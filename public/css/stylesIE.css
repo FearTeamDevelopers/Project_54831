@@ -1,0 +1,139 @@
+/* 
+    Document   : styles IE
+    Created on : 7.5.2012, 15:35:36
+    Author     : Tomy
+    Description: Marko.in stylesheet
+        
+*/
+root { 
+    display: block;
+}
+html{
+    background:black url('../images/Marko_In_bg.jpg') center center fixed no-repeat;
+    background-size: Contain;
+}
+
+@font-face { 
+    font-family: 'stencilla'; 
+    src: url('../fonts/stencilla.eot'); 
+    font-weight: normal;
+    font-style: normal;
+}
+/* ---------- Main style config ---------- */
+body {
+    margin:0;
+    padding: 0;
+    font:16px 'Calibri', sans-serif;
+    color: white;
+    overflow: auto;   
+}
+
+#spacer {
+    margin: 0px;
+    padding: 0px;
+    clear: both;
+    width: 1000px;
+    height: 2px;
+    line-height: 0px;
+    font-size: 0px;
+}
+
+#styling{
+    position: absolute;
+    left: 30%; top: 120px;
+    width: 950px;
+    height: auto;
+}
+#design{
+    position: absolute;
+    left: 18%; top: 120px;
+    width: 50%;
+}
+
+#announcement{
+    position: fixed;
+    right: 10%; bottom: 5%;
+    width: 700px;
+}
+
+#portfolio{
+    position: absolute;
+    left: 22%; top: 120px;
+    padding: 10px;
+    text-align: center;
+    width: 50%;
+}
+
+#collection{
+    position: absolute;
+    left: 20%; top: 120px;
+    width: 900px;
+    height: 750px;
+    padding: 10px;
+    text-align: center;
+    overflow-y: auto;
+}
+
+#partners{
+    position: absolute;
+    left: 55%; top: 120px;
+    width: 700px;
+    padding: 10px;
+    text-align: center;
+}
+
+#news,#bio,#design,
+#styling,#contact,#portfolio,
+#announcement,#collection,#partners{
+    border: 2px solid #9a9a9a;
+    border-image:url('../images/div_border') 4 4 repeat;
+    -moz-border-image:url('../images/div_border') 4 4 repeat; /* Firefox */
+    -webkit-border-image:url('../images/div_border') 4 4 repeat; /* Safari */
+    -o-border-image:url('../images/div_border') 4 4 repeat; /* Opera */    
+}
+
+#news,#bio,#design,
+#styling,#contact,#portfolio,
+#announcement,#collection,#partners{
+    background:url('../images/div_bg.png');
+    -moz-background-size:100% 100%; 
+    background-size:100% 100%;
+}
+
+/* ---------- Menu ---------- */
+#navi{
+    padding: 5px;
+    line-height: 100%;
+    height: 70px;
+    font-size: 25px;
+    background: url('../images/linka.png') 0 36% repeat-x;
+    width: 100%;
+}
+
+#navi li {
+    width: 100px;
+    margin-left: 11%;  
+    float: left;
+    position: relative;
+    list-style: none;
+    background: url('../images/KOLOGO.png') 50% 5% no-repeat;
+}
+
+/* main level link */
+#navi a {
+    font-weight: bold;
+    color: white;
+    text-decoration: none;
+    display: block;
+    margin-top: 55px;
+    padding: 1px;
+    text-align: center;
+    filter: Shadow(Color=#000000, Direction=135, Strength=3);
+}
+
+/* ------------------------ special font elements -------------------*/
+
+.stencilla {
+    font-family: 'stencilla', sans-serif;
+    font-size: 14px;
+}

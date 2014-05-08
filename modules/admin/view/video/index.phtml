@@ -1,0 +1,73 @@
+<ul class="maintabmenu multipletabmenu">
+    <li class="current"><a href="#">Video List</a></li>
+    <li><a href="/admin/video/add/">Add Video</a></li>
+</ul><!--maintabmenu-->
+
+<div class="content">
+    <div class="contenttitle radiusbottom0">
+        <h2 class="table"><span>Videos Table</span></h2>
+    </div><!--contenttitle-->
+
+    <form method="post" class="massActionForm" action="/admin/video/massAction/">
+        <table cellpadding="0" cellspacing="0" border="0" class="stdtable" >
+            <colgroup>
+                <col class="con0" /><col class="con1" />
+                <col class="con0" /><col class="con1" />
+                <col class="con0" /><col class="con1" />
+                <col class="con0" /><col class="con1" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th class="head0 width50"><input type="checkbox" class="checkall" /></th>
+                    <th class="head1">Title</th>
+                    <th class="head0">Section</th>
+                    <th class="head1">Path</th>
+                    <th class="head0">Resolution</th>
+                    <th class="head1">Priority</th>
+                    <th class="head0">Created</th>
+                    <th class="head1">&nbsp;</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {if !empty($videos)}
+                    {foreach $video in $videos}
+                        {if $video->active}
+                            <tr class="rowActive">
+                        {/if}
+                        {else}
+                            <tr>
+                        {/else}
+
+                            <td class="center">
+                                <input type="checkbox" name="videoids[]" value="{echo $video->getId()}" />
+                            </td>
+                            <td>{echo $video->getTitle()}</td>
+                            <td>{echo $video->getInSections()}</td>
+                            <td>{echo $video->getPath()}</td>
+                            <td>{echo $video->getWidth()}x{echo $video->getHeight()}</td>
+                            <td>{echo $video->getPriority()}</td>
+                            <td>{echo $video->getCreated()}</td>
+                            <td>    
+                                <a href="{echo $video->getPath()}" target=_blank class="btn btn3 btn_video" title="Play"></a>
+                                <a href="/admin/video/edit/{echo $video->getId()}" class="btn btn3 btn_pencil" title="Edit"></a>
+                                <a href="/admin/video/delete/{echo $video->getId()}" class="btn btn3 btn_trash deleteRow" title="Delete"></a>
+                            </td>
+                        </tr>
+                    {/foreach}
+                {/if}
+            </tbody>
+        </table>
+        <div class="tableoptions">
+            Selected:
+            <select class="radius3" name="action">
+                <option value="activate">Activate</option>
+                <option value="deactivate">Deactivate</option>
+                <option value="delete">Delete</option>
+            </select> &nbsp;
+            <input class="radius3" type="submit" name="performVideoAction" value="Execute"/>
+        </div><!--tableoptions-->
+        
+    </form>
+</div>
+<br clear="all"/><br />

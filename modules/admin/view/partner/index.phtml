@@ -1,0 +1,77 @@
+<ul class="maintabmenu multipletabmenu">
+    <li class="current"><a href="#">All Partners</a></li>
+    <li><a href="/admin/partner/add/">Add Partner</a></li>
+</ul><!--maintabmenu-->
+
+<div class="content">
+
+    <div class="contenttitle radiusbottom0">
+        <h2 class="image"><span>Partner List</span></h2>
+    </div><!--contenttitle-->
+
+    <form method="post" class="massActionForm" action="/admin/partner/massAction/">
+        <table cellpadding="0" cellspacing="0" border="0" class="stdtable mediatable">
+            <colgroup>
+                <col class="con0" /> <col class="con1" />
+                <col class="con0" /> <col class="con1" />
+                <col class="con0" /> <col class="con1" />
+                <col class="con0" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th class="head0 width50"><input type="checkbox" class="checkall" /></th>
+                    <td class="head1">Title</td>
+                    <td class="head0">Logo</td>
+                    <td class="head1">Section</td>
+                    <td class="head0">Web</td>
+                    <td class="head1">Created</td>
+                    <td class="head0">&nbsp;</td>
+                </tr>
+            </thead>
+            <tbody>
+
+                {if !empty($partners)}
+                    {foreach $partner in $partners}
+                        {if ($partner->active)}
+                            <tr class="rowActive">
+                        {/if} 
+                        {else}
+                            <tr>
+                        {/else}
+                            <td class="center">
+                                <input type="checkbox" name="partnerids[]" value="{echo $partner->getId()}" />
+                            </td>
+                            <td>{echo $partner->getTitle()}</td>
+
+                            <td class="center">
+                                <a href="{echo $partner->getLogo()}" class="view">
+                                    <img src="{echo $partner->getLogo()}" alt="{echo $partner->getTitle()}" height="50px" />
+                                </a>
+                            </td>
+
+                            <td>{echo ucfirst($partner->sectionTitle)}</td>
+                            <td>
+                                <a href="{echo $partner->getWeb()}" target="_blank">{echo $partner->getWeb()}</a>
+                            </td>
+                            <td>{echo $partner->getCreated()}</td>
+                            <td>
+                                <a href="/admin/partner/edit/{echo $partner->getId()}" class="btn btn3 btn_pencil" title="Edit"></a>
+                                <a href="/admin/partner/delete/{echo $partner->getId()}" class="btn btn3 btn_trash" title="Delete"></a></td>
+                        </tr>
+                    {/foreach}
+                {/if}
+            </tbody>
+        </table>
+        <div class="tableoptions">
+            Selected:
+            <select class="radius3" name="action">
+                <option value="activate">Activate</option>
+                <option value="deactivate">Deactivate</option>
+                <option value="delete">Delete</option>
+            </select> &nbsp;
+            <input class="radius3" type="submit" name="performPartnerAction" value="Execute"/>
+        </div><!--tableoptions-->
+
+    </form>
+</div>
+<br clear="all"/><br />

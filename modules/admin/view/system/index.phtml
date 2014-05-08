@@ -1,0 +1,34 @@
+<ul class="maintabmenu multipletabmenu">
+    <li class="current"><a href="/admin/system/">Main</a></li>
+    <li><a href="/admin/system/showAdminLog/">Admin log</a></li>
+</ul><!--maintabmenu-->
+<div class="content">
+
+    <div class="one_fourth">
+        <div class="contenttitle"><h2 class="form"><span>Clear cache</span></h2></div>
+        <form class="stdform stdform2" method="post" action="/admin/system/clearCache/">
+            <p class="stdformbutton">
+                <input name="clearCache" type="submit" value="Clear cache" class="submit radius2" />
+            </p>
+        </form>
+    </div>
+    <div class="one_fourth">
+        <div class="contenttitle"><h2 class="form"><span>Database backup</span></h2></div>
+        <form class="stdform stdform2" method="post" action="/admin/system/createDatabaseBackup/">
+            <p class="stdformbutton">
+                <input name="createBackup" type="submit" value="Create backup" class="submit radius2" />
+            </p>
+        </form>
+    </div>
+    <div class="one_fourth">
+        <div class="contenttitle"><h2 class="form"><span>Archivate older news</span></h2></div>
+        <form class="stdform stdform2" method="post" action="/admin/system/archivateNews/">
+            <p class="stdformbutton">
+                <input name="archivateNews" type="submit" value="Archivate" class="submit radius2" />
+            </p>
+        </form>
+    </div>
+    <br clear="all" />
+</div><!--widgetcontent-->
+
+<br clear="all" />

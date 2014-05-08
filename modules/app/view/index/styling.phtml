@@ -1,0 +1,35 @@
+<div class="section-content-text">
+    {echo nl2br(html_entity_decode($text->body))}
+</div>
+<div class="float-left">
+{if (!empty($photos))}
+    <div class="section-content-photos">
+        {foreach $photo in $photos}
+            <a href="{echo $photo->path}" class="highslide" 
+               title="{echo $photo->photoName}" onclick="return hs.expand(this, configstyling)">
+                <img src="{echo $photo->thumbPath}" alt="Marko.in"/>
+            </a>
+        {/foreach}
+    </div>
+{/if}
+
+{if (!empty($collectionlist))}
+    <div class="section-content-collectionList">
+        {foreach $item in $collectionlist}
+            <a href="#" class="collectionLink ajaxLink" id="show_styling_{echo $item->urlKey}"> 
+                {if $item->customName == ""}{echo ucfirst($item->title)}{/if}
+                {else}{echo ucfirst($item->customName)}{/else}</a>
+            <br/>
+        {/foreach}
+    </div>
+{/if}
+</div>
+
+{if (!empty($videos))}
+    <div class="section-content-videos float-right">
+        {foreach $video in $videos}
+            <iframe width="{echo $video->width}" height="{echo $video->height}" 
+                    src="{echo $video->path}" frameborder="0" allowfullscreen></iframe>
+        {/foreach}
+    </div>
+{/if}

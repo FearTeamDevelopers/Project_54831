@@ -1,0 +1,49 @@
+jQuery.noConflict();
+
+jQuery(document).ready(function() {
+    jQuery('input[name=title]').blur(function(){
+        var t = jQuery('input[name=title]').val();
+        var val = t.replace(/\s/g, '-');
+        jQuery('input[name=urlkey]').val(val);
+    });
+    
+    jQuery('#news-text-to-teaser').click(function(event){
+        event.preventDefault();
+        var value = CKEDITOR.instances['ckeditor'].getData();
+        var short = value.substr(0,240);
+        CKEDITOR.instances['ckeditor2'].setData(short);
+    });
+    
+    jQuery('#news-clear-text').click(function(event){
+        event.preventDefault();
+        CKEDITOR.instances['ckeditor'].setData('');
+    });
+    jQuery('#news-clear-teaser').click(function(event){
+        event.preventDefault();
+        CKEDITOR.instances['ckeditor2'].setData('');
+    });
+    
+    jQuery('.img-to-text').click(function(event){
+        event.preventDefault();
+        var id = jQuery(this).attr('value');
+        CKEDITOR.instances['ckeditor'].insertText('(!photo_'+id+'!)');
+    });
+    
+    jQuery('.img-to-teaser').click(function(event){
+        event.preventDefault();
+        var id = jQuery(this).attr('value');
+        CKEDITOR.instances['ckeditor2'].insertText('(!photo_'+id+'!)');
+    });
+    
+    jQuery('.video-to-text').click(function(event){
+        event.preventDefault();
+        var id = jQuery(this).attr('value');
+        CKEDITOR.instances['ckeditor'].insertText('(!video_'+id+'!)');
+    });
+    
+    jQuery('.video-to-teaser').click(function(event){
+        event.preventDefault();
+        var id = jQuery(this).attr('value');
+        CKEDITOR.instances['ckeditor2'].insertText('(!video_'+id+'!)');
+    });
+});

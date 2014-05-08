@@ -1,0 +1,53 @@
+<ul class="maintabmenu multipletabmenu">
+    <li><a href="/admin/system/">Main</a></li>
+    <li class="current"><a href="#">Admin log</a></li>
+</ul><!--maintabmenu-->
+
+<div class="content">
+
+    <div class="contenttitle radiusbottom0">
+        <h2 class="table"><span>Admin log</span></h2>
+    </div><!--contenttitle-->
+
+    <table cellpadding="0" cellspacing="0" border="0" class="stdtable" >
+        <colgroup>
+            <col class="con0" /><col class="con1" />
+            <col class="con0" /><col class="con1" />
+            <col class="con0" /><col class="con1" />
+            <col class="con0" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th class="head0">Created</th><th class="head1">Username</th>
+                <th class="head0">Role</th><th class="head1">Module</th>
+                <th class="head0">Controller</th><th class="head1">Action</th>
+                <th class="head0">Params</th>
+
+            </tr>
+        </thead>
+
+        <tbody>
+            {if !empty($log)}
+            {foreach $_log in $log}
+            <tr>
+                <td>{echo $_log->created}</td><td>{echo $_log->firstname} {echo $_log->lastname}</td>
+                <td>
+                    {if $_log->role == 'role_superadmin'}
+                        role_admin
+                    {/if}
+                    {else}
+                        {echo $_log->role}
+                    {/else}
+                </td>
+
+                <td>{echo $_log->module}</td>
+                <td>{echo $_log->controller}</td><td>{echo $_log->action}</td>
+                <td>{echo $_log->params}</td>
+            </tr>
+            {/foreach}
+            {/if}
+        </tbody>
+    </table>
+
+</div>
+<br clear="all"/><br />

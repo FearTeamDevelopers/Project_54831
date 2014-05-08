@@ -1,0 +1,9 @@
+{if (!empty($news))}
+<div class="newsDetail">
+    <p class="newsDetailTitle">{echo $news->title}</p>
+    <p class="newsDetailAdded">{echo $news->created} {echo $news->author}</p>
+    {echo nl2br(html_entity_decode($news->body))}
+    <br>
+
+</div>
+{/if}

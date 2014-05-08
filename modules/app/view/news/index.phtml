@@ -1,0 +1,21 @@
+{if (!empty($newsbatch))}
+{foreach $news in $newsbatch}
+<div class="oneNews">
+    
+    <p>
+        <a href="#" class="ajaxLink newsTitle" id="show_news-detail_{echo $news->urlKey}">{echo $news->title}</a>
+    </p>
+    <p class="newsAdded">{echo $news->created}</p>
+    {echo nl2br(html_entity_decode($news->shortBody))}
+    <br>
+</div>
+{/foreach}
+
+<div class="paginationCont">
+    <ul class="pagination">
+        {for $i=1 $i<=$newspagecount $i++}
+        <li><a id="{echo $i}" href="#">$i</a></li>
+        {/for}
+    </ul>
+</div>
+{/if}

@@ -1,0 +1,122 @@
+<ul class="maintabmenu multipletabmenu">
+    <li><a href="/admin/collection/">Collection List</a></li>
+    <li><a href="/admin/collection/add/">Add Collection</a></li>
+    <li><a href="/admin/collection/detail/{echo $collection->id}">Collection Detail</a></li>
+    <li class="current"><a href="#">Edit Collection</a></li>
+    <li><a href="/admin/collection/delete/{echo $collection->id}">Delete Collection</a></li>
+</ul><!--maintabmenu-->
+
+<div class="content">
+    <div class="contenttitle radiusbottom0">
+        <h2 class="table"><span>Collection informations</span></h2>
+    </div><!--contenttitle-->
+
+    <form class="stdform stdform2" method="post" action="#">
+        <p>
+            <label>Collection Name</label>
+            <span class="field">
+                <input type="text" name="title" class="longinput" value="{echo $collection->title}"/>
+                {if isset($errors["title"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["title"])}
+                    </label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Year</label>
+            <span class="field">
+                <input type="text" name="year" class="longinput" value="{echo $collection->year}"/>
+                {if isset($errors["year"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["year"])}
+                    </label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Season</label>
+            <span class="field">
+                <input type="text" name="season" class="longinput" value="{echo $collection->season}"/>
+                {if isset($errors["season"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["season"])}
+                    </label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Date</label>
+            <span class="field">
+                <input type="text" name="date" class="longinput datepicker" value="{echo $collection->date}"/>
+               {if isset($errors["date"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["date"])}
+                    </label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Photographer</label>
+            <span class="field">
+                <input type="text" name="photographer" class="longinput" value="{echo $collection->photographer}"/>
+               {if isset($errors["photographer"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["photographer"])}
+                    </label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Show In</label>
+            <span class="field">
+                <select name="show" >
+                    {foreach $item in $menu}
+                        {script $s=""}
+                        {if $item->id == $collection->collectionMenuId}
+                            {script $s = "selected"}
+                        {/if}
+                        <option value="{echo $item->id}" {echo $s}>{echo $item->title}</option>
+                    {/foreach}
+                </select>
+               {if isset($errors["collectionMenuId"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["collectionMenuId"])}
+                    </label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Description</label>
+            <span class="field">
+                <textarea rows="8" name="description" id="ckeditor">{echo $collection->description}</textarea>
+                {if isset($errors["description"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["description"])}
+                    </label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Active</label>
+            <span class="field">
+                <select name="active" class="longinput">
+                    {if $collection->active}
+                    <option value="0">Inactive</option>
+                    <option value="1" selected>Active</option>
+                    {/if}
+                    {else}
+                    <option value="0" selected>Inactive</option>
+                    <option value="1">Active</option>
+                    {/else}
+                </select>
+            </span>
+        </p>
+        
+        <p class="stdformbutton">
+            <input name="submitEditCollection" type="submit" value="Save" class="submit radius2" />
+        </p>
+    </form>
+
+</div>
+<br clear="all"/>

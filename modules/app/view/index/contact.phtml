@@ -1,0 +1,30 @@
+<div class="section-content-text center fs25">
+    {echo nl2br(html_entity_decode($text->body))}
+</div>
+
+<div class="section-content-photos center">
+    <a class="socialIcon" target=_blank href="http://www.facebook.com/Marko.in">
+        <img src="/public/images/icons/facebook.png" alt="Facebook" height=40 />
+    </a>
+    <a class="socialIcon" target=_blank href="https://twitter.com/Marko_in">
+        <img src="/public/images/icons/twitter.png" alt="Twitter" height=40 />
+    </a>
+    
+    {if (!empty($photos))}
+        {foreach $photo in $photos}
+            <a href="{echo $photo->path}" class="highslide" 
+                    title="{echo $photo->photoName}" onclick="return hs.expand(this, configstyling)">
+                <img src="{echo $photo->thumbPath}" alt="Marko.in"/>
+            </a>
+        {/foreach}
+    {/if}
+</div>
+
+{if (!empty($videos))}
+    <div class="section-content-videos">
+        {foreach $video in $videos}
+            <iframe width="{echo $video->width}" height="{echo $video->height}" 
+                src="{echo $video->path}" frameborder="0" allowfullscreen></iframe>
+        {/foreach}
+    </div>
+{/if}

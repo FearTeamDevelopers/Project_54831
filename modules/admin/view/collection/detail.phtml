@@ -1,0 +1,57 @@
+<ul class="maintabmenu multipletabmenu">
+    <li><a href="/admin/collection/">Collection List</a></li>
+    <li><a href="/admin/collection/add/">Add Collection</a></li>
+    <li class="current"><a href="#">Collection Detail</a></li>
+    <li><a href="/admin/collection/edit/{echo $collection->id}">Edit Collection</a></li>
+    <li><a href="/admin/collection/delete/{echo $collection->id}">Delete Collection</a></li>
+</ul><!--maintabmenu-->
+
+<div class="content">
+    {if !empty($collection)}
+    <div class="contenttitle radiusbottom0">
+        <h2 class="table"><span>{echo $collection->title}</span></h2>
+    </div><!--contenttitle-->
+
+    <div class="collectiondetail">
+        <p>
+            Created: {echo $collection->created}<br/>
+            Show in: {echo ucfirst($collection->menuTitle)}<br/>
+            Photo count: {echo $collectionphotocount}<br/>
+            Collection description:
+        </p>
+        <div class="collectiondetail_description">
+            {echo $collection->description}
+        </div>
+        <br/>
+        <p>
+            <a href="/admin/collection/addPhoto/{echo $collection->id}" class="btn btn_image"><span>Upload Photo</span></a> 
+        </p>
+    </div>
+    <hr/>
+
+    {if !empty($photos)}
+    <div style="overflow:hidden;">
+        <ul class="imagelist">
+            {foreach $photo in $photos}
+            {if $photo->active}
+                <li class="photoactive">
+            {/if} 
+            {else}
+                <li class="photoinactive">
+            {/else}
+            <img src="{echo $photo->thumbPath}" alt="{echo $photo->photoName}" title="{echo $photo->photoName}" height="100px" />
+                <span>
+                    <a href="{echo $photo->path}" class="view"></a>
+                    <a href="/admin/collection/changePhotoStatus/{echo $photo->id}" class="activate" value="Change photo state"></a>
+                    <a href="/admin/collection/deletePhoto/{echo $photo->id}" class="delete" value="Delete photo"></a>
+                </span>
+            </li>
+            {/foreach}
+        </ul>
+    </div>
+    {/if} 
+    {else}
+    <div class="notification msginfo"><a class="close"></a><p>No Photo in collection</p></div>
+    {/else}
+</div>
+<br clear="all"/><br />

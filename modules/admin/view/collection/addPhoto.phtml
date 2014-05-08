@@ -1,0 +1,127 @@
+<ul class="maintabmenu multipletabmenu">
+    <li><a href="/admin/collection/">Collection List</a></li>
+    <li><a href="/admin/collection/add/">Add Collection</a></li>
+    <li><a href="/admin/collection/detail/{echo $collection->id}">Collection Detail</a></li>
+    <li class="current"><a href="#">Upload Photo</a></li>
+</ul><!--maintabmenu-->
+
+<div class="content">
+    <div class="one_half">
+        <div class="widgetbox">
+            <div class="contenttitle radiusbottom0">
+                <h2 class="table"><span>Upload Single Photo to Collection</span></h2>
+            </div><!--contenttitle-->
+
+            <form class="stdform stdform2 uploadCollectionPhotoForm" method="post" action="#" enctype="multipart/form-data">
+                <input type="hidden" name="MAX_FILE_SIZE" value="5000000"/>
+                <p>
+                    <label>Collection Name</label>
+                    <span class="field">
+                        {echo $collection->title}
+                    </span>
+                </p>
+
+                <p>
+                    <label>Category</label>
+                    <span class="field">
+                        <input type="text" name="category" class="longinput" value=""/>
+                        {if isset($errors["category"])}
+                        <label class="error">
+                            {echo join("<br/>", $errors["category"])}
+                        </label>
+                        {/if}
+                    </span>
+                </p>
+                <p>
+                    <label>Image</label>
+                    <span class="field">
+                        <input type="file" name="photo"/>
+                    </span> 
+                    {if isset($errors["photo"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["photo"])}
+                    </label>
+                    {/if}
+                    {if isset($errors["size"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["size"])}
+                    </label>
+                    {/if}
+                    {if isset($errors["mime"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["mime"])}
+                    </label>
+                    {/if}
+                </p>
+
+                <p class="stdformbutton">
+                    <input name="submitAddPhoto" type="submit" value="Save" class="submit radius2" />
+                    <input type="reset" class="reset radius2" value="Reset" />
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <div class="one_half last">
+        <div class="widgetbox">
+            <div class="contenttitle radiusbottom0">
+                <h2 class="table"><span>Upload More Photos to Collection</span></h2>
+            </div><!--contenttitle-->
+
+            <form class="stdform stdform2 uploadCollectionPhotoForm" method="post" action="#" enctype="multipart/form-data">
+                <input type="hidden" name="MAX_FILE_SIZE" value="5000000"/>
+                <p>
+                    <label>Collection Name</label>
+                    <span class="field">
+                        {echo $collection->title}
+                    </span>
+                </p>
+
+                <p>
+                    <label>Category</label>
+                    <span class="field">
+                        <input type="text" name="category" class="longinput" value=""/>
+                        {if isset($errors["category"])}
+                        <label class="error">
+                            {echo join("<br/>", $errors["category"])}
+                        </label>
+                        {/if}
+                    </span>
+                </p>
+                <p>
+                    <label>Image</label>
+                    <span class="field">
+                        <a href="#" class="btn btn_folder multi_upload"><span>+</span></a>
+                        <a href="#" class="btn btn_folder multi_upload_dec"><span>-</span></a>
+                    </span>
+                    <span class="field file_inputs">
+                        <input type="file" name="photos[]"/>
+                        <input type="file" name="photos[]"/>
+                    </span> 
+                    {if isset($errors["photo"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["photo"])}
+                    </label>
+                    {/if}
+                    {if isset($errors["size"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["size"])}
+                    </label>
+                    {/if}
+                    {if isset($errors["mime"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["mime"])}
+                    </label>
+                    {/if}
+                </p>
+
+                <p class="stdformbutton">
+                    <input name="submitAddMultiPhoto" type="submit" value="Save" class="submit radius2" />
+                    <input type="reset" class="reset radius2" value="Reset" />
+                </p>
+            </form>
+        </div>
+    </div>
+    <br clear="all"/>
+</div>
+<br clear="all"/>

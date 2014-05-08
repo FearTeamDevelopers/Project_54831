@@ -1,0 +1,59 @@
+<ul class="maintabmenu multipletabmenu">
+    <li><a href="/admin/collectionmenu/">Collection Menu List</a></li>
+    <li class="current"><a href="#">Add Collection Menu Item</a></li>
+</ul><!--maintabmenu-->
+
+<div class="content">
+    <div class="contenttitle"><h2 class="form"><span>Collection menu Item</span></h2></div><br />
+    <form class="stdform stdform2" method="post" action="#">
+        <p>
+            <label>Title</label>
+            <span class="field">
+                <input type="text" name="title" class="longinput" value="{echo isset($clmenu)? $clmenu->title: ""}"/>
+                {if isset($errors["title"])}
+                <label class="error">{echo join("<br/>", $errors["title"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>URL Key</label>
+            <span class="field">
+                <input type="text" name="urlkey" class="longinput" value="{echo isset($clmenu)? $clmenu->urlKey: ""}"/>
+                {if isset($errors["urlKey"])}
+                <label class="error">{echo join("<br/>", $errors["urlKey"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Custom name</label>
+            <span class="field">
+                <input type="text" name="custom" class="longinput" value="{echo isset($clmenu)? $clmenu->customName: ""}"/>
+                {if isset($errors["customName"])}
+                <label class="error">{echo join("<br/>", $errors["customName"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Section</label>
+           <span class="field">
+                <select name="section" class="longinput">
+                    {foreach $section in $sections}
+                        <option value="{echo $section->id}">{echo $section->title}</option>
+                    {/foreach}
+                </select>
+            </span>
+        </p>
+        <p>
+            <label>Rank<small>Max. 99</small></label>
+            <span class="field">
+                <input type="text" name="rank" class="longinput" value="{echo isset($clmenu)? $clmenu->rank: ""}"/>
+            </span>
+        </p>
+        <p class="stdformbutton">
+            <input name="submitAddClmenu" type="submit" value="Save" class="submit radius2" />
+            <input type="reset" class="reset radius2" value="Reset" />
+        </p>
+    </form>
+</div>
+<br clear="all" />
+<script type="text/javascript" src="/public/js/custom/collectionmenu.js"></script>

@@ -1,0 +1,15 @@
+<div class="section-content-photos center">
+    {if (!empty($partners))}
+        {foreach $section in $sections}
+            <p class="section-title">{echo ucfirst($section->title)}</p>
+        
+            {if !empty($partners[$section->title])}
+                {foreach $partner in $partners[$section->title]}
+                    <a href="{echo $partner->web}" target=_blank>
+                        <img src="{echo $partner->logo}" alt="" height="100" /></a>
+                {/foreach}
+            {/if}
+            <br/>
+        {/foreach}
+    {/if}
+</div>

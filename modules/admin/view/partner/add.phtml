@@ -1,0 +1,85 @@
+<ul class="maintabmenu multipletabmenu">
+    <li ><a href="/admin/partner/">Partner List</a></li>
+    <li class="current"><a href="#">Add Partner</a></li>
+</ul>
+
+<div class="content">
+    <div class="contenttitle"><h2 class="form"><span>Partner Informations</span></h2></div><br />
+    <form class="stdform stdform2" method="post" action="#" enctype="multipart/form-data">
+        <input type="hidden" name="MAX_FILE_SIZE" value="5000000"/>
+        <p>
+            <label>Partner name*</label>
+            <span class="field">
+                <input type="text" required name="title" class="longinput" 
+                       value="{echo isset($partner)? $partner->title: ""}"/>
+                {if isset($errors["title"])}
+                    <label class="error">{echo join("<br/>", $errors["title"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Logo*</label>
+            <span class="field">
+                <input type="file" name="logo" />
+                {if isset($errors["logo"])}
+                    <label class="error">{echo join("<br/>", $errors["logo"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Address</label>
+            <span class="field">
+                <textarea rows="10" name="address" class="longinput">{echo isset($partner)? $partner->address: ""}</textarea>
+                {if isset($errors["address"])}
+                    <label class="error">{echo join("<br/>", $errors["address"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Webpage*</label>
+            <span class="field">
+                <input type="url" required name="web" class="longinput" 
+                       value="{echo isset($partner)? $partner->web: ""}"/>
+                {if isset($errors["web"])}
+                    <label class="error">{echo join("<br/>", $errors["web"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Email</label>
+            <span class="field">
+                <input type="email" name="email" class="longinput" 
+                       value="{echo isset($partner)? $partner->email: ""}"/>
+                {if isset($errors["email"])}
+                    <label class="error">{echo join("<br/>", $errors["email"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Mobile</label>
+            <span class="field">
+                <input type="text" name="mobile" class="longinput" 
+                       value="{echo isset($partner)? $partner->mobile: ""}"/>
+                {if isset($errors["mobile"])}
+                    <label class="error">{echo join("<br/>", $errors["mobile"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Section</label>
+            <span class="field">
+                <select name="section" class="longinput">
+                    {foreach $section in $sections}
+                        <option value="{echo $section->id}">{echo $section->title}</option>
+                    {/foreach}
+                </select>
+            </span>
+        </p>
+
+        <p class="stdformbutton">
+            <input name="submitAddPartner" type="submit" value="Save" class="submit radius2" />
+            <input type="reset" class="reset radius2" value="Reset" />
+        </p>
+    </form>
+</div>
+<br clear="all" />

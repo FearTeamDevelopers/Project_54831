@@ -1,0 +1,50 @@
+<ul class="maintabmenu multipletabmenu">
+    <li class="current"><a href="#">User List</a></li>
+    <li><a href="/admin/user/add/">Add User</a></li>
+</ul><!--maintabmenu-->
+
+<div class="content">
+    <div class="contenttitle radiusbottom0">
+        <h2 class="table"><span>User List</span></h2>
+    </div><!--contenttitle-->
+
+    <table cellpadding="0" cellspacing="0" border="0" class="stdtable" >
+        <colgroup>
+            <col class="con0" /><col class="con1" />
+            <col class="con0" /><col class="con1" />
+            <col class="con0" /><col class="con1" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th class="head0">Firstname</th><th class="head1">Lastname</th>
+                <th class="head0">Email</th><th class="head1">Created</th>
+                <th class="head0">Active</th><th class="head1">&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            {if (!empty(users))}
+                {foreach $user in $users}
+                    <tr>
+                        <td>{echo $user->getFirstname()}</td>
+                        <td>{echo $user->getLastname()}</td>
+                        <td>{echo $user->getEmail()}</td>
+                        <td>{echo $user->getCreated()}</td>
+                    {if $user->active}
+                        <td>Active</td>
+                    {/if}
+                    {else}
+                        <td>Inactive</td>
+                    {/else}
+
+                    <td>
+                        <a href="/admin/user/edit/{echo $user->id}" class="btn btn3 btn_pencil"></a> 
+                        <a href="/admin/user/delete/{echo $user->id}" class="btn btn3 btn_trash deleteRow"></a>
+                    </td>
+                    </tr>
+                {/foreach}
+            {/if}
+        </tbody>
+    </table>
+</div>
+<br clear="all"/><br />

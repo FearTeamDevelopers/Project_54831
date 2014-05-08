@@ -1,0 +1,38 @@
+<ul class="maintabmenu multipletabmenu">
+    <li><a href="/admin/collection/">Collection List</a></li>
+    <li><a href="/admin/collection/add/">Add Collection</a></li>
+    <li><a href="/admin/collection/detail/{echo $collection->id}">Collection Detail</a></li>
+    <li><a href="/admin/collection/edit/{echo $collection->id}">Edit Collection</a></li>
+    <li class="current"><a href="#">Delete Collection</a></li>
+</ul><!--maintabmenu-->
+
+<div class="content">
+    <form class="stdform stdform2" method="post" action="#">
+        <p>
+            <label>Title</label>
+            <span class="field">{echo $collection->title}</span>
+        </p>
+        <p>
+            <label>Description</label>
+            <span class="field">{echo $collection->description}</span>
+        </p>
+        <p>
+            <label>Created</label>
+            <span class="field">{echo $collection->created}</span>
+        </p>
+        <p>
+            <label>Action</label>
+            <span class="field">
+                <select name="action">
+                    <option value="1">Delete all photos</option>
+                    <option value="2">Keep all photos</option>
+                </select>
+            </span>
+        </p>
+
+        <p class="stdformbutton">
+            <input name="submitDeleteCollection" type="submit" value="Delete" class="submit radius2" />
+        </p>
+    </form>
+</div>
+<br clear="all" />

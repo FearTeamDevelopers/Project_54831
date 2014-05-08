@@ -1,0 +1,107 @@
+<ul class="maintabmenu multipletabmenu">
+    <li><a href="/admin/collection/">Collection List</a></li>
+    <li class="current"><a href="#">Add Collection</a></li>
+</ul><!--maintabmenu-->
+
+<div class="content">
+    <div class="contenttitle radiusbottom0">
+        <h2 class="table"><span>Collection informations</span></h2>
+    </div><!--contenttitle-->
+
+    <form class="stdform stdform2" method="post" action="#">
+        <p>
+            <label>Collection Name</label>
+            <span class="field">
+                <input type="text" name="title" class="longinput" 
+                       value="{echo isset($collection)? $collection->title: ""}"/>
+                {if isset($errors["title"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["title"])}
+                    </label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Year</label>
+            <span class="field">
+                <input type="text" name="year" class="longinput" 
+                       value="{echo isset($collection)? $collection->year: ""}"/>
+                {if isset($errors["year"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["year"])}
+                    </label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Season</label>
+            <span class="field">
+                <input type="text" name="season" class="longinput" 
+                       value="{echo isset($collection)? $collection->season: ""}" />
+                {if isset($errors["season"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["season"])}
+                    </label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Date</label>
+            <span class="field">
+                <input type="text" name="date" class="longinput datepicker" 
+                       value="{echo isset($collection)? $collection->date: ""}"/>
+                {if isset($errors["date"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["date"])}
+                    </label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Photographer</label>
+            <span class="field">
+                <input type="text" name="photographer" class="longinput" 
+                       value="{echo isset($collection)? $collection->photographer: ""}"/>
+                {if isset($errors["photographer"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["photographer"])}
+                    </label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Show In</label>
+            <span class="field">
+                <select name="show" class="longinput">
+                    <option value="">Choose one</option>
+                    {foreach $item in $menu}
+                    <option value="{echo $item->id}">{echo $item->title}</option>
+                    {/foreach}
+                </select>
+                {if isset($errors["collectionMenuId"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["collectionMenuId"])}
+                    </label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Description</label>
+            <span class="field">
+                <textarea rows="8" cols="" name="description" id="ckeditor">{echo isset($collection)? $collection->description: ""}</textarea>
+                {if isset($errors["description"])}
+                    <label class="error">
+                        {echo join("<br/>", $errors["description"])}
+                    </label>
+                {/if}
+            </span>
+        </p>
+        
+        <p class="stdformbutton">
+            <input name="submitAddCollection" type="submit" value="Save" class="submit radius2" />
+            <input type="reset" class="reset radius2" value="Reset" />
+        </p>
+    </form>
+
+</div>
+<br clear="all"/>

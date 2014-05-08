@@ -1,0 +1,80 @@
+<ul class="maintabmenu multipletabmenu">
+    <li><a href="/admin/announcement/">Announcements List</a></li>
+    <li><a href="/admin/announcement/add/">Add Announcement</a></li>
+    <li class="current"><a href="#">Edit Announcement</a></li>
+    <li><a href="/admin/announcement/delete/{echo $announcement->id}">Delete Announcement</a></li>
+</ul>
+
+<div class="content">
+    <div class="contenttitle"><h2 class="form"><span>Announcement content</span></h2></div><br />
+
+    <form class="stdform stdform2" method="post" action="#" id="announcementForm">
+        <p>
+            <label>Title*</label>
+            <span class="field">
+                <input name="title" type="text" class="longinput" value="{echo $announcement->title}" />
+                {if isset($errors["title"])}
+                    <label class="error">{echo join("<br/>", $errors["title"])}</label>
+                {/if}
+                    
+            </span>
+        </p>
+        <p>
+            <label>Text*</label>
+            <span class="field">
+                <textarea rows="10" name="text" class="longinput" id="ckeditor">{echo $announcement->body}</textarea>
+                {if isset($errors["body"])}
+                    <label class="error">{echo join("<br/>", $errors["body"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Signature</label>
+            <span class="field">
+                <input type="text" name="signature" class="longinput" value="{echo $announcement->signature}"/>
+                {if isset($errors["signature"])}
+                    <label class="error">{echo join("<br/>", $errors["signature"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>End date</label>
+            <span class="field">
+                <input type="text" name="datestart" class="longinput datepicker" value="{echo $announcement->dateStart}"/>
+                {if isset($errors["datestart"])}
+                    <label class="error">{echo join("<br/>", $errors["datestart"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Start date</label>
+            <span class="field">
+                <input type="text" name="dateend" class="longinput datepicker" value="{echo $announcement->dateEnd}"/>
+                {if isset($errors["dateend"])}
+                    <label class="error">{echo join("<br/>", $errors["dateend"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Active</label>
+            <span class="field">
+                <select name="active" class="longinput">
+                    {if $announcement->active}
+                    <option value="0">Inactive</option>
+                    <option value="1" selected>Active</option>
+                    {/if}
+                    {else}
+                    <option value="0" selected>Inactive</option>
+                    <option value="1">Active</option>
+                    {/else}
+                </select>
+            </span>
+        </p>
+        
+        <p class="stdformbutton">
+            <input name="submitEditAnc" type="submit" value="Save" class="submit radius2" />
+            <input type="reset" class="reset radius2" value="Reset" />
+        </p>
+    </form>
+</div>
+<br clear="all" />

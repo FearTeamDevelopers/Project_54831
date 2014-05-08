@@ -1,0 +1,52 @@
+<ul class="maintabmenu multipletabmenu">
+    <li class="current"><a href="#">Collection List</a></li>
+    <li><a href="/admin/collection/add/">Add Collection</a></li>
+</ul><!--maintabmenu-->
+
+<div class="content">
+    <div class="contenttitle radiusbottom0">
+        <h2 class="table"><span>Collection List</span></h2>
+    </div><!--contenttitle-->
+
+    <table cellpadding="0" cellspacing="0" border="0" class="stdtable" >
+        <colgroup>
+            <col class="con0" /><col class="con1" />
+            <col class="con0" /><col class="con1" />
+            <col class="con0" /><col class="con1" />
+            <col class="con0" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th class="head0">Title</th><th class="head1">Created</th>
+                <th class="head0">Photographer</th><th class="head1">Season</th>
+                <th class="head0">Show in</th><th class="head1">In section</th>
+                <th class="head0">&nbsp;</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {if !empty($collections)}
+                {foreach $collection in $collections}
+                    {if $collection->active}
+                        <tr class="rowActive">
+                    {/if}
+                    {else}
+                        <tr>
+                    {/else}
+                        <td>{echo $collection->title}</td><td>{echo $collection->created}</td>
+                        <td>{echo $collection->photographer}</td>
+                        <td>{echo $collection->season}</td>
+                        <td>{echo $collection->menuTitle}</td>
+                        <td>{echo $collection->sectionTitle}</td>
+                        <td>
+                            <a href="/admin/collection/detail/{echo $collection->id}" class="btn btn_image2">
+                                <span>Vstoupit do kolekce</span>
+                            </a>
+                        </td>
+                    </tr>
+                {/foreach}
+            {/if}
+        </tbody>
+    </table>
+</div>
+<br clear="all"/><br />

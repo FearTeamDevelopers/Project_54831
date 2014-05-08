@@ -1,0 +1,65 @@
+<ul class="maintabmenu multipletabmenu">
+    <li ><a href="/admin/announcement/">Announcements List</a></li>
+    <li class="current"><a href="#">Add Announcement</a></li>
+</ul>
+
+<div class="content">
+    <div class="contenttitle"><h2 class="form"><span>Announcement content</span></h2></div><br />
+
+    <form class="stdform stdform2" method="post" action="#" id="announcementForm">
+        <p>
+            <label>Title*</label>
+            <span class="field">
+                <input name="title" type="text" class="longinput" 
+                       value="{echo isset($announc)? $announc->title: ""}" />
+                {if isset($errors["title"])}
+                    <label class="error">{echo join("<br/>", $errors["title"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Text*</label>
+            <span class="field">
+                <textarea rows="10" name="text" class="longinput" id="ckeditor">{echo isset($announc)? $announc->body: ""}</textarea>
+                {if isset($errors["body"])}
+                    <label class="error">{echo join("<br/>", $errors["body"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Signature</label>
+            <span class="field">
+                <input type="text" name="signature" class="longinput" 
+                       value="{echo isset($announc)? $announc->signature: ""}"/>
+                {if isset($errors["signature"])}
+                    <label class="error">{echo join("<br/>", $errors["signature"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Start date</label>
+            <span class="field">
+                <input type="text" name="datestart" class="longinput datepicker" 
+                       value="{echo isset($announc)? $announc->datestart: ""}"/>
+                {if isset($errors["datestart"])}
+                    <label class="error">{echo join("<br/>", $errors["datestart"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>End date</label>
+            <span class="field">
+                <input type="text" name="dateend" class="longinput datepicker" 
+                       value="{echo isset($announc)? $announc->dateend: ""}"/>
+                {if isset($errors["dateend"])}
+                    <label class="error">{echo join("<br/>", $errors["dateend"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p class="stdformbutton">
+            <input name="submitAddAnc" type="submit" value="Save" class="submit radius2" />
+            <input type="reset" class="reset radius2" value="Reset" />
+        </p>
+    </form>
+</div>
+<br clear="all" />

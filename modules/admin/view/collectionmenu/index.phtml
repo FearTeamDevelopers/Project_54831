@@ -1,0 +1,72 @@
+<ul class="maintabmenu multipletabmenu">
+    <li class="current"><a href="#">Collection Menu List</a></li>
+    <li><a href="/admin/collectionmenu/add/">Add Collection Menu Item</a></li>
+</ul><!--maintabmenu-->
+
+<div class="content">
+    <div class="contenttitle radiusbottom0">
+        <h2 class="table"><span>Collection Menu List</span></h2>
+    </div><!--contenttitle-->
+
+    <form method="post" class="massActionForm" action="/admin/collectionmenu/massAction/">
+        <table cellpadding="0" cellspacing="0" border="0" class="stdtable" >
+            <colgroup>
+                <col class="con0" /><col class="con1" />
+                <col class="con0" /><col class="con1" />
+                <col class="con0" /><col class="con1" />
+                <col class="con0" /><col class="con1" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th class="head0 width50"><input type="checkbox" class="checkall" /></th>
+                    <th class="head1">Title</th>
+                    <th class="head0">Section</th>
+                    <th class="head1">URL Key</th>
+                    <th class="head0">Custom Name</th>
+                    <th class="head1">Rank</th>
+                    <th class="head0">Created</th>
+                    <th class="head1">&nbsp;</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {if !empty($clmenu)}
+                {foreach $clm in $clmenu}
+                {if $clm->active}
+                <tr class="rowActive">
+                    {/if}
+                    {else}
+                <tr>
+                    {/else}
+
+                    <td class="center">
+                        <input type="checkbox" name="clmids[]" value="{echo $clm->getId()}" />
+                    </td>
+                    <td>{echo $clm->getTitle()}</td>
+                    <td>{echo $clm->getSecTitle()}</td>
+                    <td>{echo $clm->getUrlKey()}</td>
+                    <td>{echo $clm->getCustomName()}</td>
+                    <td>{echo $clm->getRank()}</td>
+                    <td>{echo $clm->getCreated()}</td>
+                    <td>    
+                        <a href="/admin/collectionmenu/edit/{echo $clm->getId()}" class="btn btn3 btn_pencil" title="Edit"></a>
+                        <a href="/admin/collectionmenu/delete/{echo $clm->getId()}" class="btn btn3 btn_trash deleteRow" title="Delete"></a>
+                    </td>
+                </tr>
+                {/foreach}
+                {/if}
+            </tbody>
+        </table>
+        <div class="tableoptions">
+            Selected:
+            <select class="radius3" name="action">
+                <option value="activate">Activate</option>
+                <option value="deactivate">Deactivate</option>
+                <option value="delete">Delete</option>
+            </select> &nbsp;
+            <input class="radius3" type="submit" name="performClmAction" value="Execute"/>
+        </div><!--tableoptions-->
+
+    </form>
+</div>
+<br clear="all"/><br />
