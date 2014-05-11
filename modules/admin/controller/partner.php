@@ -18,19 +18,12 @@ class Admin_Controller_Partner extends Controller
      */
     public function index()
     {
-        Event::fire('admin.log');
         $view = $this->getActionView();
 
         $query = App_Model_Partner::getQuery(array('pa.*'))
                 ->join('tb_section', 'pa.sectionId = s.id', 's', array('s.title' => 'sectionTitle'));
 
-        $partnerResult = App_Model_Partner::initialize($query);
-
-        if (is_array($partnerResult)) {
-            $partners = $partnerResult;
-        } else {
-            $partners[] = $partnerResult;
-        }
+        $partners = App_Model_Partner::initialize($query);
 
         $view->set('partners', $partners);
     }

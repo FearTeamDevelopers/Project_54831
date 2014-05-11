@@ -33,11 +33,12 @@
                     {else}
                         <tr>
                     {/else}
-                        <td>{echo $collection->title}</td><td>{echo $collection->created}</td>
+                        <td>{echo $collection->title}</td>
+                        <td>{echo $collection->created}</td>
                         <td>{echo $collection->photographer}</td>
                         <td>{echo $collection->season}</td>
                         <td>{echo $collection->menuTitle}</td>
-                        <td>{echo $collection->sectionTitle}</td>
+                        <td>{echo $collection->secTitle}</td>
                         <td>
                             <a href="/admin/collection/detail/{echo $collection->id}" class="btn btn_image2">
                                 <span>Vstoupit do kolekce</span>

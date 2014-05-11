@@ -42,13 +42,7 @@ class App_Controller_Index extends Controller
                         ->order('ph.priority', 'DESC')
                         ->order('ph.created', 'DESC');
 
-                $photosResult = App_Model_Photo::initialize($query);
-
-                if (is_array($photosResult)) {
-                    $photos = $photosResult;
-                } else {
-                    $photos[] = $photosResult;
-                }
+                $photos = App_Model_Photo::initialize($query);
             }
 
             if ($section->getSupportVideo()) {
@@ -59,13 +53,7 @@ class App_Controller_Index extends Controller
                         ->order('vi.priority', 'DESC')
                         ->order('vi.created', 'DESC');
 
-                $videosResult = App_Model_Video::initialize($queryVi);
-
-                if (is_array($videosResult)) {
-                    $videos = $videosResult;
-                } else {
-                    $videos[] = $videosResult;
-                }
+                $videos = App_Model_Video::initialize($queryVi);
             }
 
             if ($section->getSupportCollection()) {

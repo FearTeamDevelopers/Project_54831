@@ -385,7 +385,6 @@ jQuery(document).ready(function() {
             var filename = file_data.name;
 
             jQuery.post('/admin/photo/checkPhoto/', {filename: filename}, function(msg) {
-
                 if (msg == 'ok') {
                     jQuery('.uploadPhotoForm input[type=submit]').removeAttr('disabled');
                 } else {
@@ -404,8 +403,36 @@ jQuery(document).ready(function() {
         });
     });
 
-    jQuery('.uploadPhotoForm input[type=file]').change(function() {
-        jQuery('.uploadPhotoForm input[type=submit]').removeAttr('disabled');
+    jQuery('.uploadCollectionPhotoForm input[type=submit]').mouseover(function() {
+        var inputs = jQuery(this).parents('form').find('input[type=file]');
+        var collectionId = jQuery(this).parents('form').children('.collid').val();
+        var proceed = true;
+
+        inputs.each(function() {
+            var file_data = this.files[0];
+            var filename = file_data.name;
+
+            jQuery.post('/admin/collection/checkPhoto/', {filename: filename, collectionId:collectionId}, function(msg) {
+                if (msg == 'ok') {
+                    jQuery('.uploadCollectionPhotoForm input[type=submit]').removeAttr('disabled');
+                } else {
+                    var c = confirm(msg);
+
+                    if (c) {
+                        if (proceed) {
+                            jQuery('.uploadCollectionPhotoForm input[type=submit]').removeAttr('disabled');
+                        }
+                    } else {
+                        jQuery('.uploadCollectionPhotoForm input[type=submit]').attr('disabled', 'disabled');
+                        proceed = false;
+                    }
+                }
+            });
+        });
+    });
+
+    jQuery('.uploadPhotoForm input[type=file], .uploadCollectionPhotoForm input[type=file]').change(function() {
+        jQuery('.uploadPhotoForm input[type=submit], .uploadCollectionPhotoForm input[type=submit]').removeAttr('disabled');
     });
 
     //Partner
@@ -472,14 +499,14 @@ jQuery(document).ready(function() {
     jQuery('.mediatable a.btn_trash').click(function() {
         var c = confirm('Delete this image?');
         var parentTr = jQuery(this).parents('tr');
-        
+
         if (c) {
             var url = jQuery(this).attr('href');
 
             jQuery.post(url, function(msg) {
                 if (msg == 'ok') {
                     parentTr.fadeOut();
-                }else{
+                } else {
                     alert(msg);
                 }
             });
@@ -602,14 +629,14 @@ jQuery(document).ready(function() {
     jQuery('.stdtable a.deleteRow').click(function() {
         var c = confirm('Continue delete?');
         var parentTr = jQuery(this).parents('tr');
-        
-        if (c){
+
+        if (c) {
             var url = jQuery(this).attr('href');
 
             jQuery.post(url, function(msg) {
                 if (msg == 'ok') {
                     parentTr.fadeOut();
-                }else{
+                } else {
                     alert(msg);
                 }
             });
@@ -635,14 +662,14 @@ jQuery(document).ready(function() {
             return true;
         }
     });
-    
-    jQuery('.labeled-checkbox').click(function(){
+
+    jQuery('.labeled-checkbox').click(function() {
         var ch = jQuery(this).find('input[type=checkbox]');
-        
-        if(ch.parents('span.checkbox').hasClass('checked')){
+
+        if (ch.parents('span.checkbox').hasClass('checked')) {
             ch.parents('span.checkbox').removeClass('checked');
             ch.removeAttr('checked');
-        }else{
+        } else {
             ch.parents('span.checkbox').addClass('checked');
             ch.attr('checked', 'checked');
         }

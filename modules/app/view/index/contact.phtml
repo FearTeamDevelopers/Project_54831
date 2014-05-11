@@ -10,7 +10,7 @@
         <img src="/public/images/icons/twitter.png" alt="Twitter" height=40 />
     </a>
     
-    {if (!empty($photos))}
+    {if ($photos && !empty($photos))}
         {foreach $photo in $photos}
             <a href="{echo $photo->path}" class="highslide" 
                     title="{echo $photo->photoName}" onclick="return hs.expand(this, configstyling)">
@@ -20,7 +20,7 @@
     {/if}
 </div>
 
-{if (!empty($videos))}
+{if ($videos && !empty($videos))}
     <div class="section-content-videos">
         {foreach $video in $videos}
             <iframe width="{echo $video->width}" height="{echo $video->height}" 

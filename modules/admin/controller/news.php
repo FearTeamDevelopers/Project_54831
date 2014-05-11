@@ -21,13 +21,7 @@ class Admin_Controller_News extends Controller
                         array('s.urlKey'))
                 ->where('s.urlKey = ?', 'news');
 
-        $photoResult = App_Model_Photo::initialize($photoQuery);
-
-        if (is_array($photoResult)) {
-            $photos = $photoResult;
-        } else {
-            $photos[] = $photoResult;
-        }
+        $photos = App_Model_Photo::initialize($photoQuery);
 
         return $photos;
     }
@@ -46,13 +40,7 @@ class Admin_Controller_News extends Controller
                         array('s.urlKey'))
                 ->where('s.urlKey = ?', 'news');
 
-        $viedoResult = App_Model_Video::initialize($videoQuery);
-
-        if (is_array($viedoResult)) {
-            $videos = $viedoResult;
-        } else {
-            $videos[] = $viedoResult;
-        }
+        $videos = App_Model_Video::initialize($videoQuery);
 
         return $videos;
     }
@@ -62,7 +50,6 @@ class Admin_Controller_News extends Controller
      */
     public function index()
     {
-        Event::fire('admin.log');
         $view = $this->getActionView();
 
         $news = App_Model_News::all();

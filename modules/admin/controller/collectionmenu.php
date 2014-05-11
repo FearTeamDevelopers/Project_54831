@@ -16,19 +16,12 @@ class Admin_Controller_CollectionMenu extends Controller
      */
     public function index()
     {
-        Event::fire('admin.log');
         $view = $this->getActionView();
 
         $clmenuQuery = App_Model_CollectionMenu::getQuery(array('clm.*'))
                 ->join('tb_section', 'clm.sectionId = s.id', 's', 
                         array('s.title' => 'secTitle'));
-        $clmenuResult = App_Model_CollectionMenu::initialize($clmenuQuery);
-        
-        if (is_array($clmenuResult)) {
-            $clmenu = $clmenuResult;
-        } else {
-            $clmenu[] = $clmenuResult;
-        }
+        $clmenu = App_Model_CollectionMenu::initialize($clmenuQuery);
         
         $view->set('clmenu', $clmenu);
     }

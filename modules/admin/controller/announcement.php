@@ -15,7 +15,6 @@ class Admin_Controller_Announcement extends Controller
      */
     public function index()
     {
-        Event::fire('admin.log');
         $view = $this->getActionView();
 
         $announc = App_Model_Announcement::all();

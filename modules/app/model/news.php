@@ -63,9 +63,9 @@ class App_Model_News extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 250
+     * @length 256
      * 
-     * @validate required, html, max(250)
+     * @validate required, html, max(1024)
      * @label short text
      */
     protected $_shortBody;
@@ -76,7 +76,7 @@ class App_Model_News extends Model
      * @type text
      * @length 256
      * 
-     * @validate required, html, max(4096)
+     * @validate required, html, max(5000)
      * @label text
      */
     protected $_body;

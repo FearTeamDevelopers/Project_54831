@@ -1,5 +1,5 @@
 <div class="section-content-photos center">
-    {if (!empty($partners))}
+    {if ($partners && !empty($partners))}
         {foreach $section in $sections}
             <p class="section-title">{echo ucfirst($section->title)}</p>
         

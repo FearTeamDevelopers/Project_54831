@@ -200,12 +200,11 @@ class Model extends Base
         if ($value == '') {
             return true;
         } else {
-            return StringMethods::match($value, 
-                    '#(<|&lt;)(strong|em|s|p|div|a|img|table|tr|td|thead|tbody|ol|li|ul|caption|span)(.*)(>|&gt;)'
-                    . '([a-zA-Zá-žÁ-Ž0-9_-\s\?\.,!:()+=\"&@\*]*)</\2>#');
+            return StringMethods::match($value, '#(<|&lt;)(strong|em|s|p|div|a|img|table|tr|td|thead|tbody|ol|li|ul|caption|span)(.*)(>|&gt;)'
+                            . '([a-zA-Zá-žÁ-Ž0-9_-\s\?\.,!:()+=\"&@\*]*)</\2>#');
         }
     }
-    
+
     protected function _validatePath($value)
     {
         if ($value == '') {
@@ -793,10 +792,10 @@ class Model extends Base
         foreach ($query->all() as $row) {
             $rows[] = new $class($row);
         }
-        
-        if(count($rows) == 1){
-            return array_shift($rows);
-        }else{
+
+        if (empty($rows)) {
+            return null;
+        } else {
             return $rows;
         }
     }

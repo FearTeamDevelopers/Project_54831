@@ -15,7 +15,6 @@ class Admin_Controller_Video extends Controller
      */
     public function index()
     {
-        Event::fire('admin.log');
         $view = $this->getActionView();
 
         $videos = App_Model_Video::all();
@@ -28,14 +27,10 @@ class Admin_Controller_Video extends Controller
 
             $sections = App_Model_VideoSection::initialize($videosQuery);
 
-            if (is_array($sections)) {
-                foreach ($sections as $section) {
-                    $sectionArr[] = ucfirst($section->secTitle);
-                }
-                $sectionString = join(', ', $sectionArr);
-            } else {
-                $sectionString = ucfirst($sections->secTitle);
+            foreach ($sections as $section) {
+                $sectionArr[] = ucfirst($section->secTitle);
             }
+            $sectionString = join(', ', $sectionArr);
 
             $video->inSections = $sectionString;
         }
@@ -125,12 +120,8 @@ class Admin_Controller_Video extends Controller
                 ->where('vis.videoId = ?', $video->id);
         $videoSections = App_Model_VideoSection::initialize($videoSectionQuery);
 
-        if (is_array($videoSections)) {
-            foreach ($videoSections as $section) {
-                $sectionArr[] = $section->secTitle;
-            }
-        } else {
-            $sectionArr[] = $videoSections->secTitle;
+        foreach ($videoSections as $section) {
+            $sectionArr[] = $section->secTitle;
         }
         $video->inSections = $sectionArr;
 

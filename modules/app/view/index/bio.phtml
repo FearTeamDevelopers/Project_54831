@@ -1,7 +1,7 @@
 <div class="section-content-text">
     {echo nl2br(html_entity_decode($text->body))}
 </div>
-{if (!empty($collectionlist))}
+{if ($collectionlist && !empty($collectionlist))}
     <div class="section-content-collectionList">
         {foreach $item in $collectionlist}
             <a href="#" class="collectionLink ajaxLink" id="show_design_{echo $item->urlKey}"> 
@@ -12,7 +12,7 @@
     </div>
 {/if}
 
-{if (!empty($photos))}
+{if ($photos && !empty($photos))}
     <div class="section-content-photos">
         {foreach $photo in $photos}
             <a href="{echo $photo->path}" class="highslide" 
@@ -23,7 +23,7 @@
     </div>
 {/if}
 
-{if (!empty($videos))}
+{if ($videos && !empty($videos))}
     <div class="section-content-videos">
         {foreach $video in $videos}
             <iframe width="{echo $video->width}" height="{echo $video->height}" 

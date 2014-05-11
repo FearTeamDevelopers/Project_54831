@@ -1,5 +1,5 @@
 <div class="section-content-collection">
-    {if (!empty($collections))}
+    {if ($collections && !empty($collections))}
         {foreach $collection in $collections}
             <p class="collectionTitle">
                 {echo $collection->title." ".$collection->date} / fotograf {echo $collection->photographer}
@@ -22,9 +22,8 @@
             <div class="section-content-videos">
                 {if (!empty($videos = $collection->videos))}
                     {foreach $video in $videos}
-                        <p class="collectionTitle">{echo $video->title}</p><br/>
-                            <iframe width="{echo $video->width}" height="{echo $video->height}" 
-                                src="{echo $video->path}" frameborder="0" allowfullscreen></iframe>
+                        <iframe width="{echo $video->width}" height="{echo $video->height}" 
+                            src="{echo $video->path}" frameborder="0" allowfullscreen></iframe>
                     {/foreach}
                 {/if}
             </div>

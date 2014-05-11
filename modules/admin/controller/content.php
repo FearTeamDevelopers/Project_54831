@@ -16,7 +16,6 @@ class Admin_Controller_Content extends Controller
      */
     public function index()
     {
-        Event::fire('admin.log');
         $view = $this->getActionView();
 
         $content = App_Model_PageContent::all();

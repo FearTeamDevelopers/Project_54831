@@ -16,7 +16,6 @@ class Admin_Controller_Photo extends Controller
      */
     public function index()
     {
-        Event::fire('admin.log');
         $view = $this->getActionView();
 
         $photos = App_Model_Photo::all();
@@ -29,14 +28,10 @@ class Admin_Controller_Photo extends Controller
 
             $sections = App_Model_PhotoSection::initialize($photoSectionQuery);
 
-            if (is_array($sections)) {
-                foreach ($sections as $section) {
-                    $sectionArr[] = ucfirst($section->secTitle);
-                }
-                $sectionString = join(', ', $sectionArr);
-            } else {
-                $sectionString = ucfirst($sections->secTitle);
+            foreach ($sections as $section) {
+                $sectionArr[] = ucfirst($section->secTitle);
             }
+            $sectionString = join(', ', $sectionArr);
 
             $photo->inSections = $sectionString;
         }
@@ -207,13 +202,10 @@ class Admin_Controller_Photo extends Controller
                 ->where('phs.photoId = ?', $photo->id);
         $photoSections = App_Model_PhotoSection::initialize($photoSectionQuery);
 
-        if (is_array($photoSections)) {
-            foreach ($photoSections as $section) {
-                $sectionArr[] = $section->secTitle;
-            }
-        } else {
-            $sectionArr[] = $photoSections->secTitle;
+        foreach ($photoSections as $section) {
+            $sectionArr[] = $section->secTitle;
         }
+        
         $photo->inSections = $sectionArr;
 
         if (RequestMethods::post('submitEditPhoto')) {
@@ -418,7 +410,7 @@ class Admin_Controller_Photo extends Controller
         if ($photo === null) {
             echo 'ok';
         } else {
-            echo "Photo with this name {$filename} already exits. Do you want to rewrite it?";
+            echo "Photo with this name {$filename} already exits. Do you want to overwrite it?";
         }
     }
 

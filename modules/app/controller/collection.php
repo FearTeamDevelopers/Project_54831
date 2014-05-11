@@ -24,10 +24,11 @@ class App_Controller_Collection extends Controller
 
         if (NULL !== $collectionCache) {
             $collections = $collectionCache;
+            return $collections;
         } else {
-            $collectionQuery = App_Model_Collection::getQuery(array('cl.*'));
-            $collectionQuery->join('tb_collectionmenu', 'cl.menuId = clm.id', 'clm', 
-                    array('clm.urlKey',))
+            $collectionQuery = App_Model_Collection::getQuery(array('cl.*'))
+                    ->join('tb_collectionmenu', 'cl.menuId = clm.id', 'clm', 
+                            array('clm.urlKey',))
                     ->where('clm.urlKey = ?', $urlKey)
                     ->where('cl.active = ?', true)
                     ->order('cl.created', 'DESC');
@@ -38,7 +39,7 @@ class App_Controller_Collection extends Controller
                 foreach ($collections as $collection) {
                     $query = App_Model_Photo::getQuery(array('ph.*'));
                     $query->join('tb_collectionphoto', 'ph.id = clp.photoId', 'clp', 
-                            array('clp.*'))
+                            array('clp.photoId', 'clp.collectionId'))
                             ->where('clp.collectionId = ?', $collection->getId())
                             ->where('ph.active = ?', true);
 
@@ -50,29 +51,37 @@ class App_Controller_Collection extends Controller
                     }
                     $photos = App_Model_Photo::initialize($query);
 
+                    if($photos === null){
+                        $photos = array();
+                    }
+                    
                     $videoQuery = App_Model_Video::getQuery(array('vi.*'));
                     $videoQuery->join('tb_collectionvideo', 'vi.id = clv.videoId', 'clv', 
-                            array('clv.*'))
+                            array('clv.videoId', 'clv.collectionId'))
                             ->where('clv.collectionId = ?', $collection->getId())
                             ->where('vi.active = ?', true)
                             ->order('vi.priority', 'DESC')
                             ->order('vi.created', 'DESC');
 
                     $videos = App_Model_Video::initialize($videoQuery);
-
+                    
+                    if($videos === null){
+                        $videos = array();
+                    }
+                    
                     $collection->videos = $videos;
                     $collection->photos = $photos;
                 }
-            }
-            $cache->set('cache_collection_' . $urlKey, $collections);
-        }
 
-        return $collection;
+                $cache->set('cache_collection_' . $urlKey, $collections);
+            }
+            return $collections;
+        }
     }
 
     /**
      * 
-     * @param type $id
+     * @param type $urlKey
      */
     public function show($urlKey)
     {
@@ -82,14 +91,7 @@ class App_Controller_Collection extends Controller
         $view = $this->getActionView();
 
         $content = $this->_getContent($urlKey);
-        
-        if(is_array($content)){
-            $collections = $content;
-        }else{
-            $collections[] = $content;
-        }
-        
-        $view->set('collections', $collections);
-    }
 
+        $view->set('collections', $content);
+    }
 }

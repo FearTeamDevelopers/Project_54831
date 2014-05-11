@@ -17,7 +17,6 @@ class Admin_Controller_System extends Controller
      */
     public function index()
     {
-        Event::fire('admin.log');
     }
 
     /**

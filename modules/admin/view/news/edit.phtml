@@ -47,7 +47,7 @@
                     </span>
                 </p>
                 <p>
-                    <label>Text*</label>
+                    <label>Text*<small>Max. 5000 characters</small></label>
                     <span class="field">
                         <textarea rows="20" name="text" id="ckeditor">{echo $news->body}</textarea>
                         {if isset($errors["body"])}
@@ -59,7 +59,7 @@
                     </span>
                 </p>
                 <p>
-                    <label>Teaser*<small>Max. 250 characters</small></label>
+                    <label>Teaser*<small>Max. 1000 characters</small></label>
                     <span class="field">
                         <textarea rows="20" name="shorttext" id="ckeditor2">{echo $news->shortBody}</textarea>
                         {if isset($errors["shortBody"])}
@@ -99,7 +99,7 @@
                 <h2 class="table"><span>Photos</span></h2>
             </div><!--contenttitle-->
             <div class="news-photos">
-                {if !empty($photos)}
+                {if ($photos && !empty($photos))}
                     {foreach $photo in $photos}
                         <span class="news-photo">
                             <img src="{echo $photo->getThumbPath()}" alt="{echo $photo->getPhotoName()}" width="200px"/>
@@ -114,7 +114,7 @@
                 <h2 class="table"><span>Videos</span></h2>
             </div><!--contenttitle-->
             <div class="news-videos">
-                {if !empty($videos)}
+                {if ($videos && !empty($videos))}
                     {foreach $video in $videos}
                         <span class="news-video">
                             <iframe width="200px" src="{echo $video->getPath()}" frameborder="0" allowfullscreen></iframe>

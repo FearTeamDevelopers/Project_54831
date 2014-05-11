@@ -109,9 +109,25 @@ class Core
         $messageE = '[' . date('Y-m-d H:i:s', time()) . '] DEBUG: ' . $message . PHP_EOL;
 
         if (NULL !== $file) {
-            file_put_contents(APP_PATH . '/application/logs/' . $file, $messageE, FILE_APPEND);
+            if(strlen($file)>50){
+                $file = trim(substr($file,0,50));
+            }
+            
+            $path = APP_PATH . '/application/logs/' . $file;
+            if (!file_exists($path) ||
+                    file_exists($path) && filesize($path) > 10000000) {
+                file_put_contents($path, $messageE);
+            } else {
+                file_put_contents($path, $messageE, FILE_APPEND);
+            }
         } else {
-            file_put_contents(APP_PATH . '/application/logs/system.log', $messageE, FILE_APPEND);
+            $path = APP_PATH . '/application/logs/system.log';
+            if (!file_exists($path) ||
+                    file_exists($path) && filesize($path) > 10000000) {
+                file_put_contents($path, $messageE);
+            } else {
+                file_put_contents($path, $messageE, FILE_APPEND);
+            }
         }
     }
 
@@ -145,10 +161,10 @@ class Core
         self::$_systemLog = APP_PATH . '/application/logs/system.txt';
         self::$_errorLog = APP_PATH . '/application/logs/' . date('Y-m-d') . '-errorLog.txt';
 
-        if(!is_dir(self::$_pathToLogs)){
+        if (!is_dir(self::$_pathToLogs)) {
             mkdir(self::$_pathToLogs);
         }
-        
+
         // remove old log files
         self::_logCleanUp();
 
@@ -263,7 +279,7 @@ class Core
         $time = '[' . strftime('%Y-%m-%d %H:%M:%S', time()) . ']';
         $message = "{$time} ~ {$type} ~ {$file} ~ {$row} ~ {$text}" . PHP_EOL;
 
-        if (!file_exists(self::$_errorLog) || 
+        if (!file_exists(self::$_errorLog) ||
                 file_exists(self::$_errorLog) && filesize(self::$_errorLog) > 10000000) {
             file_put_contents(self::$_errorLog, $message);
         } else {
@@ -285,8 +301,9 @@ class Core
         $time = '[' . strftime('%Y-%m-%d %H:%M:%S', time()) . ']';
 
         $message = "{$time} ~ Uncaught exception: {$type} ~ {$file} ~ {$row} ~ {$text}" . PHP_EOL;
+        $message .= $exception->getTraceAsString() . PHP_EOL;
 
-        if (!file_exists(self::$_errorLog) || 
+        if (!file_exists(self::$_errorLog) ||
                 file_exists(self::$_errorLog) && filesize(self::$_errorLog) > 10000000) {
             file_put_contents(self::$_errorLog, $message);
         } else {

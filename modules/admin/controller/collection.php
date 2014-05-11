@@ -16,7 +16,6 @@ class Admin_Controller_Collection extends Controller
      */
     public function index()
     {
-        Event::fire('admin.log');
         $view = $this->getActionView();
 
         $collectionQuery = App_Model_Collection::getQuery(
@@ -38,8 +37,7 @@ class Admin_Controller_Collection extends Controller
     {
         $view = $this->getActionView();
         $menu = App_Model_CollectionMenu::all(
-                        array('active = ?' => true), 
-                        array('id', 'title')
+                        array('active = ?' => true), array('id', 'title')
         );
 
         if (RequestMethods::post('submitAddCollection')) {
@@ -76,8 +74,9 @@ class Admin_Controller_Collection extends Controller
      */
     public function detail($id)
     {
+        Event::fire('admin.log');
         $view = $this->getActionView();
-
+        
         $collectionQuery = App_Model_Collection::getQuery(array('cl.*'))
                 ->join('tb_collectionmenu', 'cl.menuId = m.id', 'm', 
                         array('m.title' => 'menuTitle'))
@@ -85,7 +84,7 @@ class Admin_Controller_Collection extends Controller
                         array('s.id' => 'sectId', 's.title' => 'sectionTitle'))
                 ->where('cl.id = ?', $id);
 
-        $collection = App_Model_Collection::initialize($collectionQuery);
+        $collection = array_shift(App_Model_Collection::initialize($collectionQuery));
 
         if (!empty($collection)) {
             $collectionPhotoCount = App_Model_CollectionPhoto::count(array('collectionId = ?' => $id));
@@ -124,8 +123,7 @@ class Admin_Controller_Collection extends Controller
         }
 
         $menu = App_Model_CollectionMenu::all(
-                        array('active = ?' => true), 
-                        array('id', 'title')
+                        array('active = ?' => true), array('id', 'title')
         );
 
         if (RequestMethods::post('submitEditCollection')) {
@@ -165,7 +163,7 @@ class Admin_Controller_Collection extends Controller
 
         $collection = App_Model_Collection::first(
                         array('id = ?' => $id), 
-                        array('id', 'title', 'description', 'created')
+                        array('id', 'title', 'created')
         );
 
         if (NULL === $collection) {
@@ -173,7 +171,10 @@ class Admin_Controller_Collection extends Controller
             self::redirect('/admin/collection/');
         }
 
-        $view->set('collection', $collection);
+        $photoCount = App_Model_CollectionPhoto::count(array('collectionId = ?' => $collection->getId()));
+        
+        $view->set('collection', $collection)
+                ->set('photocount', $photoCount);
 
         if (RequestMethods::post('submitDeleteCollection')) {
             if (NULL !== $collection) {
@@ -386,6 +387,34 @@ class Admin_Controller_Collection extends Controller
                     echo join('<br/>', $photo->getErrors());
                 }
             }
+        }
+    }
+
+    /**
+     * Ajax
+     * 
+     * @before _secured, _publisher
+     */
+    public function checkPhoto()
+    {
+        $this->willRenderActionView = false;
+        $this->willRenderLayoutView = false;
+
+        $filename = pathinfo(RequestMethods::post('filename'), PATHINFO_FILENAME);
+        $collectionId = RequestMethods::post('collectionId');
+
+        $photoQuery = App_Model_Photo::getQuery(array('ph.photoName'))
+                ->join('tb_collectionphoto', 'clp.photoId = ph.id', 'clp', 
+                        array('clp.photoId', 'clp.collectionId'))
+                ->where('clp.collectionId = ?', $collectionId)
+                ->where('ph.photoName LIKE ?', $filename);
+
+        $photo = App_Model_Photo::initialize($photoQuery);
+
+        if ($photo === null) {
+            echo 'ok';
+        } else {
+            echo "Photo with this name {$filename} already exits in collection. Do you want to overwrite it?";
         }
     }
 

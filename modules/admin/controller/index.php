@@ -14,7 +14,6 @@ class Admin_Controller_Index extends Controller
      */
     public function index()
     {
-        Event::fire('admin.log');
         $view = $this->getActionView();
 
         $latestNews = App_Model_News::all(
