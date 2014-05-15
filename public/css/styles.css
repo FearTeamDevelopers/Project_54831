@@ -62,7 +62,7 @@ a:hover{color: #ccc;}
 
 #news-detail{
     position: absolute;
-    left: 20%; top: 120px;
+    left: 15%; top: 120px;
     min-width: 300px;
     width: 30%;
 }

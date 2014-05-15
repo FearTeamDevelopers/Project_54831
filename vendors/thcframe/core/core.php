@@ -11,12 +11,86 @@ class Core
     private static $_errorLog;
     private static $_pathToLogs;
     private static $_systemLog;
+    private static $_loadedClass = array();
     private static $_modules = array();
     private static $_relPaths = array(
         './vendors',
         './application',
         './modules',
         '.'
+    );
+    private static $_exceptions = array(
+        '401' => array(
+            'THCFrame\Security\Exception\Role',
+            'THCFrame\Security\Exception\Unauthorized',
+            'THCFrame\Security\Exception\UserExpired',
+            'THCFrame\Security\Exception\UserInactive',
+            'THCFrame\Security\Exception\UserPassExpired'
+        ),
+        '404' => array(
+            'THCFrame\Router\Exception\Module',
+            'THCFrame\Router\Exception\Action',
+            'THCFrame\Router\Exception\Controller'
+        ),
+        '500' => array(
+            'THCFrame\Cache\Exception',
+            'THCFrame\Cache\Exception\Argument',
+            'THCFrame\Cache\Exception\Implementation',
+            'THCFrame\Configuration\Exception',
+            'THCFrame\Configuration\Exception\Argument',
+            'THCFrame\Configuration\Exception\Implementation',
+            'THCFrame\Configuration\Exception\Syntax',
+            'THCFrame\Controller\Exception',
+            'THCFrame\Controller\Exception\Argument',
+            'THCFrame\Controller\Exception\Implementation',
+            'THCFrame\Core\Exception',
+            'THCFrame\Core\Exception\Argument',
+            'THCFrame\Core\Exception\Implementation',
+            'THCFrame\Core\Exception\Property',
+            'THCFrame\Core\Exception\ReadOnly',
+            'THCFrame\Core\Exception\WriteOnly',
+            'THCFrame\Database\Exception',
+            'THCFrame\Database\Exception\Argument',
+            'THCFrame\Database\Exception\Implementation',
+            'THCFrame\Database\Exception\Sql',
+            'THCFrame\Model\Exception',
+            'THCFrame\Model\Exception\Argument',
+            'THCFrame\Model\Exception\Connector',
+            'THCFrame\Model\Exception\Implementation',
+            'THCFrame\Model\Exception\Primary',
+            'THCFrame\Model\Exception\Type',
+            'THCFrame\Model\Exception\Validation',
+            'THCFrame\Module\Exception\Multiload',
+            'THCFrame\Module\Exception\Implementation',
+            'THCFrame\Module\Exception',
+            'THCFrame\Request\Exception',
+            'THCFrame\Request\Exception\Argument',
+            'THCFrame\Request\Exception\Implementation',
+            'THCFrame\Request\Exception\Response',
+            'THCFrame\Router\Exception',
+            'THCFrame\Router\Exception\Argument',
+            'THCFrame\Router\Exception\Implementation',
+            'THCFrame\Security\Exception',
+            'THCFrame\Security\Exception\Implementation',
+            'THCFrame\Security\Exception\HashAlgorithm',
+            'THCFrame\Session\Exception',
+            'THCFrame\Session\Exception\Argument',
+            'THCFrame\Session\Exception\Implementation',
+            'THCFrame\Template\Exception',
+            'THCFrame\Template\Exception\Argument',
+            'THCFrame\Template\Exception\Implementation',
+            'THCFrame\Template\Exception\Parser',
+            'THCFrame\View\Exception',
+            'THCFrame\View\Exception\Argument',
+            'THCFrame\View\Exception\Data',
+            'THCFrame\View\Exception\Implementation',
+            'THCFrame\View\Exception\Renderer',
+            'THCFrame\View\Exception\Syntax'
+        ),
+        '503' => array(
+            'THCFrame\Database\Exception\Service',
+            'THCFrame\Cache\Exception\Service',
+        )
     );
 
     private function __construct()
@@ -60,7 +134,7 @@ class Core
         $arrev = array_reverse($arr);
         $count = count($arrev);
 
-        for ($i = 15; $i < $count; $i++) {
+        for ($i = 30; $i < $count; $i++) {
             unlink($arrev[$i]);
         }
     }
@@ -73,30 +147,38 @@ class Core
      */
     protected static function _autoload($class)
     {
-        //$paths = explode(PATH_SEPARATOR, get_include_path());
-        $flags = PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE;
-        $file = strtolower(str_replace('\\', DIRECTORY_SEPARATOR, trim($class, '\\'))) . '.php';
 
-        foreach (self::$_relPaths as $path) {
-            $combined = $path . DIRECTORY_SEPARATOR . $file;
+        if (array_key_exists($class, self::$_loadedClass)) {
+            require_once(self::$_loadedClass[$class]);
+            return;
+        } else {
+            //$paths = explode(PATH_SEPARATOR, get_include_path());
+            $flags = PREG_SPLIT_NO_EMPTY | PREG_SPLIT_DELIM_CAPTURE;
+            $file = strtolower(str_replace('\\', DIRECTORY_SEPARATOR, trim($class, '\\'))) . '.php';
 
-            if (file_exists($combined)) {
-                require_once($combined);
-                return;
+            foreach (self::$_relPaths as $path) {
+                $combined = $path . DIRECTORY_SEPARATOR . $file;
+
+                if (file_exists($combined)) {
+                    self::$_loadedClass[$class] = $combined;
+                    require_once($combined);
+                    return;
+                }
             }
-        }
 
-        $file = strtolower(str_replace('_', DIRECTORY_SEPARATOR, trim($class, '\\'))) . '.php';
-        foreach (self::$_relPaths as $path) {
-            $combined = $path . DIRECTORY_SEPARATOR . $file;
+            $file = strtolower(str_replace('_', DIRECTORY_SEPARATOR, trim($class, '\\'))) . '.php';
+            foreach (self::$_relPaths as $path) {
+                $combined = $path . DIRECTORY_SEPARATOR . $file;
 
-            if (file_exists($combined)) {
-                require_once($combined);
-                return;
+                if (file_exists($combined)) {
+                    self::$_loadedClass[$class] = $combined;
+                    require_once($combined);
+                    return;
+                }
             }
-        }
 
-        throw new \Exception(sprintf('%s not found', $class));
+            throw new \Exception(sprintf('%s not found', $class));
+        }
     }
 
     /**
@@ -104,29 +186,35 @@ class Core
      * @param type $message
      * @param type $file
      */
-    public static function log($message, $file = null)
+    public static function log($message, $file = null, $profiler = null)
     {
-        $messageE = '[' . date('Y-m-d H:i:s', time()) . '] DEBUG: ' . $message . PHP_EOL;
+        if ($profiler !== null) {
+            $messageE = '[' . date('Y-m-d H:i:s', time()) . '] PROFILER: ' . $message . PHP_EOL;
+        } else {
+            $messageE = '[' . date('Y-m-d H:i:s', time()) . '] DEBUG: ' . $message . PHP_EOL;
+        }
 
         if (NULL !== $file) {
-            if(strlen($file)>50){
-                $file = trim(substr($file,0,50));
+            if (strlen($file) > 50) {
+                $file = trim(substr($file, 0, 50)) . '.log';
             }
-            
+
             $path = APP_PATH . '/application/logs/' . $file;
-            if (!file_exists($path) ||
-                    file_exists($path) && filesize($path) > 10000000) {
+            if (!file_exists($path)) {
                 file_put_contents($path, $messageE);
-            } else {
+            } elseif (file_exists($path) && filesize($path) < 10000000) {
                 file_put_contents($path, $messageE, FILE_APPEND);
+            } elseif (file_exists($path) && filesize($path) > 10000000) {
+                file_put_contents($path, $messageE);
             }
         } else {
             $path = APP_PATH . '/application/logs/system.log';
-            if (!file_exists($path) ||
-                    file_exists($path) && filesize($path) > 10000000) {
+            if (!file_exists($path)) {
                 file_put_contents($path, $messageE);
-            } else {
+            } elseif (file_exists($path) && filesize($path) < 10000000) {
                 file_put_contents($path, $messageE, FILE_APPEND);
+            } elseif (file_exists($path) && filesize($path) > 10000000) {
+                file_put_contents($path, $messageE);
             }
         }
     }
@@ -171,6 +259,65 @@ class Core
         // error and exception handlers
         set_error_handler(__CLASS__ . '::_errorHandler');
         set_exception_handler(__CLASS__ . '::_exceptionHandler');
+
+        try {
+            // configuration
+            $configuration = new \THCFrame\Configuration\Configuration(
+                    array('type' => 'ini', 'options' => array('env' => ENV))
+            );
+            Registry::set('configuration', $configuration->initialize());
+
+            // observer events from config
+            $events = \THCFrame\Events\Events::initialize();
+
+            // database
+            $database = new \THCFrame\Database\Database();
+            Registry::set('database', $database->initialize());
+
+            // cache
+            $cache = new \THCFrame\Cache\Cache();
+            Registry::set('cache', $cache->initialize());
+
+            // session
+            $session = new \THCFrame\Session\Session();
+            Registry::set('session', $session->initialize());
+
+            // security
+            $security = new \THCFrame\Security\Security();
+            Registry::set('security', $security->initialize());
+
+
+
+            // unset globals
+            unset($configuration);
+            unset($events);
+            unset($database);
+            unset($cache);
+            unset($session);
+            unset($security);
+        } catch (\Exception $e) {
+            $exception = get_class($e);
+
+            // attempt to find the approapriate error template, and render
+            foreach (self::$_exceptions as $template => $classes) {
+                foreach ($classes as $class) {
+                    if ($class == $exception) {
+                        $defaultErrorFile = APP_PATH . "/modules/app/view/errors/{$template}.phtml";
+                        header('Content-type: text/html');
+                        include($defaultErrorFile);
+                        exit();
+                    }
+                }
+            }
+
+            // render fallback template
+            header('Content-type: text/html');
+            echo 'An error occurred.';
+            if (ENV == 'dev') {
+                print_r($e);
+            }
+            exit();
+        }
     }
 
     /**
@@ -279,11 +426,12 @@ class Core
         $time = '[' . strftime('%Y-%m-%d %H:%M:%S', time()) . ']';
         $message = "{$time} ~ {$type} ~ {$file} ~ {$row} ~ {$text}" . PHP_EOL;
 
-        if (!file_exists(self::$_errorLog) ||
-                file_exists(self::$_errorLog) && filesize(self::$_errorLog) > 10000000) {
+        if (!file_exists(self::$_errorLog)) {
             file_put_contents(self::$_errorLog, $message);
-        } else {
+        } elseif (file_exists(self::$_errorLog) && filesize(self::$_errorLog) < 10000000) {
             file_put_contents(self::$_errorLog, $message, FILE_APPEND);
+        } elseif (file_exists(self::$_errorLog) && filesize(self::$_errorLog) > 10000000) {
+            file_put_contents(self::$_errorLog, $message);
         }
     }
 
@@ -303,11 +451,12 @@ class Core
         $message = "{$time} ~ Uncaught exception: {$type} ~ {$file} ~ {$row} ~ {$text}" . PHP_EOL;
         $message .= $exception->getTraceAsString() . PHP_EOL;
 
-        if (!file_exists(self::$_errorLog) ||
-                file_exists(self::$_errorLog) && filesize(self::$_errorLog) > 10000000) {
+        if (!file_exists(self::$_errorLog)) {
             file_put_contents(self::$_errorLog, $message);
-        } else {
+        } elseif (file_exists(self::$_errorLog) && filesize(self::$_errorLog) < 10000000) {
             file_put_contents(self::$_errorLog, $message, FILE_APPEND);
+        } elseif (file_exists(self::$_errorLog) && filesize(self::$_errorLog) > 10000000) {
+            file_put_contents(self::$_errorLog, $message);
         }
     }
 
@@ -317,155 +466,50 @@ class Core
     public static function run()
     {
         try {
-            // configuration
-
-            $configuration = new \THCFrame\Configuration\Configuration(
-                    array('type' => 'ini', 'options' => array('env' => ENV))
-            );
-            Registry::set('configuration', $configuration->initialize());
-
-            // observer events from config
-
-            $events = \THCFrame\Events\Events::initialize();
-
-            // database
-
-            $database = new \THCFrame\Database\Database();
-            Registry::set('database', $database->initialize());
-
-            // cache
-
-            $cache = new \THCFrame\Cache\Cache();
-            Registry::set('cache', $cache->initialize());
-
-            // session
-
-            $session = new \THCFrame\Session\Session();
-            Registry::set('session', $session->initialize());
-
-            // security
-
-            $security = new \THCFrame\Security\Security();
-            Registry::set('security', $security->initialize());
-
             // router
-
             $router = new \THCFrame\Router\Router(array(
                 'url' => urldecode($_SERVER['REQUEST_URI'])
             ));
             Registry::set('router', $router);
 
             //dispatcher
-
             $dispatcher = new \THCFrame\Router\Dispatcher();
             Registry::set('dispatcher', $dispatcher->initialize());
-
+            
             $dispatcher->dispatch($router->getLastRoute());
-            // unset globals
 
-            unset($configuration);
-            unset($events);
-            unset($database);
-            unset($cache);
-            unset($session);
-            unset($security);
             unset($router);
             unset($dispatcher);
         } catch (\Exception $e) {
-
-            $exceptions = array(
-                '401' => array(
-                    'THCFrame\Security\Exception\Role',
-                    'THCFrame\Security\Exception\Unauthorized',
-                    'THCFrame\Security\Exception\UserExpired',
-                    'THCFrame\Security\Exception\UserInactive',
-                    'THCFrame\Security\Exception\UserPassExpired'
-                ),
-                '404' => array(
-                    'THCFrame\Router\Exception\Module',
-                    'THCFrame\Router\Exception\Action',
-                    'THCFrame\Router\Exception\Controller'
-                ),
-                '500' => array(
-                    'THCFrame\Cache\Exception',
-                    'THCFrame\Cache\Exception\Argument',
-                    'THCFrame\Cache\Exception\Implementation',
-                    'THCFrame\Configuration\Exception',
-                    'THCFrame\Configuration\Exception\Argument',
-                    'THCFrame\Configuration\Exception\Implementation',
-                    'THCFrame\Configuration\Exception\Syntax',
-                    'THCFrame\Controller\Exception',
-                    'THCFrame\Controller\Exception\Argument',
-                    'THCFrame\Controller\Exception\Implementation',
-                    'THCFrame\Core\Exception',
-                    'THCFrame\Core\Exception\Argument',
-                    'THCFrame\Core\Exception\Implementation',
-                    'THCFrame\Core\Exception\Property',
-                    'THCFrame\Core\Exception\ReadOnly',
-                    'THCFrame\Core\Exception\WriteOnly',
-                    'THCFrame\Database\Exception',
-                    'THCFrame\Database\Exception\Argument',
-                    'THCFrame\Database\Exception\Implementation',
-                    'THCFrame\Database\Exception\Sql',
-                    'THCFrame\Model\Exception',
-                    'THCFrame\Model\Exception\Argument',
-                    'THCFrame\Model\Exception\Connector',
-                    'THCFrame\Model\Exception\Implementation',
-                    'THCFrame\Model\Exception\Primary',
-                    'THCFrame\Model\Exception\Type',
-                    'THCFrame\Model\Exception\Validation',
-                    'THCFrame\Module\Exception\Multiload',
-                    'THCFrame\Module\Exception\Implementation',
-                    'THCFrame\Module\Exception',
-                    'THCFrame\Request\Exception',
-                    'THCFrame\Request\Exception\Argument',
-                    'THCFrame\Request\Exception\Implementation',
-                    'THCFrame\Request\Exception\Response',
-                    'THCFrame\Router\Exception',
-                    'THCFrame\Router\Exception\Argument',
-                    'THCFrame\Router\Exception\Implementation',
-                    'THCFrame\Security\Exception',
-                    'THCFrame\Security\Exception\Implementation',
-                    'THCFrame\Security\Exception\HashAlgorithm',
-                    'THCFrame\Session\Exception',
-                    'THCFrame\Session\Exception\Argument',
-                    'THCFrame\Session\Exception\Implementation',
-                    'THCFrame\Template\Exception',
-                    'THCFrame\Template\Exception\Argument',
-                    'THCFrame\Template\Exception\Implementation',
-                    'THCFrame\Template\Exception\Parser',
-                    'THCFrame\View\Exception',
-                    'THCFrame\View\Exception\Argument',
-                    'THCFrame\View\Exception\Data',
-                    'THCFrame\View\Exception\Implementation',
-                    'THCFrame\View\Exception\Renderer',
-                    'THCFrame\View\Exception\Syntax'
-                ),
-                '503' => array(
-                    'THCFrame\Database\Exception\Service',
-                    'THCFrame\Cache\Exception\Service',
-                )
-            );
-
             $exception = get_class($e);
+            $module = $router->getLastRoute()->getModule();
 
             // attempt to find the approapriate error template, and render
-
-            foreach ($exceptions as $template => $classes) {
+            foreach (self::$_exceptions as $template => $classes) {
                 foreach ($classes as $class) {
                     if ($class == $exception) {
-                        header('Content-type: text/html');
-                        include(APP_PATH . "/modules/app/view/errors/{$template}.phtml");
-                        exit();
+                        $moduleErrorFile = APP_PATH . "/modules/{$module}/view/errors/{$template}.phtml";
+                        $defaultErrorFile = APP_PATH . "/modules/app/view/errors/{$template}.phtml";
+
+                        if (file_exists($moduleErrorFile)) {
+                            header('Content-type: text/html');
+                            include($moduleErrorFile);
+                            exit();
+                        } elseif (file_exists($defaultErrorFile)) {
+                            header('Content-type: text/html');
+                            include($defaultErrorFile);
+                            exit();
+                        }
                     }
                 }
             }
 
             // render fallback template
-
             header('Content-type: text/html');
             echo 'An error occurred.';
-            print_r($e);
+            if (ENV == 'dev') {
+                print_r($e);
+            }
             exit();
         }
     }

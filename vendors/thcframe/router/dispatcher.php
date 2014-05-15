@@ -112,9 +112,9 @@ final class Dispatcher extends Base
      */
     public function dispatch(\THCFrame\Router\Route $route)
     {
-        $module = trim($route->module);
-        $class = trim($route->controller);
-        $action = trim($route->action);
+        $module = trim($route->getModule());
+        $class = trim($route->getController());
+        $action = trim($route->getAction());
         $parameters = $route->getMapArguments();
 
         if ('' === $module) {

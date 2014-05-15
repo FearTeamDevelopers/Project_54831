@@ -56,6 +56,7 @@ class App_Controller_Index extends Controller
                 $videos = App_Model_Video::initialize($queryVi);
             }
 
+            $collectionList = '';
             if ($section->getSupportCollection()) {
                 $collectionList = App_Model_CollectionMenu::all(
                         array(

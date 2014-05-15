@@ -37,5 +37,10 @@ foreach ($iterator as $item) {
 $modules = array('App', 'Admin', 'Cron');
 THCFrame\Core\Core::registerModules($modules);
 
+$profiler = THCFrame\Profiler\Profiler::getProfiler();
+$profiler->start();
+
 // load services and run dispatcher
 THCFrame\Core\Core::run();
+
+$profiler->end();

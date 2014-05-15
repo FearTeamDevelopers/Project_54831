@@ -53,7 +53,7 @@ class Admin_Controller_News extends Controller
         $view = $this->getActionView();
 
         $news = App_Model_News::all();
-
+        
         $view->set('news', $news);
     }
 

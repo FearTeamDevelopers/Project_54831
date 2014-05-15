@@ -171,9 +171,9 @@ class Router extends Base
 
         Events::fire('framework.router.findroute.after', array(
             $path,
-            $this->_lastRoute->module,
-            $this->_lastRoute->controller,
-            $this->_lastRoute->action)
+            $this->_lastRoute->getModule(),
+            $this->_lastRoute->getController(),
+            $this->_lastRoute->getAction())
         );
     }
 

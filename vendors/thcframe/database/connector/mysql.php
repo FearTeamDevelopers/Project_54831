@@ -56,6 +56,11 @@ class Mysql extends Database\Connector
     protected $_isConnected = false;
 
     /**
+     * @readwrite
+     */
+    protected $_profiler = false;
+
+    /**
      * @read
      */
     protected $_magicQuotesActive;
@@ -110,6 +115,11 @@ class Mysql extends Database\Connector
 
             $this->_service->set_charset('utf8');
             $this->_service->query("SET NAMES 'utf8' COLLATE 'utf8_general_ci'");
+
+            if ($this->getProfiler()) {
+                $this->_service->query("SET profiling = 1");
+            }
+
             $this->isConnected = true;
             unset($this->_password);
         }
