@@ -130,6 +130,36 @@ class App_Model_Photo extends Model
     /**
      * @column
      * @readwrite
+     * @type integer
+     * 
+     * @validate required, numeric, max(8)
+     * @label thumb size
+     */
+    protected $_thumbSize;
+
+    /**
+     * @column
+     * @readwrite
+     * @type integer
+     * 
+     * @validate required, numeric, max(8)
+     * @label thumb width
+     */
+    protected $_thumbWidth;
+
+    /**
+     * @column
+     * @readwrite
+     * @type integer
+     * 
+     * @validate required, numeric, max(8)
+     * @label thumb height
+     */
+    protected $_thumbHeight;
+    
+    /**
+     * @column
+     * @readwrite
      * @type tinyint
      * 
      * @validate numeric, max(2)

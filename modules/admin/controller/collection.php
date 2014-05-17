@@ -1,9 +1,10 @@
 <?php
 
 use Admin\Etc\Controller as Controller;
-use THCFrame\Filesystem\ImageManager as Image;
+use THCFrame\Filesystem\ImageManager as ImageManager;
 use THCFrame\Request\RequestMethods as RequestMethods;
 use THCFrame\Events\Events as Event;
+use THCFrame\Core\ArrayMethods as ArrayMethods;
 
 /**
  * 
@@ -76,7 +77,7 @@ class Admin_Controller_Collection extends Controller
     {
         Event::fire('admin.log');
         $view = $this->getActionView();
-        
+
         $collectionQuery = App_Model_Collection::getQuery(array('cl.*'))
                 ->join('tb_collectionmenu', 'cl.menuId = m.id', 'm', 
                         array('m.title' => 'menuTitle'))
@@ -90,8 +91,7 @@ class Admin_Controller_Collection extends Controller
             $collectionPhotoCount = App_Model_CollectionPhoto::count(array('collectionId = ?' => $id));
 
             $query = App_Model_Photo::getQuery(array('ph.*'))
-                    ->join('tb_collectionphoto', 'clp.photoId = ph.id', 'clp', 
-                            array('clp.collectionId'))
+                    ->join('tb_collectionphoto', 'clp.photoId = ph.id', 'clp', array('clp.collectionId'))
                     ->where('clp.collectionId = ?', $id);
             $collectionPhotos = App_Model_Photo::initialize($query);
 
@@ -162,8 +162,7 @@ class Admin_Controller_Collection extends Controller
         $view = $this->getActionView();
 
         $collection = App_Model_Collection::first(
-                        array('id = ?' => $id), 
-                        array('id', 'title', 'created')
+                        array('id = ?' => $id), array('id', 'title', 'created')
         );
 
         if (NULL === $collection) {
@@ -172,7 +171,7 @@ class Admin_Controller_Collection extends Controller
         }
 
         $photoCount = App_Model_CollectionPhoto::count(array('collectionId = ?' => $collection->getId()));
-        
+
         $view->set('collection', $collection)
                 ->set('photocount', $photoCount);
 
@@ -221,10 +220,9 @@ class Admin_Controller_Collection extends Controller
             $errors = array();
             try {
                 $uploadTo = 'collections/' . $id;
-                $image = new Image;
-                $image->upload('photo', $uploadTo)
-                        ->resizeToHeight(180)
-                        ->save(true);
+                $im = new ImageManager();
+                $photoArr = $im->upload('photo', $uploadTo);
+                $uploaded = ArrayMethods::toObject($photoArr);
             } catch (Exception $ex) {
                 $errors['photo'] = $ex->getMessage();
             }
@@ -233,13 +231,16 @@ class Admin_Controller_Collection extends Controller
                 'description' => RequestMethods::post('description'),
                 'category' => RequestMethods::post('category'),
                 'priority' => RequestMethods::post('priority'),
-                'photoName' => $image->getFileName(),
-                'thumbPath' => $image->getThumbPath(false),
-                'path' => $image->getPath(false),
-                'mime' => $image->getImageType(),
-                'size' => $image->getSize(),
-                'width' => $image->getWidth(),
-                'height' => $image->getHeight()
+                'photoName' => $uploaded->photo->name,
+                'thumbPath' => trim($uploaded->thumb->filename, '.'),
+                'path' => trim($uploaded->photo->filename, '.'),
+                'mime' => $uploaded->photo->mime,
+                'size' => $uploaded->photo->size,
+                'width' => $uploaded->photo->width,
+                'height' => $uploaded->photo->height,
+                'thumbSize' => $uploaded->thumb->size,
+                'thumbWidth' => $uploaded->thumb->width,
+                'thumbHeight' => $uploaded->thumb->height
             ));
 
             if (empty($errors) && $photo->validate()) {
@@ -263,8 +264,8 @@ class Admin_Controller_Collection extends Controller
             $errors = array();
             try {
                 $uploadTo = 'collections/' . $id;
-                $image = new Image;
-                $result = $image->upload('photos', $uploadTo);
+                $im = new ImageManager();
+                $result = $im->upload('photos', $uploadTo);
             } catch (Exception $ex) {
                 $errors['photo'] = $ex->getMessage();
             }
@@ -273,21 +274,24 @@ class Admin_Controller_Collection extends Controller
                 $errors['photo'] = $result['errors'];
             }
 
-            if (is_array($result) && !empty($result['photos'])) {
+            if (is_array($result) && !empty($result)) {
                 foreach ($result['photos'] as $image) {
-                    $image->resizeToHeight(180)->save(true);
+                    $object = ArrayMethods::toObject($image);
 
                     $photo = new App_Model_Photo(array(
                         'description' => RequestMethods::post('description', ''),
                         'category' => RequestMethods::post('category', ''),
                         'priority' => RequestMethods::post('priority', 0),
-                        'photoName' => $image->getFileName(),
-                        'thumbPath' => $image->getThumbPath(false),
-                        'path' => $image->getPath(false),
-                        'mime' => $image->getImageType(),
-                        'size' => $image->getSize(),
-                        'width' => $image->getWidth(),
-                        'height' => $image->getHeight()
+                        'photoName' => $object->photo->name,
+                        'thumbPath' => trim($object->thumb->filename, '.'),
+                        'path' => trim($object->photo->filename, '.'),
+                        'mime' => $object->photo->mime,
+                        'size' => $object->photo->size,
+                        'width' => $object->photo->width,
+                        'height' => $object->photo->height,
+                        'thumbSize' => $object->thumb->size,
+                        'thumbWidth' => $object->thumb->width,
+                        'thumbHeight' => $object->thumb->height
                     ));
 
                     if (empty($errors) && $photo->validate()) {
@@ -404,8 +408,7 @@ class Admin_Controller_Collection extends Controller
         $collectionId = RequestMethods::post('collectionId');
 
         $photoQuery = App_Model_Photo::getQuery(array('ph.photoName'))
-                ->join('tb_collectionphoto', 'clp.photoId = ph.id', 'clp', 
-                        array('clp.photoId', 'clp.collectionId'))
+                ->join('tb_collectionphoto', 'clp.photoId = ph.id', 'clp', array('clp.photoId', 'clp.collectionId'))
                 ->where('clp.collectionId = ?', $collectionId)
                 ->where('ph.photoName LIKE ?', $filename);
 

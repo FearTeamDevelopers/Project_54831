@@ -1,9 +1,10 @@
 <?php
 
 use Admin\Etc\Controller as Controller;
-use THCFrame\Filesystem\ImageManager as Image;
 use THCFrame\Request\RequestMethods as RequestMethods;
 use THCFrame\Events\Events as Event;
+use THCFrame\Filesystem\ImageManager as ImageManager;
+use THCFrame\Core\ArrayMethods as ArrayMethods;
 
 /**
  * 
@@ -21,18 +22,20 @@ class Admin_Controller_Photo extends Controller
         $photos = App_Model_Photo::all();
 
         foreach ($photos as $photo) {
+            $sectionString = '';
+            $sectionArr = array();
+            
             $photoSectionQuery = App_Model_PhotoSection::getQuery(array('phs.photoId', 'phs.sectionId'))
                     ->join('tb_section', 'phs.sectionId = s.id', 's', 
                             array('s.urlKey' => 'secUrlKey', 's.title' => 'secTitle'))
                     ->where('phs.photoId = ?', $photo->id);
 
             $sections = App_Model_PhotoSection::initialize($photoSectionQuery);
-
+            
             foreach ($sections as $section) {
                 $sectionArr[] = ucfirst($section->secTitle);
             }
             $sectionString = join(', ', $sectionArr);
-
             $photo->inSections = $sectionString;
         }
 
@@ -60,25 +63,27 @@ class Admin_Controller_Photo extends Controller
             $errors = array();
             try {
                 $uploadTo = 'section_photos';
-                $image = new Image;
-                $image->upload('photo', $uploadTo)
-                        ->resizeToHeight(180)
-                        ->save(true);
+                $im = new ImageManager();
+                $photoArr = $im->upload('photo', $uploadTo);
+                $uploaded = ArrayMethods::toObject($photoArr);
             } catch (Exception $ex) {
                 $errors['photo'] = $ex->getMessage();
             }
 
             $photo = new App_Model_Photo(array(
-                'photoName' => $image->getFileName(),
-                'thumbPath' => $image->getThumbPath(false),
-                'path' => $image->getPath(false),
-                'mime' => $image->getImageType(),
-                'size' => $image->getSize(),
-                'width' => $image->getWidth(),
-                'height' => $image->getHeight(),
+                'description' => RequestMethods::post('description'),
+                'category' => RequestMethods::post('category'),
                 'priority' => RequestMethods::post('priority'),
-                'description' => RequestMethods::post('description', ''),
-                'category' => RequestMethods::post('category', '')
+                'photoName' => $uploaded->photo->name,
+                'thumbPath' => trim($uploaded->thumb->filename, '.'),
+                'path' => trim($uploaded->photo->filename, '.'),
+                'mime' => $uploaded->photo->mime,
+                'size' => $uploaded->photo->size,
+                'width' => $uploaded->photo->width,
+                'height' => $uploaded->photo->height,
+                'thumbSize' => $uploaded->thumb->size,
+                'thumbWidth' => $uploaded->thumb->width,
+                'thumbHeight' => $uploaded->thumb->height
             ));
 
             $sectionsIds = (array) RequestMethods::post('sections');
@@ -107,34 +112,37 @@ class Admin_Controller_Photo extends Controller
                         ->set('photo', $photo);
             }
         } elseif (RequestMethods::post('submitAddMultiPhoto')) {
-            $errors = $errors['photom'] = array();
+            $errors = $errors['photo'] = array();
             try {
                 $uploadTo = 'section_photos';
-                $image = new Image;
-                $result = $image->upload('photos', $uploadTo);
+                $im = new ImageManager();
+                $result = $im->upload('photos', $uploadTo);
             } catch (Exception $ex) {
-                $errors['photom'] = $ex->getMessage();
+                $errors['photos'] = $ex->getMessage();
             }
 
             if (is_array($result) && !empty($result['errors'])) {
-                $errors['photom'] = $result['errors'];
+                $errors['photo'] = $result['errors'];
             }
 
             if (is_array($result) && !empty($result['photos'])) {
                 foreach ($result['photos'] as $image) {
-                    $image->resizeToHeight(180)->save(true);
+                    $object = ArrayMethods::toObject($image);
 
                     $photo = new App_Model_Photo(array(
-                        'photoName' => $image->getFileName(),
-                        'thumbPath' => $image->getThumbPath(false),
-                        'path' => $image->getPath(false),
-                        'mime' => $image->getImageType(),
-                        'size' => $image->getSize(),
-                        'width' => $image->getWidth(),
-                        'height' => $image->getHeight(),
-                        'priority' => RequestMethods::post('priority'),
                         'description' => RequestMethods::post('description', ''),
-                        'category' => RequestMethods::post('category', '')
+                        'category' => RequestMethods::post('category', ''),
+                        'priority' => RequestMethods::post('priority', 0),
+                        'photoName' => $object->photo->name,
+                        'thumbPath' => trim($object->thumb->filename, '.'),
+                        'path' => trim($object->photo->filename, '.'),
+                        'mime' => $object->photo->mime,
+                        'size' => $object->photo->size,
+                        'width' => $object->photo->width,
+                        'height' => $object->photo->height,
+                        'thumbSize' => $object->thumb->size,
+                        'thumbWidth' => $object->thumb->width,
+                        'thumbHeight' => $object->thumb->height
                     ));
 
                     $sectionsIds = (array) RequestMethods::post('sections');
@@ -205,7 +213,7 @@ class Admin_Controller_Photo extends Controller
         foreach ($photoSections as $section) {
             $sectionArr[] = $section->secTitle;
         }
-        
+
         $photo->inSections = $sectionArr;
 
         if (RequestMethods::post('submitEditPhoto')) {
@@ -264,8 +272,7 @@ class Admin_Controller_Photo extends Controller
         if (NULL === $photo) {
             echo 'Photo not found';
         } else {
-            if ($photo->delete() 
-                    && unlink($photo->getUnlinkPath()) && unlink($photo->getUnlinkThumbPath())) {
+            if ($photo->delete() && unlink($photo->getUnlinkPath()) && unlink($photo->getUnlinkThumbPath())) {
                 Event::fire('admin.log', array('success', 'ID: ' . $id));
                 echo 'ok';
             } else {
@@ -332,7 +339,7 @@ class Admin_Controller_Photo extends Controller
                                 $photo->save();
                             } else {
                                 $errors[] = "Photo id {$photo->getId()} - "
-                                        . "{$photo->getPhotoName()} errors: " 
+                                        . "{$photo->getPhotoName()} errors: "
                                         . join(', ', array_shift($photo->getErrors()));
                             }
                         } else {
@@ -365,7 +372,7 @@ class Admin_Controller_Photo extends Controller
                                 $photo->save();
                             } else {
                                 $errors[] = "Photo id {$photo->getId()} - "
-                                        . "{$photo->getPhotoName()} errors: " 
+                                        . "{$photo->getPhotoName()} errors: "
                                         . join(', ', array_shift($photo->getErrors()));
                             }
                         } else {

@@ -17,7 +17,7 @@
             </p>
         </div>
         <div class='content container_12'>
-            <?php if (ENV == 'dev'): ?>
+            <?php if (ENV == 'dev' || ENV == 'qa'): ?>
                 <pre><?php print_r($e); ?></pre>
             <?php endif; ?>
         </div>

@@ -20,6 +20,9 @@ class Admin_Controller_Video extends Controller
         $videos = App_Model_Video::all();
 
         foreach ($videos as $video) {
+            $sectionString = '';
+            $sectionArr = array();
+            
             $videosQuery = App_Model_VideoSection::getQuery(array('vis.videoId', 'vis.sectionId'))
                     ->join('tb_section', 'vis.sectionId = s.id', 's', 
                             array('s.urlKey' => 'secUrlKey', 's.title' => 'secTitle'))

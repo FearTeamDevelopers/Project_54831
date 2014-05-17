@@ -4,6 +4,7 @@ namespace THCFrame\Core;
 
 use THCFrame\Core\Exception as Exception;
 use THCFrame\Registry\Registry as Registry;
+use THCFrame\Filesystem\FileManager as FileManager;
 
 class Core
 {
@@ -147,7 +148,6 @@ class Core
      */
     protected static function _autoload($class)
     {
-
         if (array_key_exists($class, self::$_loadedClass)) {
             require_once(self::$_loadedClass[$class]);
             return;
@@ -250,7 +250,8 @@ class Core
         self::$_errorLog = APP_PATH . '/application/logs/' . date('Y-m-d') . '-errorLog.txt';
 
         if (!is_dir(self::$_pathToLogs)) {
-            mkdir(self::$_pathToLogs);
+            $fm = new FileManager();
+            $fm->mkdir(self::$_pathToLogs);
         }
 
         // remove old log files
@@ -285,8 +286,6 @@ class Core
             // security
             $security = new \THCFrame\Security\Security();
             Registry::set('security', $security->initialize());
-
-
 
             // unset globals
             unset($configuration);
