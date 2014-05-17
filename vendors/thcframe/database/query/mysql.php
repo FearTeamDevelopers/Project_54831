@@ -28,6 +28,7 @@ class Mysql extends Database\Query
             $error = $this->connector->lastError;
 
             if (ENV == 'dev') {
+                \THCFrame\Core\Core::log($sql);
                 throw new Exception\Sql(sprintf('There was an error with your SQL query: %s', $error));
             } else {
                 throw new Exception\Sql('There was an error with your SQL query');

@@ -39,26 +39,6 @@ final class Dispatcher extends Base
 
     /**
      * 
-     */
-    public function initialize()
-    {
-        Events::fire('framework.dispatcher.initialize.before', array());
-
-        $configuration = Registry::get('config');
-
-        if (!empty($configuration->dispatcher->default)) {
-            $this->_setSuffix($configuration->dispatcher->default->suffix);
-        } else {
-            throw new \Exception('Error in configuration file');
-        }
-
-        Events::fire('framework.dispatcher.initialize.after', array());
-
-        return $this;
-    }
-
-    /**
-     * 
      * @param type $method
      * @return \THCFrame\Router\Exception\Implementation
      */
@@ -103,6 +83,26 @@ final class Dispatcher extends Base
     }
 
     /**
+     * 
+     */
+    public function initialize()
+    {
+        Events::fire('framework.dispatcher.initialize.before', array());
+
+        $configuration = Registry::get('config');
+
+        if (!empty($configuration->dispatcher->default)) {
+            $this->_setSuffix($configuration->dispatcher->default->suffix);
+        } else {
+            throw new \Exception('Error in configuration file');
+        }
+
+        Events::fire('framework.dispatcher.initialize.after', array());
+
+        return $this;
+    }
+
+    /**
      * Attempts to dispatch the supplied Route object. 
      * 
      * @param \THCFrame\Router\Route $route
@@ -123,6 +123,14 @@ final class Dispatcher extends Base
             throw new Exception\Controller('Class Name not specified');
         } elseif ('' === $action) {
             throw new Exception\Action('Method Name not specified');
+        }
+
+        if ($module == 'app') {
+            $status = $this->loadConfigFromDb('appstatus');
+
+            if ($status === null || $status->value != 1) {
+                throw new Exception\Offline('Application is offline');
+            }
         }
 
         $module = str_replace('\\', '', $module);

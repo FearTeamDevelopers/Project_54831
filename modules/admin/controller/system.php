@@ -17,6 +17,16 @@ class Admin_Controller_System extends Controller
      */
     public function index()
     {
+        $view = $this->getActionView();
+        $conf = $this->loadConfigFromDb('appstatus');
+
+        if ($conf->value == 1) {
+            $status = 'Go Offline';
+        } else {
+            $status = 'Go Online';
+        }
+
+        $view->set('appstatus', $status);
     }
 
     /**
@@ -122,6 +132,31 @@ class Admin_Controller_System extends Controller
             } else {
                 Event::fire('admin.log', array('success', 'Count: ' . $count));
                 $view->successMessage('Expired news have been successfully archivated');
+                self::redirect('/admin/system/');
+            }
+        }
+    }
+
+    /**
+     * @befor _secured, _admin
+     */
+    public function changeApplicationStatus()
+    {
+        $view = $this->getActionView();
+
+        if (RequestMethods::post('changeStatus')) {
+            $conf = $this->loadConfigFromDb('appstatus');
+
+            if ($conf->value == 2) {
+                $value = 1;
+            } else {
+                $value = 2;
+            }
+            if ($this->saveConfigToDb('appstatus', $value)) {
+                $view->successMessage('Application status have been successfully changed');
+                self::redirect('/admin/system/');
+            } else {
+                $view->errorMessage('An error occured while saving application status');
                 self::redirect('/admin/system/');
             }
         }

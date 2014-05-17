@@ -102,7 +102,7 @@ class Base
 
                 if (isset($this->$property)) {
                     return $this->$property;
-                }else{
+                } else {
                     return null;
                 }
             } elseif (array_key_exists($normalized, $this->_dataStore)) {
@@ -188,6 +188,38 @@ class Base
     {
         $function = 'uns' . ucfirst($name);
         return $this->$function();
+    }
+
+    /**
+     * 
+     * @param type $key
+     * @return type
+     */
+    public function loadConfigFromDb($key)
+    {
+        $conf = \App_Model_Config::first(array('xkey = ?' => $key));
+
+        return $conf;
+    }
+
+    /**
+     * 
+     * @param type $key
+     * @param type $value
+     * @return boolean
+     */
+    public function saveConfigToDb($key, $value)
+    {
+        $conf = \App_Model_Config::first(array('xkey = ?' => $key));
+        $conf->value = $value;
+        var_dump($conf->value);
+        if ($conf->validate()) {
+            $conf->save();
+            return true;
+        } else {
+            var_dump($conf->getErrors());die;
+            return false;
+        }
     }
 
 }

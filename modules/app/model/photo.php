@@ -46,9 +46,9 @@ class App_Model_Photo extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 150
+     * @length 250
      * 
-     * @validate required, max(150)
+     * @validate required, max(250)
      * @label thum path
      */
     protected $_thumbPath;
@@ -57,9 +57,9 @@ class App_Model_Photo extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 150
+     * @length 250
      * 
-     * @validate required, max(150)
+     * @validate required, max(250)
      * @label photo path
      */
     protected $_path;
@@ -68,9 +68,9 @@ class App_Model_Photo extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 200
+     * @length 250
      * 
-     * @validate alphanumeric, max(200)
+     * @validate alphanumeric, max(250)
      * @label description
      */
     protected $_description;

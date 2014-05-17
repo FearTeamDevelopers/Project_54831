@@ -4,7 +4,7 @@
 </ul><!--maintabmenu-->
 <div class="content">
 
-    <div class="one_fourth">
+    <div class="one_fifth">
         <div class="contenttitle"><h2 class="form"><span>Clear cache</span></h2></div>
         <form class="stdform stdform2" method="post" action="/admin/system/clearCache/">
             <p class="stdformbutton">
@@ -12,7 +12,7 @@
             </p>
         </form>
     </div>
-    <div class="one_fourth">
+    <div class="one_fifth">
         <div class="contenttitle"><h2 class="form"><span>Database backup</span></h2></div>
         <form class="stdform stdform2" method="post" action="/admin/system/createDatabaseBackup/">
             <p class="stdformbutton">
@@ -20,7 +20,7 @@
             </p>
         </form>
     </div>
-    <div class="one_fourth">
+    <div class="one_fifth">
         <div class="contenttitle"><h2 class="form"><span>Archivate older news</span></h2></div>
         <form class="stdform stdform2" method="post" action="/admin/system/archivateNews/">
             <p class="stdformbutton">
@@ -28,6 +28,16 @@
             </p>
         </form>
     </div>
+
+    <div class="one_fifth">
+        <div class="contenttitle"><h2 class="form"><span>Change Application Status</span></h2></div>
+        <form class="stdform stdform2" method="post" action="/admin/system/changeApplicationStatus/">
+            <p class="stdformbutton">
+                <input name="changeStatus" type="submit" value="{echo $appstatus}" class="submit radius2" />
+            </p>
+        </form>
+    </div>
+    
     <br clear="all" />
 </div><!--widgetcontent-->
 

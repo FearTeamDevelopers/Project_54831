@@ -12,15 +12,9 @@ if (ENV == 'dev') {
     error_reporting(0);
 }
 
-if( version_compare(PHP_VERSION, '5.4.0') <= 0 ) {
+if (version_compare(PHP_VERSION, '5.4.0') <= 0) {
     header('Content-type: text/html');
     include(APP_PATH . '/phpversion.phtml');
-    exit();
-}
-
-if (file_exists(APP_PATH . '/pagedown.phtml')) {
-    header('Content-type: text/html');
-    include(APP_PATH . '/pagedown.phtml');
     exit();
 }
 
@@ -29,7 +23,6 @@ require('./vendors/thcframe/core/core.php');
 THCFrame\Core\Core::initialize();
 
 // plugins
-
 $path = APP_PATH . '/application/plugins';
 $iterator = new \DirectoryIterator($path);
 

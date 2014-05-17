@@ -90,7 +90,10 @@ class Core
         ),
         '503' => array(
             'THCFrame\Database\Exception\Service',
-            'THCFrame\Cache\Exception\Service',
+            'THCFrame\Cache\Exception\Service'
+        ),
+        '507' => array(
+            'THCFrame\Router\Exception\Offline'
         )
     );
 
