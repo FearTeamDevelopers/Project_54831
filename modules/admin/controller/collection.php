@@ -21,10 +21,8 @@ class Admin_Controller_Collection extends Controller
 
         $collectionQuery = App_Model_Collection::getQuery(
                         array('cl.id', 'cl.active', 'cl.title', 'cl.created', 'cl.photographer', 'cl.season'))
-                ->join('tb_collectionmenu', 'cl.menuId = clm.id', 'clm', 
-                        array('clm.id' => 'menuId', 'clm.title' => 'menuTitle', 'clm.urlKey' => 'menuUrlKey'))
-                ->join('tb_section', 'clm.sectionId = s.id', 's', 
-                        array('s.id' => 'secId', 's.title' => 'secTitle'));
+                ->join('tb_collectionmenu', 'cl.menuId = clm.id', 'clm', array('clm.id' => 'menuId', 'clm.title' => 'menuTitle', 'clm.urlKey' => 'menuUrlKey'))
+                ->join('tb_section', 'clm.sectionId = s.id', 's', array('s.id' => 'secId', 's.title' => 'secTitle'));
 
         $collections = App_Model_Collection::initialize($collectionQuery);
 
@@ -79,10 +77,8 @@ class Admin_Controller_Collection extends Controller
         $view = $this->getActionView();
 
         $collectionQuery = App_Model_Collection::getQuery(array('cl.*'))
-                ->join('tb_collectionmenu', 'cl.menuId = m.id', 'm', 
-                        array('m.title' => 'menuTitle'))
-                ->join('tb_section', 'm.sectionId = s.id', 's', 
-                        array('s.id' => 'sectId', 's.title' => 'sectionTitle'))
+                ->join('tb_collectionmenu', 'cl.menuId = m.id', 'm', array('m.title' => 'menuTitle'))
+                ->join('tb_section', 'm.sectionId = s.id', 's', array('s.id' => 'sectId', 's.title' => 'sectionTitle'))
                 ->where('cl.id = ?', $id);
 
         $collection = array_shift(App_Model_Collection::initialize($collectionQuery));
@@ -95,9 +91,15 @@ class Admin_Controller_Collection extends Controller
                     ->where('clp.collectionId = ?', $id);
             $collectionPhotos = App_Model_Photo::initialize($query);
 
+            $videoQuery = App_Model_Video::getQuery(array('vi.*'))
+                    ->join('tb_collectionvideo', 'clv.videoId = vi.id', 'clv', array('clv.collectionId'))
+                    ->where('clv.collectionId = ?', $id);
+            $collectionVideos = App_Model_Video::initialize($videoQuery);
+
             $view->set('collection', $collection)
                     ->set('collectionphotocount', $collectionPhotoCount)
-                    ->set('photos', $collectionPhotos);
+                    ->set('photos', $collectionPhotos)
+                    ->set('videos', $collectionVideos);
         } else {
             $view->warningMessage('Collection not foud');
             self::redirect('/admin/collection/');
@@ -421,4 +423,44 @@ class Admin_Controller_Collection extends Controller
         }
     }
 
+    /**
+     * Ajax
+     * 
+     * @before _secured, _publisher
+     * @param int $id   photo id
+     */
+    public function addVideo($id)
+    {
+        $view = $this->getActionView();
+
+        if (RequestMethods::post('submitAddVideo')) {
+            $path = str_replace('watch?v=', 'embed/', RequestMethods::post('path'));
+            
+            $video = new App_Model_Video(array(
+                'title' => RequestMethods::post('title'),
+                'path' => $path,
+                'width' => RequestMethods::post('width', 500),
+                'height' => RequestMethods::post('height', 281),
+                'priority' => RequestMethods::post('priority')
+            ));
+
+            if ($video->validate()) {
+                $videoId = $video->save();
+
+                    $collectionvideo = new App_Model_CollectionVideo(array(
+                        'videoId' => $videoId,
+                        'collectionId' => (int) $id,
+                    ));
+                    $collectionvideo->save();
+
+                Event::fire('admin.log', array('success', 'ID: ' . $videoId));
+                $view->successMessage('Video has been successfully saved');
+                self::redirect('/admin/collection/detail/' . $id);
+            } else {
+                $view->set('errors', $video->getErrors())
+                        ->set('video', $video);
+                Event::fire('admin.log', array('fail'));
+            }
+        }
+    }
 }

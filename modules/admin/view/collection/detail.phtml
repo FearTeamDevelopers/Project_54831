@@ -25,33 +25,56 @@
         <br/>
         <p>
             <a href="/admin/collection/addPhoto/{echo $collection->id}" class="btn btn_image"><span>Upload Photo</span></a> 
+            <a href="/admin/collection/addVideo/{echo $collection->id}" class="btn btn_video"><span>Add Video</span></a>
         </p>
     </div>
     <hr/>
 
-    {if !empty($photos)}
-    <div style="overflow:hidden;">
-        <ul class="imagelist">
-            {foreach $photo in $photos}
-            {if $photo->active}
-                <li class="photoactive">
+    <div id="tabs">
+        <ul>
+            <li><a href="#tabs-1">Photos</a></li>
+            <li><a href="#tabs-2">Videos</a></li>
+        </ul>
+        <div id="tabs-1">
+            {if !empty($photos)}
+            <div style="overflow:hidden;">
+                <ul class="imagelist">
+                    {foreach $photo in $photos}
+                    {if $photo->active}
+                    <li class="photoactive">
+                        {/if} 
+                        {else}
+                    <li class="photoinactive">
+                        {/else}
+                        <img src="{echo $photo->thumbPath}" alt="{echo $photo->photoName}" title="{echo $photo->photoName}" height="100px" />
+                        <span>
+                            <a href="{echo $photo->path}" class="view"></a>
+                            <a href="/admin/collection/changePhotoStatus/{echo $photo->id}" class="activate" value="Change photo state"></a>
+                            <a href="/admin/collection/deletePhoto/{echo $photo->id}" class="delete" value="Delete photo"></a>
+                        </span>
+                    </li>
+                    {/foreach}
+                </ul>
+            </div>
             {/if} 
             {else}
-                <li class="photoinactive">
+            <div class="notification msginfo"><a class="close"></a><p>No Photo in collection</p></div>
             {/else}
-            <img src="{echo $photo->thumbPath}" alt="{echo $photo->photoName}" title="{echo $photo->photoName}" height="100px" />
-                <span>
-                    <a href="{echo $photo->path}" class="view"></a>
-                    <a href="/admin/collection/changePhotoStatus/{echo $photo->id}" class="activate" value="Change photo state"></a>
-                    <a href="/admin/collection/deletePhoto/{echo $photo->id}" class="delete" value="Delete photo"></a>
-                </span>
-            </li>
-            {/foreach}
-        </ul>
-    </div>
-    {/if} 
-    {else}
-    <div class="notification msginfo"><a class="close"></a><p>No Photo in collection</p></div>
-    {/else}
+        </div>
+        <div id="tabs-2">
+            {if (!empty($videos))}
+                <div>
+                    {foreach $video in $videos}
+                        <iframe width="{echo $video->width}" height="{echo $video->height}" 
+                            src="{echo $video->path}" frameborder="0" allowfullscreen></iframe>
+                    {/foreach}
+                </div>
+            {/if} 
+            {else}
+            <div class="notification msginfo"><a class="close"></a><p>No Videos in collection</p></div>
+            {/else}
+        </div>
+    </div><!--#tabs-->
+
 </div>
 <br clear="all"/><br />
