@@ -5,6 +5,7 @@ namespace THCFrame\Cache\Driver;
 use THCFrame\Cache as Cache;
 use THCFrame\Registry\Registry as Registry;
 use THCFrame\Cache\Exception as Exception;
+use THCFrame\Filesystem\FileManager as FileManager;
 
 /**
  * Description of Filecache
@@ -20,6 +21,7 @@ class Filecache extends Cache\Driver
     protected $_duration;
     private $_cacheFilePath;
     private $_fileSuffix;
+    private $_fileManager;
 
     /**
      * 
@@ -34,14 +36,20 @@ class Filecache extends Cache\Driver
         if (!empty($configuration->cache->filecache)) {
             $this->_cacheFilePath = APP_PATH . '/' . $configuration->cache->filecache->path . '/';
             $this->_fileSuffix = '.' . $configuration->cache->filecache->suffix;
+            $this->_fileManager = new FileManager();
+
+            if (!is_dir($this->_cacheFilePath)) {
+                $this->_fileManager->mkdir($this->_cacheFilePath);
+            }
         } else {
             throw new \Exception('Error in configuration file');
         }
     }
 
     /**
+     * Method checks if cache file is not expired
      * 
-     * @param type $key
+     * @param string $key
      * @return boolean
      */
     public function isFresh($key)
@@ -62,9 +70,11 @@ class Filecache extends Cache\Driver
     }
 
     /**
+     * Loads cache file content
      * 
-     * @param type $key
-     * @param type $default
+     * @param string $key
+     * @param string $default
+     * @return string
      */
     public function get($key, $default = null)
     {
@@ -77,9 +87,10 @@ class Filecache extends Cache\Driver
     }
 
     /**
+     * Save data into file named by key
      * 
-     * @param type $key
-     * @param type $value
+     * @param string $key
+     * @param mixed $value
      * @return type
      * @throws Exception\Service
      */
@@ -88,8 +99,8 @@ class Filecache extends Cache\Driver
         $file = $this->_cacheFilePath . $key . $this->_fileSuffix;
         $tmpFile = tempnam($this->_cacheFilePath, basename($key . $this->_fileSuffix));
 
-        if (false !== @file_put_contents($tmpFile, serialize($value)) && @rename($tmpFile, $file)) {
-            @chmod($file, 0666 & ~umask());
+        if (false !== @file_put_contents($tmpFile, serialize($value)) && $this->_fileManager->rename($tmpFile, $file)) {
+            $this->_fileManager->chmod($file, 0666, umask());
 
             if (file_exists($tmpFile)) {
                 @unlink($tmpFile);
@@ -102,13 +113,14 @@ class Filecache extends Cache\Driver
     }
 
     /**
+     * Removes file with specific name
      * 
-     * @param type $key
+     * @param string $key
      */
     public function erase($key)
     {
         if (file_exists($this->_cacheFilePath . $key . $this->_fileSuffix)) {
-            unlink($this->_cacheFilePath . $key . $this->_fileSuffix);
+            $this->_fileManager->remove($this->_cacheFilePath . $key . $this->_fileSuffix);
         }
     }
 
@@ -117,18 +129,8 @@ class Filecache extends Cache\Driver
      */
     public function clearCache()
     {
-        $dh = opendir($this->_cacheFilePath);
-        if ($dh) {
-            while ($file = readdir($dh)) {
-                if (!in_array($file, array('.', '..'))) {
-                    if (is_file($this->_cacheFilePath . $file)) {
-                        unlink($this->_cacheFilePath . $file);
-                    } else if (is_dir($this->_cacheFilePath . $file)) {
-                        rmdir_files($this->_cacheFilePath . $file);
-                    }
-                }
-            }
-        }
+        $this->_fileManager->remove($this->_cacheFilePath);
+        return;
     }
 
 }

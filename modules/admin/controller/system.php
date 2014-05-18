@@ -54,7 +54,12 @@ class Admin_Controller_System extends Controller
     {
         $view = $this->getActionView();
         $dump = new Mysqldump(array('exclude-tables' => array('tb_user')));
-
+        $fm = new THCFrame\Filesystem\FileManager();
+        
+        if(!is_dir('./temp/db/')){
+            $fm->mkdir('./temp/db/');
+        }
+        
         if (RequestMethods::post('createBackup')) {
             Event::fire('admin.log');
 //            if (RequestMethods::post('downloadDump')) {

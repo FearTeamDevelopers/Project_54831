@@ -67,6 +67,8 @@ class FileManager extends Base
                 throw new Exception\IO(sprintf('Failed to copy %s to %s', $originFile, $targetFile));
             }
         }
+        
+        return true;
     }
 
     /**
@@ -101,6 +103,8 @@ class FileManager extends Base
                 }
             }
         }
+        
+        return true;
     }
 
     /**
@@ -119,6 +123,8 @@ class FileManager extends Base
         if (true !== @rename($origin, $target)) {
             throw new Exception\IO(sprintf('Cannot rename "%s" to "%s".', $origin, $target));
         }
+        
+        return true;
     }
 
     /**
@@ -138,6 +144,7 @@ class FileManager extends Base
                 throw new Exception\IO(sprintf('Failed to create %s', $dir));
             }
         }
+        return true;
     }
 
     /**
@@ -154,10 +161,13 @@ class FileManager extends Base
             if ($recursive && is_dir($file) && !is_link($file)) {
                 $this->chmod(new \FilesystemIterator($file), $mode, $umask, true);
             }
+            
             if (true !== @chmod($file, $mode & ~$umask)) {
                 throw new Exception\IO(sprintf('Failed to chmod file %s', $file));
             }
         }
+        
+        return true;
     }
 
     /**

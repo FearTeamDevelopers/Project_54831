@@ -21,8 +21,10 @@ class Admin_Controller_Collection extends Controller
 
         $collectionQuery = App_Model_Collection::getQuery(
                         array('cl.id', 'cl.active', 'cl.title', 'cl.created', 'cl.photographer', 'cl.season'))
-                ->join('tb_collectionmenu', 'cl.menuId = clm.id', 'clm', array('clm.id' => 'menuId', 'clm.title' => 'menuTitle', 'clm.urlKey' => 'menuUrlKey'))
-                ->join('tb_section', 'clm.sectionId = s.id', 's', array('s.id' => 'secId', 's.title' => 'secTitle'));
+                ->join('tb_collectionmenu', 'cl.menuId = clm.id', 'clm', 
+                        array('clm.id' => 'menuId', 'clm.title' => 'menuTitle', 'clm.urlKey' => 'menuUrlKey'))
+                ->join('tb_section', 'clm.sectionId = s.id', 's', 
+                        array('s.id' => 'secId', 's.title' => 'secTitle'));
 
         $collections = App_Model_Collection::initialize($collectionQuery);
 
@@ -77,8 +79,10 @@ class Admin_Controller_Collection extends Controller
         $view = $this->getActionView();
 
         $collectionQuery = App_Model_Collection::getQuery(array('cl.*'))
-                ->join('tb_collectionmenu', 'cl.menuId = m.id', 'm', array('m.title' => 'menuTitle'))
-                ->join('tb_section', 'm.sectionId = s.id', 's', array('s.id' => 'sectId', 's.title' => 'sectionTitle'))
+                ->join('tb_collectionmenu', 'cl.menuId = m.id', 'm', 
+                        array('m.title' => 'menuTitle'))
+                ->join('tb_section', 'm.sectionId = s.id', 's', 
+                        array('s.id' => 'sectId', 's.title' => 'sectionTitle'))
                 ->where('cl.id = ?', $id);
 
         $collection = array_shift(App_Model_Collection::initialize($collectionQuery));
@@ -87,12 +91,14 @@ class Admin_Controller_Collection extends Controller
             $collectionPhotoCount = App_Model_CollectionPhoto::count(array('collectionId = ?' => $id));
 
             $query = App_Model_Photo::getQuery(array('ph.*'))
-                    ->join('tb_collectionphoto', 'clp.photoId = ph.id', 'clp', array('clp.collectionId'))
+                    ->join('tb_collectionphoto', 'clp.photoId = ph.id', 'clp', 
+                            array('clp.collectionId'))
                     ->where('clp.collectionId = ?', $id);
             $collectionPhotos = App_Model_Photo::initialize($query);
 
             $videoQuery = App_Model_Video::getQuery(array('vi.*'))
-                    ->join('tb_collectionvideo', 'clv.videoId = vi.id', 'clv', array('clv.collectionId'))
+                    ->join('tb_collectionvideo', 'clv.videoId = vi.id', 'clv', 
+                            array('clv.collectionId'))
                     ->where('clv.collectionId = ?', $id);
             $collectionVideos = App_Model_Video::initialize($videoQuery);
 
@@ -410,7 +416,8 @@ class Admin_Controller_Collection extends Controller
         $collectionId = RequestMethods::post('collectionId');
 
         $photoQuery = App_Model_Photo::getQuery(array('ph.photoName'))
-                ->join('tb_collectionphoto', 'clp.photoId = ph.id', 'clp', array('clp.photoId', 'clp.collectionId'))
+                ->join('tb_collectionphoto', 'clp.photoId = ph.id', 'clp',
+                        array('clp.photoId', 'clp.collectionId'))
                 ->where('clp.collectionId = ?', $collectionId)
                 ->where('ph.photoName LIKE ?', $filename);
 
@@ -424,8 +431,6 @@ class Admin_Controller_Collection extends Controller
     }
 
     /**
-     * Ajax
-     * 
      * @before _secured, _publisher
      * @param int $id   photo id
      */
@@ -433,6 +438,15 @@ class Admin_Controller_Collection extends Controller
     {
         $view = $this->getActionView();
 
+        $collection = App_Model_Collection::first(
+                        array(
+                    'id = ?' => $id,
+                    'active = ?' => true
+                        ), array('id', 'title')
+        );
+
+        $view->set('collection', $collection);
+        
         if (RequestMethods::post('submitAddVideo')) {
             $path = str_replace('watch?v=', 'embed/', RequestMethods::post('path'));
             
@@ -447,11 +461,11 @@ class Admin_Controller_Collection extends Controller
             if ($video->validate()) {
                 $videoId = $video->save();
 
-                    $collectionvideo = new App_Model_CollectionVideo(array(
-                        'videoId' => $videoId,
-                        'collectionId' => (int) $id,
-                    ));
-                    $collectionvideo->save();
+                $collectionvideo = new App_Model_CollectionVideo(array(
+                    'videoId' => $videoId,
+                    'collectionId' => (int) $id,
+                ));
+                $collectionvideo->save();
 
                 Event::fire('admin.log', array('success', 'ID: ' . $videoId));
                 $view->successMessage('Video has been successfully saved');

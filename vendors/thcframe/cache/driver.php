@@ -23,8 +23,9 @@ abstract class Driver extends Base
     }
 
     /**
+     * Throw exception if specific method is no implemented
      * 
-     * @param type $method
+     * @param string $method
      * @return \THCFrame\Cache\Exception\Implementation
      */
     protected function _getImplementationException($method)

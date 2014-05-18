@@ -52,6 +52,7 @@ class Memcached extends Cache\Driver
     }
 
     /**
+     * Method attempts to connect to the Memcached server at the specified host/port
      * 
      * @return \THCFrame\Cache\Driver\Memcached
      * @throws Exception\Service
@@ -73,6 +74,7 @@ class Memcached extends Cache\Driver
     }
 
     /**
+     * Method attempts to disconnect the $_service instance from the Memcached service
      * 
      * @return \THCFrame\Cache\Driver\Memcached
      */
@@ -87,6 +89,7 @@ class Memcached extends Cache\Driver
     }
 
     /**
+     * Get cached values
      * 
      * @param type $key
      * @param type $default
@@ -109,10 +112,10 @@ class Memcached extends Cache\Driver
     }
 
     /**
+     * Set values to keys
      * 
-     * @param type $key
-     * @param type $value
-     * @param type $duration
+     * @param string $key
+     * @param mixed $value
      * @return \THCFrame\Cache\Driver\Memcached
      * @throws Exception\Service
      */
@@ -127,6 +130,7 @@ class Memcached extends Cache\Driver
     }
 
     /**
+     * Erase values from keys
      * 
      * @param type $key
      * @return \THCFrame\Cache\Driver\Memcached
@@ -143,6 +147,7 @@ class Memcached extends Cache\Driver
     }
 
     /**
+     * Flush memcached
      * 
      * @return \THCFrame\Cache\Driver\Memcached
      * @throws Exception\Service
