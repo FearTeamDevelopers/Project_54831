@@ -13,7 +13,6 @@ use THCFrame\Controller\Controller as BaseController;
  */
 class Controller extends BaseController {
 
-    protected static $_imageExtensions = array('gif', 'jpg', 'png', 'jpeg');
 
     /**
      * @protected

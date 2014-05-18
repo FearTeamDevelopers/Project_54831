@@ -197,9 +197,12 @@ class Base
      */
     public function loadConfigFromDb($key)
     {
-        $conf = \App_Model_Config::first(array('xkey = ?' => $key));
-
-        return $conf;
+        try {
+            $conf = \App_Model_Config::first(array('xkey = ?' => $key));
+            return $conf;
+        } catch (\Exception $e) {
+            return null;
+        }
     }
 
     /**

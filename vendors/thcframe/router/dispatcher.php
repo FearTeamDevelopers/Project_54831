@@ -128,7 +128,7 @@ final class Dispatcher extends Base
         if ($module == 'app') {
             $status = $this->loadConfigFromDb('appstatus');
 
-            if ($status === null || $status->value != 1) {
+            if ($status !== null && $status->value != 1) {
                 throw new Exception\Offline('Application is offline');
             }
         }
