@@ -1,8 +1,9 @@
 <?php
 
-use Admin\Etc\Controller as Controller;
-use THCFrame\Request\RequestMethods as RequestMethods;
-use THCFrame\Filesystem\ImageManager as Image;
+use Admin\Etc\Controller;
+use THCFrame\Request\RequestMethods;
+use THCFrame\Core\ArrayMethods;
+use THCFrame\Filesystem\ImageManager;
 use THCFrame\Events\Events as Event;
 
 /**
@@ -44,10 +45,14 @@ class Admin_Controller_Partner extends Controller
             $errors = array();
 
             try {
-                $image = new Image;
-                $image->upload('logo', 'logos')
-                        ->resizeToHeight(180)
-                        ->save();
+                $im = new ImageManager(array(
+                    'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
+                    'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
+                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby')
+                ));
+
+                $photoArr = $im->uploadWithoutThumb('logo', 'partners');
+                $uploaded = ArrayMethods::toObject($photoArr);
             } catch (Exception $ex) {
                 $errors['logo'] = $ex->getMessage();
             }
@@ -58,7 +63,7 @@ class Admin_Controller_Partner extends Controller
                 'address' => RequestMethods::post('address'),
                 'email' => RequestMethods::post('email'),
                 'web' => RequestMethods::post('web'),
-                'logo' => $image->getPath(false),
+                'logo' => trim($uploaded->photo->filename, '.'),
                 'mobile' => RequestMethods::post('mobile')
             ));
 
@@ -71,7 +76,7 @@ class Admin_Controller_Partner extends Controller
             } else {
                 Event::fire('admin.log', array('fail'));
                 $view->set('errors', $errors + $partner->getErrors())
-                    ->set('partner', $partner);
+                        ->set('partner', $partner);
             }
         }
 
@@ -103,9 +108,15 @@ class Admin_Controller_Partner extends Controller
         if (RequestMethods::post('submitEditPartner')) {
             if ($partner->logo == '') {
                 try {
-                    $image = new Image;
-                    $image->upload('logo', 'logos');
-                    $logo = $image->getPath(false);
+                    $im = new ImageManager(array(
+                        'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
+                        'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
+                        'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby')
+                    ));
+
+                    $photoArr = $im->uploadWithoutThumb('logo', 'partners');
+                    $uploaded = ArrayMethods::toObject($photoArr);
+                    $logo = trim($uploaded->photo->filename, '.');
                 } catch (Exception $ex) {
                     $errors['logo'] = $ex->getMessage();
                 }
@@ -181,22 +192,22 @@ class Admin_Controller_Partner extends Controller
         );
 
         if (NULL !== $partner) {
+            $path = $partner->getUnlinkLogoPath();
             $partner->logo = '';
-            if ($partner->validate()) {
-                unlink($partner->getUnlinkLogoPath());
+            if ($partner->validate() && unlink($path)) {
                 $partner->save();
                 Event::fire('admin.log', array('success', 'ID: ' . $id));
                 echo 'ok';
             } else {
                 Event::fire('admin.log', array('fail', 'ID: ' . $id));
-                echo 'Some fields are not valid';
+                echo 'Required fields are not valid';
             }
         } else {
             Event::fire('admin.log', array('fail', 'ID: ' . $id));
             echo 'Partner not found';
         }
     }
-    
+
     /**
      * @before _secured, _admin
      */
@@ -254,7 +265,7 @@ class Admin_Controller_Partner extends Controller
                                 $partner->save();
                             } else {
                                 $errors[] = "Partner id {$partner->getId()} - "
-                                        . "{$partner->getTitle()} errors: " 
+                                        . "{$partner->getTitle()} errors: "
                                         . join(', ', array_shift($partner->getErrors()));
                             }
                         } else {
@@ -287,7 +298,7 @@ class Admin_Controller_Partner extends Controller
                                 $partner->save();
                             } else {
                                 $errors[] = "Partner id {$partner->getId()} - "
-                                        . "{$partner->getTitle()} errors: " 
+                                        . "{$partner->getTitle()} errors: "
                                         . join(', ', array_shift($partner->getErrors()));
                             }
                         } else {

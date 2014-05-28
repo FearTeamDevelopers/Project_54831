@@ -1,6 +1,6 @@
 <?php
 
-use App\Etc\Controller as Controller;
+use App\Etc\Controller;
 use THCFrame\Registry\Registry;
 
 /**
@@ -85,10 +85,15 @@ class App_Controller_Collection extends Controller
      */
     public function show($urlKey)
     {
-        $this->willRenderLayoutView = false;
-        $this->willRenderActionView = true;
-
         $view = $this->getActionView();
+        
+        if($view->getHttpReferer() === null){
+            $this->willRenderLayoutView = true;
+        }else{
+            $this->willRenderLayoutView = false;
+        }
+        
+        $this->willRenderActionView = true;
 
         $content = $this->_getContent($urlKey);
 

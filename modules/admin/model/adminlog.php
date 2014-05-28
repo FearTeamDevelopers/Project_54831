@@ -1,6 +1,6 @@
 <?php
 
-use THCFrame\Model\Model as Model;
+use THCFrame\Model\Model;
 
 /**
  * Description of AdminLog
@@ -91,7 +91,6 @@ class Admin_Model_AdminLog extends Model
 
         if (empty($this->$raw)) {
             $this->setCreated(date('Y-m-d H:i:s'));
-            $this->setActive(true);
         }
         $this->setModified(date('Y-m-d H:i:s'));
     }

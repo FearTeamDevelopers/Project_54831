@@ -2,8 +2,8 @@
 
 namespace THCFrame\Profiler\Exception;
 
-use THCFrame\Core as Core;
+use THCFrame\Profiler as Profiler;
 
-class Disabled extends Core\Exception {
+class Disabled extends Profiler\Exception {
     
 }

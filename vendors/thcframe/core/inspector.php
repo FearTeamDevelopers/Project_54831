@@ -7,6 +7,17 @@ use THCFrame\Core\StringMethods as StringMethods;
 
 /**
  * Description of Inspector
+ * The first few methods of our Inspector class use built-in PHP reflection 
+ * classes to get the string values of Doc Comments, 
+ * and to get a list of the properties and methods of a class.
+ * 
+ * The public methods of our Inspector class utilize all of our internal methods to return the Doc Comment
+ * string values, parse them into associative arrays, and return usable metadata. Since classes cannot change at
+ * runtime, all of the public methods cache the results of their first execution within the internal properties. 
+ * 
+ * Public methods allow us to list the methods and properties of a class. They also allow us to return the key/value
+ * metadata of the class, named methods, and named properties, without the methods or properties needing to be
+ * public.
  *
  * @author Tomy
  */
@@ -84,6 +95,8 @@ class Inspector
     }
 
     /**
+     * The internal _parse() method uses a fairly simple regular expression to match key/value pairs
+     * within the Doc Comment string returned by any of our _get…Meta() methods
      * 
      * @param type $comment
      * @return type

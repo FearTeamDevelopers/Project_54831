@@ -1,10 +1,10 @@
 <?php
 
-use Admin\Etc\Controller as Controller;
-use THCFrame\Request\RequestMethods as RequestMethods;
+use Admin\Etc\Controller;
+use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
-use THCFrame\Filesystem\ImageManager as ImageManager;
-use THCFrame\Core\ArrayMethods as ArrayMethods;
+use THCFrame\Filesystem\ImageManager;
+use THCFrame\Core\ArrayMethods;
 
 /**
  * 
@@ -24,14 +24,14 @@ class Admin_Controller_Photo extends Controller
         foreach ($photos as $photo) {
             $sectionString = '';
             $sectionArr = array();
-            
+
             $photoSectionQuery = App_Model_PhotoSection::getQuery(array('phs.photoId', 'phs.sectionId'))
                     ->join('tb_section', 'phs.sectionId = s.id', 's', 
                             array('s.urlKey' => 'secUrlKey', 's.title' => 'secTitle'))
                     ->where('phs.photoId = ?', $photo->id);
 
             $sections = App_Model_PhotoSection::initialize($photoSectionQuery);
-            
+
             foreach ($sections as $section) {
                 $sectionArr[] = ucfirst($section->secTitle);
             }
@@ -63,7 +63,12 @@ class Admin_Controller_Photo extends Controller
             $errors = array();
             try {
                 $uploadTo = 'section_photos';
-                $im = new ImageManager();
+                $im = new ImageManager(array(
+                    'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
+                    'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
+                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby')
+                ));
+                
                 $photoArr = $im->upload('photo', $uploadTo);
                 $uploaded = ArrayMethods::toObject($photoArr);
             } catch (Exception $ex) {
@@ -112,17 +117,22 @@ class Admin_Controller_Photo extends Controller
                         ->set('photo', $photo);
             }
         } elseif (RequestMethods::post('submitAddMultiPhoto')) {
-            $errors = $errors['photo'] = array();
+            $errors = $errors['photos'] = array();
             try {
                 $uploadTo = 'section_photos';
-                $im = new ImageManager();
+                $im = new ImageManager(array(
+                    'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
+                    'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
+                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby')
+                ));
+                
                 $result = $im->upload('photos', $uploadTo);
             } catch (Exception $ex) {
                 $errors['photos'] = $ex->getMessage();
             }
 
             if (is_array($result) && !empty($result['errors'])) {
-                $errors['photo'] = $result['errors'];
+                $errors['photos'] = $result['errors'];
             }
 
             if (is_array($result) && !empty($result['photos'])) {

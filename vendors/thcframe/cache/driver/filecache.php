@@ -8,7 +8,7 @@ use THCFrame\Cache\Exception as Exception;
 use THCFrame\Filesystem\FileManager as FileManager;
 
 /**
- * Description of Filecache
+ * Class handles operations with file cache
  *
  * @author Tomy
  */
@@ -24,8 +24,9 @@ class Filecache extends Cache\Driver
     private $_fileManager;
 
     /**
+     * Class constructor
      * 
-     * @param type $options
+     * @param array $options
      */
     public function __construct($options = array())
     {
@@ -99,7 +100,7 @@ class Filecache extends Cache\Driver
         $file = $this->_cacheFilePath . $key . $this->_fileSuffix;
         $tmpFile = tempnam($this->_cacheFilePath, basename($key . $this->_fileSuffix));
 
-        if (false !== @file_put_contents($tmpFile, serialize($value)) && $this->_fileManager->rename($tmpFile, $file)) {
+        if (false !== @file_put_contents($tmpFile, serialize($value)) && $this->_fileManager->rename($tmpFile, $file, true)) {
             $this->_fileManager->chmod($file, 0666, umask());
 
             if (file_exists($tmpFile)) {

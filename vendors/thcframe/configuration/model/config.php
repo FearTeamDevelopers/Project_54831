@@ -1,13 +1,15 @@
 <?php
 
+namespace THCFrame\Configuration\Model;
+
 use THCFrame\Model\Model as Model;
 
 /**
- * Description of App_Model_Config
+ * Description of Config_Model
  *
  * @author Tomy
  */
-class App_Model_Config extends Model
+class Config extends Model
 {
 
     /**
@@ -39,17 +41,6 @@ class App_Model_Config extends Model
      * @label key
      */
     protected $_xkey;
-
-    /**
-     * @column
-     * @readwrite
-     * @type text
-     * @length 250
-     * 
-     * @validate alphanumeric, max(250)
-     * @label description
-     */
-    protected $_description;
 
     /**
      * @column

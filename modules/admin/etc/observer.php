@@ -1,6 +1,6 @@
 <?php
 
-use THCFrame\Registry\Registry as Registry;
+use THCFrame\Registry\Registry;
 
 /**
  * 

@@ -9,7 +9,10 @@ use THCFrame\Registry\Registry as Registry;
 use THCFrame\Database\Exception as Exception;
 
 /**
- * Factory class
+ * Factory class returns a Database\Connector subclass 
+ * (in this case Database\Connector\Mysql). 
+ * Connectors are the classes that do the actual interfacing with the 
+ * specific database engine. They execute queries and return metadata
  * 
  * @author Tomy
  */
@@ -27,8 +30,9 @@ class Database extends Base
     protected $_options;
 
     /**
+     * Throw exception if specific method is not implemented
      * 
-     * @param type $method
+     * @param string $method
      * @return \THCFrame\Database\Exception\Implementation
      */
     protected function _getImplementationException($method)
@@ -37,6 +41,9 @@ class Database extends Base
     }
 
     /**
+     * Factory method
+     * It accepts initialization options and selects the type of returned object, 
+     * based on the internal $_type property.
      * 
      * @return \THCFrame\Database\Database\Connector\Mysql
      * @throws Exception\Argument
@@ -48,10 +55,10 @@ class Database extends Base
         if (!$this->type) {
             $configuration = Registry::get('config');
 
-            if (!empty($configuration->database->default) && !empty($configuration->database->default->type)) {
-                $this->type = $configuration->database->default->type;
-                unset($configuration->database->default->type);
-                $this->options = (array) $configuration->database->default;
+            if (!empty($configuration->database) && !empty($configuration->database->type)) {
+                $this->type = $configuration->database->type;
+                unset($configuration->database->type);
+                $this->options = (array) $configuration->database;
             } else {
                 throw new \Exception('Error in configuration file');
             }

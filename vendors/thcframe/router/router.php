@@ -86,8 +86,9 @@ class Router extends Base
     );
 
     /**
+     * Class constructor
      * 
-     * @param type $options
+     * @param array $options
      */
     public function __construct($options = array())
     {
@@ -107,7 +108,7 @@ class Router extends Base
 
     /**
      * 
-     * @param type $method
+     * @param string $method
      * @return \THCFrame\Router\Exception\Implementation
      */
     protected function _getImplementationException($method)
@@ -116,7 +117,7 @@ class Router extends Base
     }
 
     /**
-     * 
+     * Method creates routes based on Module routes variable
      */
     private function _createRoutes($routes)
     {
@@ -178,6 +179,7 @@ class Router extends Base
     }
 
     /**
+     * Add route to route collection
      * 
      * @param \THCFrame\Router\Route $route
      * @return \THCFrame\Router\Router
@@ -190,6 +192,7 @@ class Router extends Base
     }
 
     /**
+     * Remove route from route collection
      * 
      * @param \THCFrame\Router\Route $route
      * @return \THCFrame\Router\Router
@@ -205,6 +208,7 @@ class Router extends Base
     }
 
     /**
+     * Return list of all routes in collection
      * 
      * @return array $list
      */

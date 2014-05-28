@@ -7,7 +7,11 @@ use THCFrame\Database\Exception as Exception;
 
 /**
  * Description of Mysql
- *
+ * The Database\Connector\Mysql class defines a handful of adaptable 
+ * properties and methods used to perform MySQLi class-specific functions, 
+ * and return MySQLi class-specific properties. We want to isolate these from 
+ * the outside so that our system is essentially plug-and-play
+ * 
  * @author Tomy
  */
 class Mysql extends Database\Connector
@@ -71,8 +75,9 @@ class Mysql extends Database\Connector
     protected $_realEscapeStringExists;
 
     /**
+     * Class constructor
      * 
-     * @param type $options
+     * @param array $options
      */
     public function __construct($options = array())
     {
@@ -83,6 +88,8 @@ class Mysql extends Database\Connector
     }
 
     /**
+     * Method is used to ensure that the value of the
+     * $_service is a valid MySQLi instance
      * 
      * @return boolean
      */
@@ -98,6 +105,7 @@ class Mysql extends Database\Connector
     }
 
     /**
+     * Method attempts to connect to the MySQLi server at the specified host/port
      * 
      * @return \THCFrame\Database\Connector\Mysql
      * @throws Exception\Service
@@ -128,6 +136,7 @@ class Mysql extends Database\Connector
     }
 
     /**
+     * Method attempts to disconnect the $_service instance from the MySQLi service
      * 
      * @return \THCFrame\Database\Connector\Mysql
      */
@@ -153,9 +162,10 @@ class Mysql extends Database\Connector
     }
 
     /**
+     * Method execute sql query by using prepared statements
      * 
-     * @param type $sql
-     * @return type
+     * @param string $sql
+     * @return mixed
      * @throws Exception\Service
      */
     public function execute($sql)
@@ -224,9 +234,10 @@ class Mysql extends Database\Connector
     }
 
     /**
+     * Escapes values
      * 
-     * @param type $value
-     * @return type
+     * @param mixed $value
+     * @return mixed
      * @throws Exception\Service
      */
     public function escape($value)
@@ -250,8 +261,9 @@ class Mysql extends Database\Connector
     }
 
     /**
+     * Returns last inserted id
      * 
-     * @return type
+     * @return number
      * @throws Exception\Service
      */
     public function getLastInsertId()
@@ -264,6 +276,7 @@ class Mysql extends Database\Connector
     }
 
     /**
+     * Returns count of affected rows by last query
      * 
      * @return type
      * @throws Exception\Service
@@ -278,8 +291,9 @@ class Mysql extends Database\Connector
     }
 
     /**
+     * Return last error
      * 
-     * @return type
+     * @return string
      * @throws Exception\Service
      */
     public function getLastError()
@@ -293,8 +307,8 @@ class Mysql extends Database\Connector
 
     /**
      * 
-     * @param type $result
-     * @return type
+     * @param Result $result
+     * @return array
      */
     public function fetchField($result)
     {
@@ -328,8 +342,9 @@ class Mysql extends Database\Connector
     }
 
     /**
+     * Creates and executes query base on provided model definition
      * 
-     * @param type $model
+     * @param Model $model
      * @return \THCFrame\Database\Connector\Mysql
      * @throws Exception\Sql
      */

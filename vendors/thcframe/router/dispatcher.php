@@ -10,6 +10,10 @@ use THCFrame\Router\Exception as Exception;
 
 /**
  * Description of Dispatcher
+ * Dispatcher class will use the requested URL, as well as the controller/action metadata, 
+ * to determine the correct controller/action to execute. 
+ * It needs to handle multiple defined routes and inferred routes if no defined routes
+ * are matched.
  *
  * @author Tomy
  */
@@ -39,7 +43,7 @@ final class Dispatcher extends Base
 
     /**
      * 
-     * @param type $method
+     * @param string $method
      * @return \THCFrame\Router\Exception\Implementation
      */
     protected function _getImplementationException($method)
@@ -91,8 +95,8 @@ final class Dispatcher extends Base
 
         $configuration = Registry::get('config');
 
-        if (!empty($configuration->dispatcher->default)) {
-            $this->_setSuffix($configuration->dispatcher->default->suffix);
+        if (!empty($configuration->dispatcher)) {
+            $this->_setSuffix($configuration->dispatcher->suffix);
         } else {
             throw new \Exception('Error in configuration file');
         }
@@ -128,7 +132,7 @@ final class Dispatcher extends Base
         if ($module == 'app') {
             $status = $this->loadConfigFromDb('appstatus');
 
-            if ($status !== null && $status->value != 1) {
+            if ($status !== null && $status != 1) {
                 throw new Exception\Offline('Application is offline');
             }
         }

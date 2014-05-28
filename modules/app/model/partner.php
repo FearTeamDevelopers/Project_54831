@@ -1,6 +1,6 @@
 <?php
 
-use THCFrame\Model\Model as Model;
+use THCFrame\Model\Model;
 
 /**
  * Description of App_Model_Partner
@@ -14,7 +14,7 @@ class App_Model_Partner extends Model
      * @readwrite
      */
     protected $_alias = 'pa';
-    
+
     /**
      * @column
      * @readwrite
@@ -80,7 +80,7 @@ class App_Model_Partner extends Model
      * @type text
      * @length 200
      * 
-     * @validate required, max(200)
+     * @validate max(200)
      * @label logo
      */
     protected $_logo;
@@ -143,12 +143,12 @@ class App_Model_Partner extends Model
     public function getUnlinkLogoPath($type = true)
     {
         if ($type) {
-            if (file_exists($this->_logo)) {
-                return $this->_logo;
+            if (file_exists('./' . $this->_logo)) {
+                return './' . $this->_logo;
             } elseif (file_exists('.' . $this->_logo)) {
                 return '.' . $this->_logo;
-            } elseif (file_exists('./' . $this->_logo)) {
-                return './' . $this->_logo;
+            } elseif (file_exists($this->_logo)) {
+                return $this->_logo;
             }
         } else {
             return $this->_logo;

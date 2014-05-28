@@ -6,9 +6,17 @@ use THCFrame\Core\Inspector as Inspector;
 use THCFrame\Core\ArrayMethods as ArrayMethods;
 use THCFrame\Core\StringMethods as StringMethods;
 use THCFrame\Core\Exception as Exception;
+use THCFrame\Registry\Registry as Registry;
+use THCFrame\Configuration\Model\Config as Config;
 
 /**
  * Description of Base
+ * Base class can create getters/setters simply by adding comments around the
+ * protected properties.
+ * 
+ * In order for us to achieve this sort of thing, we would need to determine the name of the property that must
+ * be read/modified, and also determine whether we are allowed to read/modify it, 
+ * based on the @read/@write/@readwrite flags in the comments.
  *
  * @author Tomy
  */
@@ -20,7 +28,7 @@ class Base
 
     /**
      * 
-     * @param type $property
+     * @param string $property
      * @return \THCFrame\Core\Exception\ReadOnly
      */
     protected function _getReadonlyException($property)
@@ -30,7 +38,7 @@ class Base
 
     /**
      * 
-     * @param type $property
+     * @param string $property
      * @return \THCFrame\Core\Exception\WriteOnly
      */
     protected function _getWriteonlyException($property)
@@ -49,7 +57,7 @@ class Base
 
     /**
      * 
-     * @param type $method
+     * @param string $method
      * @return \THCFrame\Core\Exception\Implementation
      */
     protected function _getImplementationException($method)
@@ -59,7 +67,7 @@ class Base
 
     /**
      * 
-     * @param type $options
+     * @param string $options
      */
     public function __construct($options = array())
     {
@@ -75,9 +83,13 @@ class Base
     }
 
     /**
+     * There are four basic parts to our __call() method: 
+     * checking to see that the inspector is set, 
+     * handling the getProperty() methods, handling the setProperty() methods and 
+     * handling the unsProperty() methods
      * 
-     * @param type $name
-     * @param type $arguments
+     * @param string $name
+     * @param string $arguments
      * @return null|\THCFrame\Core\Base
      * @throws Exception
      * @throws type
@@ -156,9 +168,13 @@ class Base
     }
 
     /**
+     * The __get() method accepts an argument that
+     * represents the name of the property being set.
+     * __get() method then converts this to getProperty, 
+     * which matches the pattern we defined in the __call() method
      * 
-     * @param type $name
-     * @return type
+     * @param string $name
+     * @return mixed
      */
     public function __get($name)
     {
@@ -168,10 +184,14 @@ class Base
     }
 
     /**
+     * The __set() method accepts a second argument, 
+     * which defines the value to be set.
+     * __set() method then converts this to setProperty($value), 
+     * which matches the pattern we defined in the __call() method
      * 
-     * @param type $name
-     * @param type $value
-     * @return type
+     * @param string $name
+     * @param mixed $value
+     * @return mixed
      */
     public function __set($name, $value)
     {
@@ -180,9 +200,13 @@ class Base
     }
 
     /**
+     * The __unset() method accepts an argument that
+     * represents the name of the property being set.
+     * __unset() method then converts this to unsProperty, 
+     * which matches the pattern we defined in the __call() method
      * 
-     * @param type $name
-     * @return type
+     * @param string $name
+     * @return mixed
      */
     public function __unset($name)
     {
@@ -191,37 +215,48 @@ class Base
     }
 
     /**
+     * Method try to load additional configuration from database.
+     * Config table is required
      * 
-     * @param type $key
-     * @return type
+     * @param string $key
+     * @return mixed
      */
     public function loadConfigFromDb($key)
     {
-        try {
-            $conf = \App_Model_Config::first(array('xkey = ?' => $key));
-            return $conf;
-        } catch (\Exception $e) {
-            return null;
+        if (Registry::get('database') instanceof \THCFrame\Database\Connector) {
+            try {
+                $conf = Config::first(array('xkey = ?' => $key));
+                return $conf->getValue();
+            } catch (\Exception $e) {
+                return null;
+            }
+        } else {
+            throw new Exception\Argument('Connection to the database has not been initialized yet');
         }
     }
 
     /**
+     * Method save additional configuration into database
+     * Config table is required
      * 
-     * @param type $key
-     * @param type $value
+     * @param string $key
+     * @param mixed $value
      * @return boolean
      */
     public function saveConfigToDb($key, $value)
     {
-        $conf = \App_Model_Config::first(array('xkey = ?' => $key));
-        $conf->value = $value;
-        var_dump($conf->value);
-        if ($conf->validate()) {
-            $conf->save();
-            return true;
+        if (Registry::get('database') instanceof \THCFrame\Database\Connector) {
+            $conf = Config::first(array('xkey = ?' => $key));
+            $conf->value = $value;
+
+            if ($conf->validate()) {
+                $conf->save();
+                return true;
+            } else {
+                return false;
+            }
         } else {
-            var_dump($conf->getErrors());die;
-            return false;
+            throw new Exception\Argument('Connection to the database has not been initialized yet');
         }
     }
 

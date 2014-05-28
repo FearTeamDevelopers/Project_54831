@@ -496,11 +496,19 @@ class Model extends Base
     public function getTable()
     {
         if (empty($this->_table)) {
-            list($module, $type, $name) = explode('_', get_class($this));
+            $tablePrefix = Registry::get('config')->database->tablePrefix;
 
-            if (strtolower($type) == 'model' && !empty($name)) {
-                $tablePrefix = Registry::get('config')->database->default->tablePrefix;
-                $this->_table = strtolower($tablePrefix . $name);
+            if (strpos(get_class($this), '_') !== false) {
+                list($module, $type, $name) = explode('_', get_class($this));
+                
+                if (strtolower($type) == 'model' && !empty($name)) {
+                    $this->_table = strtolower($tablePrefix . $name);
+                } else {
+                    throw new Exception\Implementation('Model is not valid THCFrame\Model\Model');
+                }
+            } elseif (preg_match('#^thcframe(.*)model(.*)$#i', get_class($this))) {
+                $parts = array_reverse(explode('\\', get_class($this)));
+                $this->_table = strtolower($tablePrefix . $parts[0]);
             } else {
                 throw new Exception\Implementation('Model is not valid THCFrame\Model\Model');
             }

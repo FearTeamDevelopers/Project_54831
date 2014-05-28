@@ -90,6 +90,7 @@ class Controller extends Base
     }
 
     /**
+     * Throw exception if specific method is not implemented
      * 
      * @param type $method
      * @return \THCFrame\Controller\Exception\Implementation
@@ -128,12 +129,12 @@ class Controller extends Base
         $session = Registry::get('session');
         $router = Registry::get('router');
 
-        if (!empty($configuration->view->default)) {
-            $this->defaultExtension = $configuration->view->default->extension;
-            $this->defaultLayout = $configuration->view->default->layout;
-            $this->mobileLayout = $configuration->view->default->mobilelayout;
-            $this->tabletLayout = $configuration->view->default->tabletlayout;
-            $this->defaultPath = $configuration->view->default->path;
+        if (!empty($configuration->view)) {
+            $this->defaultExtension = $configuration->view->extension;
+            $this->defaultLayout = $configuration->view->layout;
+            $this->mobileLayout = $configuration->view->mobilelayout;
+            $this->tabletLayout = $configuration->view->tabletlayout;
+            $this->defaultPath = $configuration->view->path;
         } else {
             throw new \Exception('Error in configuration file');
         }

@@ -1,6 +1,6 @@
 <?php
 
-use THCFrame\Module\Module as Module;
+use THCFrame\Module\Module;
 
 /**
  * Description of Module
@@ -71,10 +71,23 @@ class App_Etc_Module extends Module{
             'action' => 'contact',
         ),
         array(
+            'pattern' => '/feed',
+            'module' => 'app',
+            'controller' => 'index',
+            'action' => 'feed',
+        ),
+        array(
+            'pattern' => '/feed/',
+            'module' => 'app',
+            'controller' => 'index',
+            'action' => 'feed',
+        ),
+        array(
             'pattern' => '/admin',
             'module' => 'admin',
             'controller' => 'index',
             'action' => 'index',
         )
+        
     );
 }

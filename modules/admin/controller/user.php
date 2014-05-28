@@ -1,8 +1,8 @@
 <?php
 
-use Admin\Etc\Controller as Controller;
-use THCFrame\Registry\Registry as Registry;
-use THCFrame\Request\RequestMethods as RequestMethods;
+use Admin\Etc\Controller;
+use THCFrame\Registry\Registry;
+use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
 
 /**
@@ -19,12 +19,11 @@ class Admin_Controller_User extends Controller
     public function login()
     {
         $this->_willRenderLayoutView = false;
+        $view = $this->getActionView();
 
         if (RequestMethods::post('submitLogin')) {
             $email = RequestMethods::post('email');
             $password = RequestMethods::post('password');
-
-            $view = $this->getActionView();
             $error = false;
 
             if (empty($email)) {
@@ -48,7 +47,11 @@ class Admin_Controller_User extends Controller
                         $view->set('account_error', 'Email address and/or password are incorrect');
                     }
                 } catch (\Exception $e) {
-                    $view->set('account_error', 'Login system is down ' . $e->getMessage());
+                    if (ENV == 'dev') {
+                        $view->set('account_error', 'Login system is down ' . $e->getMessage());
+                    } else {
+                        $view->set('account_error', 'Unknown error occured');
+                    }
                 }
             }
         }
@@ -75,9 +78,9 @@ class Admin_Controller_User extends Controller
         $superAdmin = $security->isGranted('role_superadmin');
 
         $users = App_Model_User::all(
-                    array('role <> ?' => 'role_superadmin'), 
-                    array('id', 'firstname', 'lastname', 'email', 'role', 'active', 'created'), 
-                    array('id' => 'asc')
+                        array('role <> ?' => 'role_superadmin'), 
+                        array('id', 'firstname', 'lastname', 'email', 'role', 'active', 'created'), 
+                        array('id' => 'asc')
         );
 
         $view->set('users', $users)
@@ -129,7 +132,7 @@ class Admin_Controller_User extends Controller
             } else {
                 Event::fire('admin.log', array('fail'));
                 $view->set('errors', $errors + $user->getErrors())
-                    ->set('user', $user);
+                        ->set('user', $user);
             }
         }
 

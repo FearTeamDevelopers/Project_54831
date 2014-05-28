@@ -6,7 +6,9 @@ use THCFrame\Cache as Cache;
 use THCFrame\Cache\Exception as Exception;
 
 /**
- * Description of Memcached
+ * Memcached stores data in memory, in hash lookup tables so the data is 
+ * quickly accessible without reading it from disk. Memcached is an open source 
+ * HTTP caching system that can store huge amounts of key/value data.
  *
  * @author Tomy
  */
@@ -36,6 +38,8 @@ class Memcached extends Cache\Driver
     protected $_duration;
 
     /**
+     * Method is used to ensure that the value of the
+     * $_service is a valid Memcached instance
      * 
      * @return boolean
      */
@@ -91,9 +95,9 @@ class Memcached extends Cache\Driver
     /**
      * Get cached values
      * 
-     * @param type $key
-     * @param type $default
-     * @return type
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
      * @throws Exception\Service
      */
     public function get($key, $default = null)
@@ -132,7 +136,7 @@ class Memcached extends Cache\Driver
     /**
      * Erase values from keys
      * 
-     * @param type $key
+     * @param string $key
      * @return \THCFrame\Cache\Driver\Memcached
      * @throws Exception\Service
      */

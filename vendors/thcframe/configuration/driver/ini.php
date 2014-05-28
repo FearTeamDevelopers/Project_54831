@@ -18,8 +18,9 @@ class Ini extends Configuration\Driver
     private $_defaultConfig;
 
     /**
+     * Class constructor
      * 
-     * @param type $options
+     * @param array $options
      */
     public function __construct($options = array())
     {
@@ -44,6 +45,8 @@ class Ini extends Configuration\Driver
     }
 
     /**
+     * Method used to merge configuration of specific environment into 
+     * default configuration.
      * 
      * @return type
      */
@@ -53,8 +56,10 @@ class Ini extends Configuration\Driver
     }
 
     /**
+     * Method is same as parse() method. This one is preparing default
+     * configuration.
      * 
-     * @param type $path
+     * @param string $path
      */
     protected function parseDefaultCofiguration($path)
     {
@@ -85,11 +90,15 @@ class Ini extends Configuration\Driver
     }
 
     /**
+     * The _pair() method deconstructs the dot notation, used in the configuration file’s keys, 
+     * into an associative array hierarchy. If the $key variable contains a dot character (.),
+     * the first part will be sliced off, used to create a new array, and 
+     * assigned the value of another call to _pair().
      * 
-     * @param type $config
+     * @param array $config
      * @param type $key
-     * @param type $value
-     * @return type
+     * @param mixed $value
+     * @return array
      */
     protected function _pair($config, $key, $value)
     {
@@ -109,9 +118,19 @@ class Ini extends Configuration\Driver
     }
 
     /**
+     * Method checks to see that the $path argument is not empty, 
+     * throwing a ConfigurationExceptionArgument exception if it is. 
+     * Next, it checks to see if the requested configuration 
+     * file has not already been parsed, and if it has it jumps right to where it
+     * returns the configuration.
+     * 
+     * Method loop through the associative array returned by parse_ini_string, 
+     * generating the correct hierarchy (using the _pair() method), 
+     * finally converting the associative array to an object and caching/returning the configuration
+     * file data.
      * 
      * @param type $path
-     * @return type
+     * @return object
      * @throws Exception\Argument
      * @throws Exception\Syntax
      */
@@ -146,7 +165,7 @@ class Ini extends Configuration\Driver
         $configObject = ArrayMethods::toObject($merged);
 
         Registry::set('config', $configObject);
-        Registry::set('dateformat', $configObject->system->default->dateformat);
+        Registry::set('dateformat', $configObject->system->dateformat);
 
         return $configObject;
     }

@@ -1,6 +1,6 @@
 <?php
 
-use THCFrame\Model\Model as Model;
+use THCFrame\Model\Model;
 
 /**
  * Description of App_Model_Newsarchive
@@ -69,6 +69,17 @@ class App_Model_Newsarchive extends Model
      * @label short text
      */
     protected $_shortBody;
+    
+    /**
+     * @column
+     * @readwrite
+     * @type text
+     * @length 256
+     * 
+     * @validate required, alphanumeric, max(2048)
+     * @label Rss feed text
+     */
+    protected $_rssFeedBody;
 
     /**
      * @column

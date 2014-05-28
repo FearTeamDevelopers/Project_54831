@@ -1,7 +1,7 @@
 <?php
 
-use Admin\Etc\Controller as Controller;
-use THCFrame\Request\RequestMethods as RequestMethods;
+use Admin\Etc\Controller;
+use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
 use THCFrame\Core\StringMethods;
 
@@ -75,6 +75,7 @@ class Admin_Controller_News extends Controller
                 'author' => RequestMethods::post('author'),
                 'urlKey' => $urlKey,
                 'shortBody' => RequestMethods::post('shorttext'),
+                'rssFeedBody' => RequestMethods::post('feedtext', ''),
                 'body' => RequestMethods::post('text'),
                 'expirationDate' => RequestMethods::post('expiration')
             ));
@@ -122,6 +123,7 @@ class Admin_Controller_News extends Controller
             $news->expirationDate = RequestMethods::post('expiration');
             $news->body = RequestMethods::post('text');
             $news->shortBody = RequestMethods::post('shorttext');
+            $news->rssFeedBody = RequestMethods::post('feedtext', '');
             $news->active = RequestMethods::post('active');
 
             if ($news->validate()) {

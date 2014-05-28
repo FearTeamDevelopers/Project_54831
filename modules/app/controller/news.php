@@ -1,6 +1,6 @@
 <?php
 
-use App\Etc\Controller as Controller;
+use App\Etc\Controller;
 
 /**
  * Description of IndexController
@@ -66,10 +66,15 @@ class App_Controller_News extends Controller
      */
     public function index($page = 1)
     {
-        $this->willRenderLayoutView = false;
-        $this->willRenderActionView = true;
-
         $view = $this->getActionView();
+        
+        if($view->getHttpReferer() === null){
+            $this->willRenderLayoutView = true;
+        }else{
+            $this->willRenderLayoutView = false;
+        }
+        
+        $this->willRenderActionView = true;
 
         $news = App_Model_News::all(
                     array('active = ?' => true), 
@@ -104,10 +109,18 @@ class App_Controller_News extends Controller
      */
     public function detail($title)
     {
-        $this->willRenderLayoutView = false;
-        $this->willRenderActionView = true;
-
         $view = $this->getActionView();
+        
+        if($view->getHttpReferer() === null){
+            $this->willRenderLayoutView = true;
+            $layoutView = $this->getLayoutView();
+            $layoutView->set('hidetop', true)
+                    ->set('shownd', true);
+        }else{
+            $this->willRenderLayoutView = false;
+        }
+        
+        $this->willRenderActionView = true;
 
         $news = App_Model_News::first(
                         array(

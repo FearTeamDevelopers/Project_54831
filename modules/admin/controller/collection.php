@@ -1,10 +1,10 @@
 <?php
 
-use Admin\Etc\Controller as Controller;
-use THCFrame\Filesystem\ImageManager as ImageManager;
-use THCFrame\Request\RequestMethods as RequestMethods;
+use Admin\Etc\Controller;
+use THCFrame\Filesystem\ImageManager;
+use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
-use THCFrame\Core\ArrayMethods as ArrayMethods;
+use THCFrame\Core\ArrayMethods;
 
 /**
  * 
@@ -228,7 +228,12 @@ class Admin_Controller_Collection extends Controller
             $errors = array();
             try {
                 $uploadTo = 'collections/' . $id;
-                $im = new ImageManager();
+                $im = new ImageManager(array(
+                    'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
+                    'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
+                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby')
+                ));
+                
                 $photoArr = $im->upload('photo', $uploadTo);
                 $uploaded = ArrayMethods::toObject($photoArr);
             } catch (Exception $ex) {
@@ -272,7 +277,12 @@ class Admin_Controller_Collection extends Controller
             $errors = array();
             try {
                 $uploadTo = 'collections/' . $id;
-                $im = new ImageManager();
+                $im = new ImageManager(array(
+                    'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
+                    'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
+                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby')
+                ));
+                
                 $result = $im->upload('photos', $uploadTo);
             } catch (Exception $ex) {
                 $errors['photo'] = $ex->getMessage();

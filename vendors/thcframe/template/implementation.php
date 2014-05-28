@@ -8,6 +8,10 @@ use THCFrame\Template\Exception as Exception;
 
 /**
  * Description of Implementation
+ * In order for our template parser to remain flexible, the structure of our 
+ * template dialect needs to be in a separate class to the parser. 
+ * This allows us to swap out different implementation classes for the same parser. 
+ * All of our implementation classes should also inherit from a base implementation class.
  *
  * @author Tomy
  */
@@ -15,9 +19,11 @@ class Implementation extends Base
 {
 
     /**
+     * The _handler() method takes a $node array and 
+     * determines the correct handler method to execute
      * 
-     * @param type $node
-     * @return null
+     * @param array $node
+     * @return mixed
      */
     protected function _handler($node)
     {
@@ -33,10 +39,13 @@ class Implementation extends Base
     }
 
     /**
+     * The handle() method uses the _handler() method to get the correct handler 
+     * method, and executes it, throwing a Exception\Implementation exception if 
+     * there was a problem executing the statement’s handler
      * 
-     * @param type $node
-     * @param type $content
-     * @return type
+     * @param string $node
+     * @param mixed $content
+     * @return mixed
      * @throws Exception\Implementation
      */
     public function handle($node, $content)
@@ -50,9 +59,11 @@ class Implementation extends Base
     }
 
     /**
+     * The match() method evaluates a $source string to 
+     * determine if it matches a tag or statement
      * 
-     * @param type $source
-     * @return null
+     * @param mixed $source
+     * @return mixed
      */
     public function match($source)
     {

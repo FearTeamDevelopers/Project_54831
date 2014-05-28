@@ -3,7 +3,7 @@
 namespace Cron\Etc;
 
 use THCFrame\Events\Events as Events;
-use THCFrame\Registry\Registry as Registry;
+use THCFrame\Registry\Registry;
 use THCFrame\Controller\Controller as BaseController;
 
 /**

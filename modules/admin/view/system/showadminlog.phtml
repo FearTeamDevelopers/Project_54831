@@ -1,5 +1,6 @@
 <ul class="maintabmenu multipletabmenu">
     <li><a href="/admin/system/">Main</a></li>
+    <li><a href="/admin/system/settings/">Settings</a></li>
     <li class="current"><a href="#">Admin log</a></li>
 </ul><!--maintabmenu-->
 
@@ -33,10 +34,10 @@
                 <td>{echo $_log->created}</td><td>{echo $_log->firstname} {echo $_log->lastname}</td>
                 <td>
                     {if $_log->role == 'role_superadmin'}
-                        role_admin
+                    role_admin
                     {/if}
                     {else}
-                        {echo $_log->role}
+                    {echo $_log->role}
                     {/else}
                 </td>
 

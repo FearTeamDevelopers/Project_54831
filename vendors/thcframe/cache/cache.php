@@ -26,7 +26,7 @@ class Cache extends Base
     protected $_options;
 
     /**
-     * Throw exception if specific method is no implemented
+     * Throw exception if specific method is not implemented
      * 
      * @param string $method
      * @return \THCFrame\Cache\Exception\Implementation
@@ -51,10 +51,10 @@ class Cache extends Base
         if (!$this->type) {
             $configuration = Registry::get('config');
 
-            if (!empty($configuration->cache->default) && !empty($configuration->cache->default->type)) {
-                $this->type = $configuration->cache->default->type;
-                unset($configuration->cache->default->type);
-                $this->options = (array) $configuration->cache->default;
+            if (!empty($configuration->cache) && !empty($configuration->cache->type)) {
+                $this->type = $configuration->cache->type;
+                unset($configuration->cache->type);
+                $this->options = (array) $configuration->cache;
             } else {
                 throw new \Exception('Error in configuration file');
             }

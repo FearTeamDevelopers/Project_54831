@@ -31,17 +31,17 @@ class ImageManager extends Base
     protected $_pathToThumbs;
 
     /**
-     * @read
+     * @readwrite
      */
     protected $_thumbWidth;
 
     /**
-     * @read
+     * @readwrite
      */
     protected $_thumbHeight;
 
     /**
-     * @read
+     * @readwrite
      */
     protected $_thumbResizeBy;
 
@@ -53,22 +53,19 @@ class ImageManager extends Base
     /**
      * 
      */
-    public function __construct()
+    public function __construct($options = array())
     {
+        parent::__construct($options);
         $configuration = Registry::get('config');
 
-        if (!empty($configuration->files->default)) {
-            $this->_pathToImages = $configuration->files->default->pathToImages;
-            $this->_pathToThumbs = $configuration->files->default->pathToThumbs;
-            $this->_thumbWidth = $configuration->files->default->thumbWidth;
-            $this->_thumbHeight = $configuration->files->default->thumbHeight;
-            $this->_thumbResizeBy = $configuration->files->default->thumbResizeBy;
+        if (!empty($configuration->files)) {
+            $this->_pathToImages = $configuration->files->pathToImages;
+            $this->_pathToThumbs = $configuration->files->pathToThumbs;
         } else {
             throw new \Exception('Error in configuration file');
         }
 
         $this->_fileManager = new FileManager();
-        parent::__construct();
     }
 
     /**
@@ -213,6 +210,116 @@ class ImageManager extends Base
         }
     }
 
+    /**
+     * 
+     * @param type $postField
+     * @param type $namePrefix
+     */
+    public function uploadWithoutThumb($postField, $uploadto, $namePrefix = '')
+    {
+        $path = $this->getPathToImages() . $uploadto . '/';
+
+        if (!is_dir('.' . $path)) {
+            $this->fileManager->mkdir('.' . $path, 0666, true);
+        }
+
+        if (is_array($_FILES[$postField]['tmp_name'])) {
+            $returnArray = array('photos' => array(), 'errors' => array());
+
+            foreach ($_FILES[$postField]['name'] as $i => $name) {
+                if (is_uploaded_file($_FILES[$postField]['tmp_name'][$i])) {
+                    $size = $_FILES[$postField]['size'][$i];
+                    $extension = pathinfo($_FILES[$postField]['name'][$i], PATHINFO_EXTENSION);
+                    $filename = StringMethods::removeDiacriticalMarks(
+                                    str_replace(' ', '_', pathinfo($_FILES[$postField]['name'][$i], PATHINFO_FILENAME)
+                                    )
+                    );
+
+                    if ($size > 5000000) {
+                        $returnArray['errors'][] = sprintf('Your file %s size exceeds the maximum size limit', $filename);
+                        continue;
+                    } else {
+                        if (!in_array($extension, $this->_imageExtensions)) {
+                            $returnArray['errors'][] = sprintf('%s Images can only be with jpg, jpeg, png or gif extension', $filename);
+                            continue;
+                        } else {
+                            if (strlen($filename) > 50) {
+                                $filename = substr($filename, 0, 50);
+                            }
+
+                            $imageName = $filename . '.' . $extension;
+                            $imageLocName = $path . $namePrefix . $imageName;
+
+                            if (file_exists('.' . $imageLocName)) {
+                                $this->backup('.' . $imageLocName);
+                            }
+
+                            $copy = move_uploaded_file($_FILES[$postField]['tmp_name'][$i], '.' . $imageLocName);
+
+                            if (!$copy) {
+                                $returnArray['errors'][] = sprintf('Error while uploading image %s. Try again.', $filename);
+                                continue;
+                            } else {
+                                $img = new Image('.' . $imageLocName);
+                                $returnArray['photos'][$i]['photo'] = $img->getDataForDb();
+                               
+                                unset($img);
+                            }
+                        }
+                    }
+                } else {
+                    $i += 1;
+                    $returnArray['errors'][] = sprintf("Source %s cannot be empty", $i);
+                    continue;
+                }
+            }
+
+            return $returnArray;
+        } else {
+            if (is_uploaded_file($_FILES[$postField]['tmp_name'])) {
+                $size = $_FILES[$postField]['size'];
+                $extension = pathinfo($_FILES[$postField]['name'], PATHINFO_EXTENSION);
+                $filename = StringMethods::removeDiacriticalMarks(
+                                str_replace(' ', '_', pathinfo($_FILES[$postField]['name'], PATHINFO_FILENAME)
+                                )
+                );
+
+                if ($size > 5000000) {
+                    throw new Exception(sprintf('Your file %s size exceeds the maximum size limit', $filename));
+                } else {
+                    if (!in_array($extension, $this->_imageExtensions)) {
+                        throw new Exception(sprintf('%s Images can only be with jpg, jpeg, png or gif extension', $filename));
+                    } else {
+                        if (strlen($filename) > 50) {
+                            $filename = substr($filename, 0, 50);
+                        }
+
+                        $imageName = $filename . '.' . $extension;
+                        $imageLocName = $path . $namePrefix . $imageName;
+
+                        if (file_exists('.' . $imageLocName)) {
+                            $this->backup('.' . $imageLocName);
+                        }
+
+                        $copy = move_uploaded_file($_FILES[$postField]['tmp_name'], '.' . $imageLocName);
+
+                        if (!$copy) {
+                            throw new Exception(sprintf('Error while uploading image %s. Try again.', $filename));
+                        } else {
+                            $img = new Image('.' . $imageLocName);
+                            $returnArray['photo'] = $img->getDataForDb();
+                        
+                            unset($img);
+                            return $returnArray;
+                        }
+                    }
+                }
+            } else {
+                throw new Exception('Source cannot be empty');
+            }
+        }
+    }
+    
     /**
      * 
      * @param type $file

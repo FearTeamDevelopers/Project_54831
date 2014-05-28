@@ -32,7 +32,9 @@
                         <input type="text" name="description" class="longinput" 
                                value="{echo isset($photo)? $photo->description: ""}"/>
                         {if isset($errors["description"])}
-                            <label class="error">{echo join("<br/>", $errors["description"])}</label>
+                            <label class="error">
+                                {echo join("<br/>", $errors["description"])}
+                            </label>
                         {/if}
                     </span>
                 </p>
@@ -42,7 +44,9 @@
                         <input type="text" name="category" class="longinput" 
                                value="{echo isset($photo)? $photo->category: ""}"/>
                         {if isset($errors["category"])}
-                            <label class="error">{echo join("<br/>", $errors["category"])}</label>
+                            <label class="error">
+                                {echo join("<br/>", $errors["category"])}
+                            </label>
                         {/if}
                     </span>
                 </p>
@@ -116,7 +120,9 @@
                     <span class="field">
                         <input type="text" name="description" class="longinput" value=""/>
                         {if isset($errors["description"])}
-                            <label class="error">{echo join("<br/>", $errors["description"])}</label>
+                            <label class="error">
+                                {echo join("<br/>", $errors["description"])}
+                            </label>
                         {/if}
                     </span>
                 </p>
@@ -125,7 +131,9 @@
                     <span class="field">
                         <input type="text" name="category" class="longinput" value=""/>
                         {if isset($errors["category"])}
-                            <label class="error">{echo join("<br/>", $errors["category"])}</label>
+                            <label class="error">
+                                {echo join("<br/>", $errors["category"])}
+                            </label>
                         {/if}
                     </span>
                 </p>

@@ -64,6 +64,8 @@ class Core
             'THCFrame\Module\Exception\Multiload',
             'THCFrame\Module\Exception\Implementation',
             'THCFrame\Module\Exception',
+            'THCFrame\Profiler\Exception',
+            'THCFrame\Profiler\Exception\Disabled',
             'THCFrame\Request\Exception',
             'THCFrame\Request\Exception\Argument',
             'THCFrame\Request\Exception\Implementation',
@@ -71,6 +73,9 @@ class Core
             'THCFrame\Router\Exception',
             'THCFrame\Router\Exception\Argument',
             'THCFrame\Router\Exception\Implementation',
+            'THCFrame\Rss\Exception',
+            'THCFrame\Rss\Exception\InvalidDetail',
+            'THCFrame\Rss\Exception\InvalidItem',
             'THCFrame\Security\Exception',
             'THCFrame\Security\Exception\Implementation',
             'THCFrame\Security\Exception\HashAlgorithm',
@@ -219,6 +224,19 @@ class Core
             } elseif (file_exists($path) && filesize($path) > 10000000) {
                 file_put_contents($path, $messageE);
             }
+        }
+    }
+
+    /**
+     * 
+     * @return string
+     */
+    public static function generateSecret()
+    {
+        if (ENV == 'dev') {
+            return substr(rtrim(base64_encode(md5(microtime())), "="), 5, 25);
+        } else {
+            return 'Function is not allowed in this environment';
         }
     }
 
@@ -477,7 +495,7 @@ class Core
             //dispatcher
             $dispatcher = new \THCFrame\Router\Dispatcher();
             Registry::set('dispatcher', $dispatcher->initialize());
-            
+
             $dispatcher->dispatch($router->getLastRoute());
 
             unset($router);

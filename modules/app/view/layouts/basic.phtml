@@ -26,7 +26,7 @@
     </head>
     <body lang="cs">
         <div id="page">
-            <div id="temptopdiv"></div>
+            {if !$hidetop}<div id="temptopdiv"></div>{/if}
             <div id="navi">
                 <ul>
                     <li id="navi_news"><a href="#"><h1>Novinky</h1></a></li>
@@ -45,29 +45,29 @@
                     <div class="content"></div>
                 </div>
 
-                <div id="news-detail" class="nodisplay">
+                <div id="news-detail" {if !$shownd} class="nodisplay" {/if}>
                     <a href="#" class="close">Zavřít</a>
-                    <div class="content"></div>
+                    <div class="content">{if $shownd}{yield action}{/if}</div>
                 </div>
 
-                <div id="bio" class="nodisplay">
+                <div id="bio" {if !$showbio} class="nodisplay" {/if}>
                     <a href="#" class="close">Zavřít</a>       
-                    <div class="content"></div>
+                    <div class="content">{if $showbio}{yield action}{/if}</div>
                 </div>
 
-                <div id="design" class="nodisplay">
+                <div id="design" {if !$showdesign} class="nodisplay" {/if}>
                     <a href="#" class="close">Zavřít</a>
-                    <div class="content"></div>
+                    <div class="content">{if $showdesign}{yield action}{/if}</div>
                 </div>
 
-                <div id="styling" class="nodisplay">
+                <div id="styling" {if !$showstyling} class="nodisplay" {/if}>
                     <a href="#" class="close">Zavřít</a>       
-                    <div class="content"></div>
+                    <div class="content">{if $showstyling}{yield action}{/if}</div>
                 </div>
 
-                <div id="contact" class="nodisplay">
+                <div id="contact" {if !$showcontact} class="nodisplay" {/if}>
                     <a href="#" class="close">Zavřít</a>
-                    <div class="content"></div>
+                    <div class="content">{if $showcontact}{yield action}{/if}</div>
                 </div>
 
                 <div id="portfolio" class="nodisplay">
@@ -80,9 +80,9 @@
                     <div class="content"></div>
                 </div>
 
-                <div id="partners" class="nodisplay">
+                <div id="partners" {if !$showpartners} class="nodisplay" {/if}>
                     <a href="#" class="close">Zavřít</a>
-                    <div class="content"></div>
+                    <div class="content">{if $showpartners}{yield action}{/if}</div>
                 </div>
             </div>
 

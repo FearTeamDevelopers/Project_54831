@@ -26,8 +26,9 @@ class Configuration extends Base
     protected $_options;
 
     /**
+     * Throw exception if specific method is not implemented
      * 
-     * @param type $method
+     * @param string $method
      * @return \THCFrame\Configuration\Exception\Implementation
      */
     protected function _getImplementationException($method)
@@ -36,6 +37,9 @@ class Configuration extends Base
     }
 
     /**
+     * Factory method
+     * It accepts initialization options and selects the type of returned object, 
+     * based on the internal $_type property.
      * 
      * @return \THCFrame\Configuration\Configuration\Driver\Ini
      * @throws Exception\Argument

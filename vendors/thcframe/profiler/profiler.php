@@ -20,22 +20,36 @@ class Profiler
     private $_logging;
     private $_winos;
 
+    /**
+     * 
+     */
     private function __clone()
     {
         
     }
 
+    /**
+     * 
+     */
     private function __wakeup()
     {
         
     }
 
+    /**
+     * 
+     * @param type $size
+     * @return type
+     */
     private function convert($size)
     {
         $unit = array('b', 'kb', 'mb', 'gb');
         return @round($size / pow(1024, ($i = floor(log($size, 1024)))), 2) . ' ' . $unit[$i];
     }
 
+    /**
+     * 
+     */
     private function _createProfilerTable()
     {
         if (self::$_profilerTableCreated === null) {
@@ -73,8 +87,8 @@ class Profiler
         $this->_database = Registry::get('database')->connect();
 
         $configuration = Registry::get('config');
-        $this->_enabled = (bool) $configuration->profiler->default->active;
-        $this->_logging = $configuration->profiler->default->logging;
+        $this->_enabled = (bool) $configuration->profiler->active;
+        $this->_logging = $configuration->profiler->logging;
 
         if ($this->_enabled) {
             if (strtolower($this->_logging) === 'database') {
@@ -117,18 +131,27 @@ class Profiler
             if (!$this->_winos) {
                 $this->_data[$identifier]['startRusage'] = getrusage();
             }
-        }else{
+        } else {
             return;
         }
     }
 
-    public function pause(){
+    /**
+     * 
+     */
+    public function pause()
+    {
         
     }
-    
-    public function unpause(){
+
+    /**
+     * 
+     */
+    public function unpause()
+    {
         
     }
+
     /**
      * 
      * @param type $identifier
@@ -177,7 +200,7 @@ class Profiler
                 \THCFrame\Core\Core::log($str, 'profiler.log', true);
             }
             unset($this->_data[$identifier]);
-        }else{
+        } else {
             return;
         }
     }

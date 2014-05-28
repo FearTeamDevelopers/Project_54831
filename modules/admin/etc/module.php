@@ -1,6 +1,6 @@
 <?php
 
-use THCFrame\Module\Module as Module;
+use THCFrame\Module\Module;
 
 /**
  * Description of Module

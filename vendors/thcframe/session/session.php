@@ -47,10 +47,10 @@ class Session extends Base
         if (!$this->type) {
             $configuration = Registry::get('config');
 
-            if (!empty($configuration->session->default) && !empty($configuration->session->default->type)) {
-                $this->type = $configuration->session->default->type;
-                unset($configuration->session->default->type);
-                $this->options = (array) $configuration->session->default;
+            if (!empty($configuration->session) && !empty($configuration->session->type)) {
+                $this->type = $configuration->session->type;
+                unset($configuration->session->type);
+                $this->options = (array) $configuration->session;
             } else {
                 throw new \Exception('Error in configuration file');
             }

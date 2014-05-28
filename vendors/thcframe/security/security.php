@@ -55,6 +55,12 @@ class Security extends Base
     protected $_user = null;
 
     /**
+     * @read
+     * @var type 
+     */
+    protected $_secret;
+
+    /**
      * 
      * @param type $method
      * @return \THCFrame\Security\Exception\Implementation
@@ -73,11 +79,12 @@ class Security extends Base
 
         $configuration = Registry::get('config');
 
-        if (!empty($configuration->security->default)) {
-            $rolesOptions = (array) $configuration->security->default->roles;
-            $this->_loginCredentials = $configuration->security->default->loginCredentials;
-            $this->_passwordEncoder = $configuration->security->default->encoder;
-            $this->_accessControl = $configuration->security->default->accessControl;
+        if (!empty($configuration->security)) {
+            $rolesOptions = (array) $configuration->security->roles;
+            $this->_loginCredentials = $configuration->security->loginCredentials;
+            $this->_passwordEncoder = $configuration->security->encoder;
+            $this->_accessControl = $configuration->security->accessControl;
+            $this->_secret = $configuration->security->secret;
         } else {
             throw new \Exception('Error in configuration file');
         }
@@ -148,8 +155,8 @@ class Security extends Base
      */
     public function getHash($value)
     {
-        $salt = 'PIqC792XES6mbRoUpD0TFiej5';
-        
+        $salt = $this->getSecret();
+
         if ($value == '') {
             return '';
         } else {

@@ -1,6 +1,6 @@
 <?php
 
-use THCFrame\Model\Model as Model;
+use THCFrame\Model\Model;
 
 /**
  * Description of CollectionPhotoModel

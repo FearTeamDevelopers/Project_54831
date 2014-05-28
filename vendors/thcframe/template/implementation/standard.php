@@ -13,6 +13,14 @@ use THCFrame\Core\StringMethods as StringMethods;
 class Standard extends Template\Implementation
 {
 
+    /**
+     * Grammar/language map
+     * It is a list of language tags for our template dialect, so that the 
+     * parser can know what the different types of template tags are, 
+     * and how to parse them
+     * 
+     * @var type 
+     */
     protected $_map = array(
         "echo" => array(
             "opener" => "{echo",
@@ -68,10 +76,12 @@ class Standard extends Template\Implementation
     );
 
     /**
+     * The _echo() method converts the string “{echo $hello}” to “$_text[] = $hello”, 
+     * so that it is already optimized for our final evaluated function
      * 
-     * @param type $tree
+     * @param array $tree
      * @param type $content
-     * @return type
+     * @return array
      */
     protected function _echo($tree, $content)
     {
@@ -80,10 +90,11 @@ class Standard extends Template\Implementation
     }
 
     /**
+     * The _script() method converts the string “{:$foo + = 1}” to “$foo + = 1”
      * 
-     * @param type $tree
+     * @param array $tree
      * @param type $content
-     * @return type
+     * @return mixed
      */
     protected function _script($tree, $content)
     {
@@ -92,10 +103,11 @@ class Standard extends Template\Implementation
     }
 
     /**
+     * The _each() method returns the code to perform a foreach loop through an array
      * 
-     * @param type $tree
+     * @param array $tree
      * @param type $content
-     * @return type
+     * @return mixed
      */
     protected function _each($tree, $content)
     {
@@ -108,10 +120,11 @@ class Standard extends Template\Implementation
     }
 
     /**
+     * The _for() method produces the code to perform a for loop through an array
      * 
-     * @param type $tree
+     * @param array $tree
      * @param type $content
-     * @return type
+     * @return mixed
      */
     protected function _for($tree, $content)
     {
@@ -126,9 +139,9 @@ class Standard extends Template\Implementation
 
     /**
      * 
-     * @param type $tree
+     * @param array $tree
      * @param type $content
-     * @return type
+     * @return mixed
      */
     protected function _if($tree, $content)
     {
@@ -138,9 +151,9 @@ class Standard extends Template\Implementation
 
     /**
      * 
-     * @param type $tree
+     * @param array $tree
      * @param type $content
-     * @return type
+     * @return mixed
      */
     protected function _elif($tree, $content)
     {
@@ -150,9 +163,9 @@ class Standard extends Template\Implementation
 
     /**
      * 
-     * @param type $tree
+     * @param array $tree
      * @param type $content
-     * @return type
+     * @return mixed
      */
     protected function _else($tree, $content)
     {
@@ -160,10 +173,14 @@ class Standard extends Template\Implementation
     }
 
     /**
+     * The _macro() method creates the string representation of a function, 
+     * based on the contents of a {macro...}...{/macro} tag set. 
+     * It is possible, using the {macro} tag, to define functions, 
+     * which we then use within our templates
      * 
-     * @param type $tree
+     * @param array $tree
      * @param type $content
-     * @return type
+     * @return mixed
      */
     protected function _macro($tree, $content)
     {
@@ -179,10 +196,11 @@ class Standard extends Template\Implementation
     }
 
     /**
+     * The _literal() method directly quotes any content within it
      * 
-     * @param type $tree
+     * @param array $tree
      * @param type $content
-     * @return type
+     * @return mixed
      */
     protected function _literal($tree, $content)
     {
@@ -192,9 +210,9 @@ class Standard extends Template\Implementation
 
     /**
      * 
-     * @param type $tree
+     * @param array $tree
      * @param type $inner
-     * @return type
+     * @return mixed
      */
     protected function _loop($tree, $inner)
     {

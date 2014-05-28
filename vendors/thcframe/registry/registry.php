@@ -4,7 +4,10 @@ namespace THCFrame\Registry;
 
 /**
  * Description of Registry
- *
+ * Registry is a Singleton, used to store instance of other 'normal' classes.
+ * Instances of non-Singleton classes are given a key (identifier) and 
+ * are 'kept' inside the Registry’s private storage
+ * 
  * @author Tomy
  */
 class Registry
@@ -23,10 +26,13 @@ class Registry
     }
 
     /**
+     * The get() method searches the private storage for an 
+     * instance with a matching key. If it finds an instance, it will 
+     * return it, or default to the value supplied with the $default parameter
      * 
-     * @param type $key
-     * @param type $default
-     * @return type
+     * @param string $key
+     * @param mixed $default
+     * @return mixed
      */
     public static function get($key, $default = null)
     {
@@ -37,9 +43,11 @@ class Registry
     }
 
     /**
+     * The set() method is used to “store” an instance with a specified 
+     * key in the registry’s private storage.
      * 
-     * @param type $key
-     * @param type $instance
+     * @param string $key
+     * @param mixed $instance
      */
     public static function set($key, $instance = null)
     {
@@ -47,8 +55,9 @@ class Registry
     }
 
     /**
+     * The erase() method is useful for removing an instance at a certain key
      * 
-     * @param type $key
+     * @param string $key
      */
     public static function erase($key)
     {
