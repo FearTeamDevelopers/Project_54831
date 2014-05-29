@@ -34,7 +34,9 @@
                         <td>{echo substr($anc->getBody(), 0, 60) . "..."}</td>
                     <td>
                         <a href="/admin/announcement/edit/{echo $anc->getId()}" class="btn btn3 btn_pencil" title="Edit"></a> 
+                        {if $isAdmin}
                         <a href="/admin/announcement/delete/{echo $anc->getId()}" class="btn btn3 btn_trash deleteRow" title="Delete"></a>
+                        {/if}
                     </td>
                     </tr>
                 {/foreach}

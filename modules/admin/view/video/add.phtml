@@ -7,7 +7,7 @@
     <div class="contenttitle"><h2 class="form"><span>Video Informations</span></h2></div><br />
     <form class="stdform stdform2" method="post" action="#">
         <p>
-            <label>Title</label>
+            <label>Title*</label>
             <span class="field">
                 <input type="text" name="title" class="longinput" value="{echo isset($video)? $video->title: ""}"/>
                 {if isset($errors["title"])}
@@ -16,7 +16,7 @@
             </span>
         </p>
         <p>
-            <label>URL</label>
+            <label>URL*</label>
             <span class="field">
                 <input type="text" name="path" class="longinput" value="{echo isset($video)? $video->path: ""}"/>
                 {if isset($errors["path"])}
@@ -43,16 +43,15 @@
             </span>
         </p>
         <p>
-            <label>Section</label>
+            <label>Section*</label>
             <span class="field">
                 {foreach $section in $sections}
-                    <span class="labeled-checkbox">
-                        <input type="checkbox" name="sections[]" value="{echo $section->id}">
-                            {echo ucfirst($section->title)}
-                    </span>
+                <span class="labeled-checkbox">
+                    <input type="checkbox" name="sections[]" value="{echo $section->id}">{echo ucfirst($section->title)}
+                </span>
                 {/foreach}
                 {if isset($errors["sections"])}
-                    <label class="error">{echo join("<br/>", $errors["sections"])}</label>
+                <label class="error">{echo join("<br/>", $errors["sections"])}</label>
                 {/if}
             </span>
         </p>

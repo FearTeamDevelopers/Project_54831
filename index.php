@@ -1,10 +1,14 @@
 <?php
 
-define('ENV', 'dev');
-//define('ENV', 'qa');
-//define('ENV', 'live');
+if(preg_match('#^.*\.dev$#i',$_SERVER['SERVER_NAME'])){
+    defined('ENV')? null : define('ENV', 'dev');
+}elseif(preg_match('#^.*\.fear-team\.cz$#i', $_SERVER['SERVER_NAME'])){
+    defined('ENV')? null : define('ENV', 'qa');
+}else{
+    defined('ENV')? null : define('ENV', 'live');
+}
 
-define('APP_PATH', __DIR__);
+defined('APP_PATH')? null : define('APP_PATH', __DIR__);
 
 if (ENV == 'dev') {
     error_reporting(E_ALL || E_STRICT);

@@ -72,7 +72,7 @@ class Admin_Controller_News extends Controller
 
             $news = new App_Model_News(array(
                 'title' => RequestMethods::post('title'),
-                'author' => RequestMethods::post('author'),
+                'author' => RequestMethods::post('author', $this->getUser()->getWholeName()),
                 'urlKey' => $urlKey,
                 'shortBody' => RequestMethods::post('shorttext'),
                 'rssFeedBody' => RequestMethods::post('feedtext', ''),
@@ -119,7 +119,7 @@ class Admin_Controller_News extends Controller
 
             $news->title = RequestMethods::post('title');
             $news->urlKey = $urlKey;
-            $news->author = RequestMethods::post('author');
+            $news->author = RequestMethods::post('author', $this->getUser()->getWholeName());
             $news->expirationDate = RequestMethods::post('expiration');
             $news->body = RequestMethods::post('text');
             $news->shortBody = RequestMethods::post('shorttext');

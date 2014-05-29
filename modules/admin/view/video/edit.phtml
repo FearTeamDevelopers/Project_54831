@@ -48,13 +48,12 @@
             <span class="field">
                 {foreach $section in $sections}
                     {script $s = ""}
-                    {if in_array($section->title, $video->inSections)}
-                        {script $s = "checked=\"checked\""}
-                    {/if}
-                    <span class="labeled-checkbox">
-                        <input type="checkbox" name="sections[]" {echo $s} value="{echo $section->id}">
-                        {echo ucfirst($section->title)}
-                    </span>
+                        {if in_array($section->title, $video->inSections)}
+                            {script $s = "checked=\"checked\""}
+                        {/if}
+                <span class="labeled-checkbox">
+                    <input type="checkbox" name="sections[]" {echo $s} value="{echo $section->id}">{echo ucfirst($section->title)}
+                </span>
                 {/foreach}
                 {if isset($errors["sections"])}
                 <label class="error">{echo join("<br/>", $errors["sections"])}</label>
@@ -81,12 +80,12 @@
             <span class="field">
                 <select name="priority" >
                     {for $i=0 $i<6 $i++}
-                        {if $i == $video->priority}
-                            <option value="$i" selected="selected">{echo $i}</option>
-                        {/if}
-                        {else}
-                            <option value="$i">{echo $i}</option>
-                        {/else}
+                    {if $i == $video->priority}
+                    <option value="$i" selected="selected">{echo $i}</option>
+                    {/if}
+                    {else}
+                    <option value="$i">{echo $i}</option>
+                    {/else}
                     {/for}
                 </select>
             </span>

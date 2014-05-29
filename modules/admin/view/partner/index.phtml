@@ -56,12 +56,14 @@
                             <td>{echo $partner->getCreated()}</td>
                             <td>
                                 <a href="/admin/partner/edit/{echo $partner->getId()}" class="btn btn3 btn_pencil" title="Edit"></a>
-                                <a href="/admin/partner/delete/{echo $partner->getId()}" class="btn btn3 btn_trash" title="Delete"></a></td>
+                                {if $isAdmin}<a href="/admin/partner/delete/{echo $partner->getId()}" class="btn btn3 btn_trash" title="Delete"></a>{/if}
+                            </td>
                         </tr>
                     {/foreach}
                 {/if}
             </tbody>
         </table>
+        {if $isAdmin}
         <div class="tableoptions">
             Selected:
             <select class="radius3" name="action">
@@ -71,7 +73,7 @@
             </select> &nbsp;
             <input class="radius3" type="submit" name="performPartnerAction" value="Execute"/>
         </div><!--tableoptions-->
-
+        {/if}
     </form>
 </div>
 <br clear="all"/><br />

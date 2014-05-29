@@ -64,13 +64,14 @@ class Admin_Controller_Video extends Controller
                 'path' => $path,
                 'width' => RequestMethods::post('width', 500),
                 'height' => RequestMethods::post('height', 281),
-                'priority' => RequestMethods::post('priority')
+                'priority' => RequestMethods::post('priority', 0)
             ));
 
             $sectionsIds = (array) RequestMethods::post('sections');
-            if (empty(array_shift($sectionsIds))) {
+            if (empty($sectionsIds[0])) {
                 $errors['sections'] = array('At least one section has to be selected');
             }
+
             if (empty($errors) && $video->validate()) {
                 $id = $video->save();
 
@@ -135,7 +136,7 @@ class Admin_Controller_Video extends Controller
             $video->path = $path;
             $video->width = RequestMethods::post('width', 500);
             $video->height = RequestMethods::post('height', 281);
-            $video->priority = RequestMethods::post('priority');
+            $video->priority = RequestMethods::post('priority', 0);
             $video->active = RequestMethods::post('active');
 
             $sectionsIds = (array) RequestMethods::post('sections');

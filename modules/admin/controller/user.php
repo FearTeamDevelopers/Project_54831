@@ -39,7 +39,7 @@ class Admin_Controller_User extends Controller
             if (!$error) {
                 try {
                     $security = Registry::get('security');
-                    $status = $security->authenticate($email, $password, true);
+                    $status = $security->authenticate($email, $password);
 
                     if ($status) {
                         self::redirect('/admin/');
@@ -131,6 +131,7 @@ class Admin_Controller_User extends Controller
                 self::redirect('/admin/user/');
             } else {
                 Event::fire('admin.log', array('fail'));
+                var_dump($user->getErrors());
                 $view->set('errors', $errors + $user->getErrors())
                         ->set('user', $user);
             }

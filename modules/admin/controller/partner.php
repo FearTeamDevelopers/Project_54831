@@ -22,7 +22,8 @@ class Admin_Controller_Partner extends Controller
         $view = $this->getActionView();
 
         $query = App_Model_Partner::getQuery(array('pa.*'))
-                ->join('tb_section', 'pa.sectionId = s.id', 's', array('s.title' => 'sectionTitle'));
+                ->join('tb_section', 'pa.sectionId = s.id', 's', 
+                        array('s.title' => 'sectionTitle'));
 
         $partners = App_Model_Partner::initialize($query);
 
@@ -60,11 +61,11 @@ class Admin_Controller_Partner extends Controller
             $partner = new App_Model_Partner(array(
                 'sectionId' => RequestMethods::post('section'),
                 'title' => RequestMethods::post('title'),
-                'address' => RequestMethods::post('address'),
-                'email' => RequestMethods::post('email'),
+                'address' => RequestMethods::post('address', ''),
+                'email' => RequestMethods::post('email', ''),
                 'web' => RequestMethods::post('web'),
                 'logo' => trim($uploaded->photo->filename, '.'),
-                'mobile' => RequestMethods::post('mobile')
+                'mobile' => RequestMethods::post('mobile', '')
             ));
 
             if (empty($errors) && $partner->validate()) {
@@ -126,10 +127,10 @@ class Admin_Controller_Partner extends Controller
 
             $partner->sectionId = RequestMethods::post('section');
             $partner->title = RequestMethods::post('title');
-            $partner->address = RequestMethods::post('address');
-            $partner->email = RequestMethods::post('email');
+            $partner->address = RequestMethods::post('address', '');
+            $partner->email = RequestMethods::post('email', '');
             $partner->web = RequestMethods::post('web');
-            $partner->mobile = RequestMethods::post('mobile');
+            $partner->mobile = RequestMethods::post('mobile', '');
             $partner->logo = $logo;
             $partner->active = RequestMethods::post('active');
 

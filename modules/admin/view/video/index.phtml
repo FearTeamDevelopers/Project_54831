@@ -51,13 +51,14 @@
                             <td>    
                                 <a href="{echo $video->getPath()}" target=_blank class="btn btn3 btn_video" title="Play"></a>
                                 <a href="/admin/video/edit/{echo $video->getId()}" class="btn btn3 btn_pencil" title="Edit"></a>
-                                <a href="/admin/video/delete/{echo $video->getId()}" class="btn btn3 btn_trash deleteRow" title="Delete"></a>
+                                {if $isAdmin}<a href="/admin/video/delete/{echo $video->getId()}" class="btn btn3 btn_trash deleteRow" title="Delete"></a>{/if}
                             </td>
                         </tr>
                     {/foreach}
                 {/if}
             </tbody>
         </table>
+        {if $isAdmin}
         <div class="tableoptions">
             Selected:
             <select class="radius3" name="action">
@@ -67,7 +68,7 @@
             </select> &nbsp;
             <input class="radius3" type="submit" name="performVideoAction" value="Execute"/>
         </div><!--tableoptions-->
-        
+        {/if}
     </form>
 </div>
 <br clear="all"/><br />

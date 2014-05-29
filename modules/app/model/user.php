@@ -42,17 +42,6 @@ class App_Model_User extends Model implements UserInterface {
      * @label password
      */
     protected $_password;
-
-    /**
-     * @column
-     * @readwrite
-     * @type text
-     * @length 100
-     * @index
-     *
-     * @validate min(15), max(100)
-     */
-    protected $_salt;
     
     /**
      * @column
@@ -94,24 +83,6 @@ class App_Model_User extends Model implements UserInterface {
      * @label last name
      */
     protected $_lastname;
-
-    /**
-     * @column
-     * @readwrite
-     * @type text
-     * @length 40
-     * @unique
-     *
-     * @validate min(20), max(40)
-     */
-    protected $_pwdResetKey;
-    
-    /**
-     * @column
-     * @readwrite
-     * @type datetime
-     */
-    protected $_pwdResetKeyExpire;
     
     /**
      * @column

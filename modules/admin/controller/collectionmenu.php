@@ -47,8 +47,8 @@ class Admin_Controller_CollectionMenu extends Controller
                 'sectionId' => RequestMethods::post('section'),
                 'title' => RequestMethods::post('title'),
                 'urlKey' => $urlKey,
-                'customName' => RequestMethods::post('custom'),
-                'rank' => RequestMethods::post('rank')
+                'customName' => RequestMethods::post('custom', ''),
+                'rank' => RequestMethods::post('rank', 1)
             ));
 
             if ($clm->validate()) {
@@ -93,10 +93,10 @@ class Admin_Controller_CollectionMenu extends Controller
             $urlKey = StringMethods::removeDiacriticalMarks(RequestMethods::post('urlkey'));
 
             $clm->sectionId = RequestMethods::post('section');
-            $clm->title = RequestMethods::post('title');        
+            $clm->title = RequestMethods::post('title');
             $clm->urlKey = $urlKey;
-            $clm->customName = RequestMethods::post('custom');
-            $clm->rank = RequestMethods::post('rank');
+            $clm->customName = RequestMethods::post('custom', '');
+            $clm->rank = RequestMethods::post('rank', 1);
             $clm->active = RequestMethods::post('active');
 
             if ($clm->validate()) {

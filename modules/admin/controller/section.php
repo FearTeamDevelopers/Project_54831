@@ -34,7 +34,7 @@ class Admin_Controller_Section extends Controller
 
         if (RequestMethods::post('submitAddSection')) {
             $section = new App_Model_Section(array(
-                'parentId' => RequestMethods::post('parent'),
+                'parentId' => RequestMethods::post('parent', 1),
                 'title' => RequestMethods::post('title'),
                 'rank' => RequestMethods::post('rank', 1),
                 'supportVideo' => RequestMethods::post('supportVideo', 0),
@@ -76,11 +76,11 @@ class Admin_Controller_Section extends Controller
         }
 
         if (RequestMethods::post('submitEditSection')) {
-            $section->parentId = RequestMethods::post('partner');
+            $section->parentId = RequestMethods::post('partner', 1);
             $section->title = RequestMethods::post('title');
-            $section->rank = RequestMethods::post('rank');
-            $section->supportVideo = RequestMethods::post('supportVideo');
-            $section->supportPhoto = RequestMethods::post('supportPhoto');
+            $section->rank = RequestMethods::post('rank', 1);
+            $section->supportVideo = RequestMethods::post('supportVideo', 0);
+            $section->supportPhoto = RequestMethods::post('supportPhoto', 0);
             $section->active = RequestMethods::post('active');
 
             if ($section->validate()) {

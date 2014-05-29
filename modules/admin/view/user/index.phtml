@@ -39,7 +39,7 @@
 
                     <td>
                         <a href="/admin/user/edit/{echo $user->id}" class="btn btn3 btn_pencil"></a> 
-                        <a href="/admin/user/delete/{echo $user->id}" class="btn btn3 btn_trash deleteRow"></a>
+                        {if $isSuperAdmin}<a href="/admin/user/delete/{echo $user->id}" class="btn btn3 btn_trash deleteRow"></a>{/if}
                     </td>
                     </tr>
                 {/foreach}

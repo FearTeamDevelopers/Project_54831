@@ -33,9 +33,9 @@ class Admin_Controller_Announcement extends Controller
             $announc = new App_Model_Announcement(array(
                 'title' => RequestMethods::post('title'),
                 'body' => RequestMethods::post('text'),
-                'signature' => RequestMethods::post('signature'),
-                'dateStart' => RequestMethods::post('dateStart'),
-                'dateEnd' => RequestMethods::post('dateEnd')
+                'signature' => RequestMethods::post('signature', 'Marko.in'),
+                'dateStart' => RequestMethods::post('datestart', date('Y-m-d', time())),
+                'dateEnd' => RequestMethods::post('dateend', date('Y-m-d', time()))
             ));
 
             if ($announc->validate()) {
@@ -46,6 +46,7 @@ class Admin_Controller_Announcement extends Controller
                 self::redirect('/admin/announcement/');
             } else {
                 Event::fire('admin.log', array('fail'));
+                var_dump($announc->getErrors());
                 $view->set('errors', $announc->getErrors())
                         ->set('announc', $announc);
             }
@@ -71,10 +72,10 @@ class Admin_Controller_Announcement extends Controller
         if (RequestMethods::post('submitEditAnc')) {
             $announc->title = RequestMethods::post('title');
             $announc->body = RequestMethods::post('text');
-            $announc->signature = RequestMethods::post('signature');
+            $announc->signature = RequestMethods::post('signature', 'Marko.in');
             $announc->active = RequestMethods::post('active');
-            $announc->dateStart = RequestMethods::post('datestart');
-            $announc->dateEnd = RequestMethods::post('dateend');
+            $announc->dateStart = RequestMethods::post('datestart', date('Y-m-d', time()));
+            $announc->dateEnd = RequestMethods::post('dateend', date('Y-m-d', time()));
 
             if ($announc->validate()) {
                 $announc->save();

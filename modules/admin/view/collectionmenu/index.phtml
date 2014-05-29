@@ -50,13 +50,16 @@
                     <td>{echo $clm->getCreated()}</td>
                     <td>    
                         <a href="/admin/collectionmenu/edit/{echo $clm->getId()}" class="btn btn3 btn_pencil" title="Edit"></a>
+                        {if $isAdmin}
                         <a href="/admin/collectionmenu/delete/{echo $clm->getId()}" class="btn btn3 btn_trash deleteRow" title="Delete"></a>
+                        {/if}
                     </td>
                 </tr>
                 {/foreach}
                 {/if}
             </tbody>
         </table>
+        {if $isAdmin}
         <div class="tableoptions">
             Selected:
             <select class="radius3" name="action">
@@ -66,7 +69,7 @@
             </select> &nbsp;
             <input class="radius3" type="submit" name="performClmAction" value="Execute"/>
         </div><!--tableoptions-->
-
+        {/if}
     </form>
 </div>
 <br clear="all"/><br />

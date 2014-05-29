@@ -2,7 +2,6 @@
     <li><a href="/admin/announcement/">Announcements List</a></li>
     <li><a href="/admin/announcement/add/">Add Announcement</a></li>
     <li class="current"><a href="#">Edit Announcement</a></li>
-    <li><a href="/admin/announcement/delete/{echo $announcement->id}">Delete Announcement</a></li>
 </ul>
 
 <div class="content">
@@ -41,8 +40,8 @@
             <label>End date</label>
             <span class="field">
                 <input type="text" name="datestart" class="longinput datepicker" value="{echo $announcement->dateStart}"/>
-                {if isset($errors["datestart"])}
-                    <label class="error">{echo join("<br/>", $errors["datestart"])}</label>
+                {if isset($errors["dateStart"])}
+                    <label class="error">{echo join("<br/>", $errors["dateStart"])}</label>
                 {/if}
             </span>
         </p>
@@ -50,8 +49,8 @@
             <label>Start date</label>
             <span class="field">
                 <input type="text" name="dateend" class="longinput datepicker" value="{echo $announcement->dateEnd}"/>
-                {if isset($errors["dateend"])}
-                    <label class="error">{echo join("<br/>", $errors["dateend"])}</label>
+                {if isset($errors["dateEnd"])}
+                    <label class="error">{echo join("<br/>", $errors["dateEnd"])}</label>
                 {/if}
             </span>
         </p>

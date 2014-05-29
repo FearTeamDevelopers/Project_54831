@@ -42,7 +42,7 @@ class App_Model_Announcement extends Model {
      * @type text
      * @length 256
      * 
-     * @validate required, alphanumeric, max(2048)
+     * @validate required, html, max(2048)
      * @label text
      */
     protected $_body;

@@ -52,13 +52,14 @@
                             <td>{echo $photo->getCreated()}</td>
                             <td>
                                 <a href="/admin/photo/edit/{echo $photo->id}" class="btn btn3 btn_pencil" title="Edit"></a>
-                                <a href="/admin/photo/delete/{echo $photo->id}" class="btn btn3 btn_trash" title="Delete"></a>
+                                {if $isAdmin}<a href="/admin/photo/delete/{echo $photo->id}" class="btn btn3 btn_trash" title="Delete"></a>{/if}
                             </td>
                         </tr>
                     {/foreach}
                 {/if}
             </tbody>
         </table>
+        {if $isAdmin}
         <div class="tableoptions">
             Selected:
             <select class="radius3" name="action">
@@ -68,7 +69,7 @@
             </select> &nbsp;
             <input class="radius3" type="submit" name="performPhotoAction" value="Execute"/>
         </div><!--tableoptions-->
-
+        {/if}
     </form>
 </div>
 <br clear="all"/><br />

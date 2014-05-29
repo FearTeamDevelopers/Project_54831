@@ -26,7 +26,7 @@
     </head>
     <body lang="cs">
         <div id="page">
-            {if !$hidetop}<div id="temptopdiv"></div>{/if}
+            {if !isset($hidetop)}<div id="temptopdiv"></div>{/if}
             <div id="navi">
                 <ul>
                     <li id="navi_news"><a href="#"><h1>Novinky</h1></a></li>
@@ -45,29 +45,29 @@
                     <div class="content"></div>
                 </div>
 
-                <div id="news-detail" {if !$shownd} class="nodisplay" {/if}>
+                <div id="news-detail" {if !isset($shownd)} class="nodisplay" {/if}>
                     <a href="#" class="close">Zavřít</a>
-                    <div class="content">{if $shownd}{yield action}{/if}</div>
+                    <div class="content">{if isset($shownd)}{yield action}{/if}</div>
                 </div>
 
-                <div id="bio" {if !$showbio} class="nodisplay" {/if}>
+                <div id="bio" {if !isset($showbio)} class="nodisplay" {/if}>
                     <a href="#" class="close">Zavřít</a>       
-                    <div class="content">{if $showbio}{yield action}{/if}</div>
+                    <div class="content">{if isset($showbio)}{yield action}{/if}</div>
                 </div>
 
-                <div id="design" {if !$showdesign} class="nodisplay" {/if}>
+                <div id="design" {if !isset($showdesign)} class="nodisplay" {/if}>
                     <a href="#" class="close">Zavřít</a>
-                    <div class="content">{if $showdesign}{yield action}{/if}</div>
+                    <div class="content">{if isset($showdesign)}{yield action}{/if}</div>
                 </div>
 
-                <div id="styling" {if !$showstyling} class="nodisplay" {/if}>
+                <div id="styling" {if !isset($showstyling)} class="nodisplay" {/if}>
                     <a href="#" class="close">Zavřít</a>       
-                    <div class="content">{if $showstyling}{yield action}{/if}</div>
+                    <div class="content">{if isset($showstyling)}{yield action}{/if}</div>
                 </div>
 
-                <div id="contact" {if !$showcontact} class="nodisplay" {/if}>
+                <div id="contact" {if !isset($showcontact)} class="nodisplay" {/if}>
                     <a href="#" class="close">Zavřít</a>
-                    <div class="content">{if $showcontact}{yield action}{/if}</div>
+                    <div class="content">{if isset($showcontact)}{yield action}{/if}</div>
                 </div>
 
                 <div id="portfolio" class="nodisplay">
@@ -80,9 +80,9 @@
                     <div class="content"></div>
                 </div>
 
-                <div id="partners" {if !$showpartners} class="nodisplay" {/if}>
+                <div id="partners" {if !isset($showpartners)} class="nodisplay" {/if}>
                     <a href="#" class="close">Zavřít</a>
-                    <div class="content">{if $showpartners}{yield action}{/if}</div>
+                    <div class="content">{if isset($showpartners)}{yield action}{/if}</div>
                 </div>
             </div>
 

@@ -939,6 +939,27 @@ a.btn_table { background-position: -82px -480px; }
     background: #333; text-decoration: none; color: #fff; text-shadow: none; font-weight: bold; 
 }
 
+.collectiondetail{margin: 5px;}
+.collectiondetail_description{padding-left: 25px;}
+.photoactive img{border: 3px solid green;}
+.photoinactive img{border: 3px solid red;}
+
+.labeled-checkbox{font-size: 16px; margin-right: 20px;cursor: pointer; }
+.labeled-checkbox:hover{text-decoration: underline;}
+.rowActive{background-color: #bbbbbb;}
+.showText{cursor: pointer;}
+#messageTable tr{cursor: pointer;}
+
+#loader{
+    position: absolute;
+    top: 42%; left: 49%;
+    display: none;
+}
+
+.news-photos, .news-videos{height: 600px; overflow-y: auto; overflow-x: no-content;}
+.news-photo, .news-video{width: 200px; margin: 10px; border: 1px solid #ccc; display: block; float: left;}
+
+
 @media screen and (max-width: 1024px) {
     .maincontent { margin-right: 260px; margin-left: 230px; }
     .mainright { width: 250px; }
@@ -1079,23 +1100,3 @@ a.btn_table { background-position: -82px -480px; }
     .footer { font-size: 10px; }
 
 }
-
-.collectiondetail{margin: 5px;}
-.collectiondetail_description{padding-left: 25px;}
-.photoactive img{border: 3px solid green;}
-.photoinactive img{border: 3px solid red;}
-
-.labeled-checkbox{font-size: 16px; margin-right: 20px;cursor: pointer; }
-.labeled-checkbox:hover{text-decoration: underline;}
-.rowActive{background-color: #bbbbbb;}
-.showText{cursor: pointer;}
-#messageTable tr{cursor: pointer;}
-
-#loader{
-    position: absolute;
-    top: 42%; left: 49%;
-    display: none;
-}
-
-.news-photos, .news-videos{height: 600px; overflow-y: auto; overflow-x: no-content;}
-.news-photo, .news-video{width: 200px; margin: 10px; border: 1px solid #ccc; display: block; float: left;}

@@ -45,7 +45,8 @@
                     {foreach $announc in $activeannounc}
                         <p>
                             <span class="radius2">Title: {echo $announc->getTitle()}</span>
-                            <span class="radius2">Created: {echo $announc->getCreated()}</span><br/><br/>";
+                            <span class="radius2">Created: {echo $announc->getCreated()}</span><br/>
+                            {echo substr($announc->getBody(), 0, 200)}
                         </p>
                         <hr/>
                     {/foreach}

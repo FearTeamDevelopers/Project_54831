@@ -2,7 +2,6 @@
     <li><a href="/admin/user/">User List</a></li>
     <li><a href="/admin/user/add/">Add User</a></li>
     <li class="current"><a href="#">Edit User</a></li>
-    <li><a href="/admin/user/delete/{echo $user->id}">Delete User</a></li>
 </ul>
 <div class="content">
     <div class="contenttitle"><h2 class="form"><span>User Informations</span></h2></div><br />
@@ -106,10 +105,8 @@
             </span>
         </p>
         {/if}
-        <p>
-            <span class="stdformbutton">
-                <input type="submit" name="submitEditUser" value="Save changes" />
-            </span>
+        <p class="stdformbutton">
+            <input type="submit" name="submitEditUser" value="Save changes" />
         </p>
     </form>
 </article>

@@ -34,7 +34,7 @@ class Admin_Controller_Index extends Controller
         
         $activeAnnouncements = App_Model_Announcement::all(
                         array('active = ?' => true), 
-                array('id', 'title', 'created')
+                array('id', 'title', 'created', 'body')
         );
         
         $view->set('latestnews', $latestNews)

@@ -45,11 +45,11 @@ class Admin_Controller_Collection extends Controller
             $collection = new App_Model_Collection(array(
                 'menuId' => RequestMethods::post('show'),
                 'title' => RequestMethods::post('title'),
-                'year' => RequestMethods::post('year'),
-                'season' => RequestMethods::post('season'),
-                'date' => RequestMethods::post('date'),
-                'photographer' => RequestMethods::post('photographer'),
-                'description' => RequestMethods::post('description')
+                'year' => RequestMethods::post('year', date('Y', time())),
+                'season' => RequestMethods::post('season', ''),
+                'date' => RequestMethods::post('date', date('Y-m-d', time())),
+                'photographer' => RequestMethods::post('photographer', ''),
+                'description' => RequestMethods::post('description', '')
             ));
 
             if ($collection->validate()) {
@@ -138,11 +138,11 @@ class Admin_Controller_Collection extends Controller
             $collection->title = RequestMethods::post('title');
             $collection->menuId = RequestMethods::post('show');
             $collection->active = RequestMethods::post('active');
-            $collection->year = RequestMethods::post('year');
-            $collection->season = RequestMethods::post('season');
-            $collection->date = RequestMethods::post('date');
-            $collection->photographer = RequestMethods::post('photographer');
-            $collection->description = RequestMethods::post('description');
+            $collection->year = RequestMethods::post('year', date('Y', time()));
+            $collection->season = RequestMethods::post('season', '');
+            $collection->date = RequestMethods::post('date', date('Y-m-d', time()));
+            $collection->photographer = RequestMethods::post('photographer', '');
+            $collection->description = RequestMethods::post('description', '');
 
             if ($collection->validate()) {
                 $collection->save();
@@ -170,7 +170,8 @@ class Admin_Controller_Collection extends Controller
         $view = $this->getActionView();
 
         $collection = App_Model_Collection::first(
-                        array('id = ?' => $id), array('id', 'title', 'created')
+                        array('id = ?' => $id), 
+                        array('id', 'title', 'created')
         );
 
         if (NULL === $collection) {
@@ -241,9 +242,9 @@ class Admin_Controller_Collection extends Controller
             }
 
             $photo = new App_Model_Photo(array(
-                'description' => RequestMethods::post('description'),
-                'category' => RequestMethods::post('category'),
-                'priority' => RequestMethods::post('priority'),
+                'description' => RequestMethods::post('description', ''),
+                'category' => RequestMethods::post('category', ''),
+                'priority' => RequestMethods::post('priority', 0),
                 'photoName' => $uploaded->photo->name,
                 'thumbPath' => trim($uploaded->thumb->filename, '.'),
                 'path' => trim($uploaded->photo->filename, '.'),
@@ -351,7 +352,8 @@ class Admin_Controller_Collection extends Controller
         $this->willRenderLayoutView = false;
 
         $photo = App_Model_Photo::first(
-                        array('id = ?' => $id), array('id', 'path', 'thumbPath')
+                        array('id = ?' => $id), 
+                        array('id', 'path', 'thumbPath')
         );
 
         if (null === $photo) {
@@ -465,7 +467,7 @@ class Admin_Controller_Collection extends Controller
                 'path' => $path,
                 'width' => RequestMethods::post('width', 500),
                 'height' => RequestMethods::post('height', 281),
-                'priority' => RequestMethods::post('priority')
+                'priority' => RequestMethods::post('priority', 0)
             ));
 
             if ($video->validate()) {

@@ -97,7 +97,7 @@ class App_Controller_Index extends Controller
     }
 
     /**
-     * 
+     * Load and show content of bio section
      */
     public function bio()
     {
@@ -128,7 +128,7 @@ class App_Controller_Index extends Controller
     }
 
     /**
-     * 
+     * Load and show content of design section
      */
     public function design()
     {
@@ -159,7 +159,7 @@ class App_Controller_Index extends Controller
     }
 
     /**
-     * 
+     * Load and show content of styling section
      */
     public function styling()
     {
@@ -190,7 +190,7 @@ class App_Controller_Index extends Controller
     }
 
     /**
-     * 
+     * Load and show content of contact section
      */
     public function contact()
     {
@@ -221,7 +221,7 @@ class App_Controller_Index extends Controller
     }
 
     /**
-     * 
+     * Load and show content of all partner sections
      */
     public function partners()
     {
@@ -257,7 +257,7 @@ class App_Controller_Index extends Controller
     }
 
     /**
-     * 
+     * Creates rss feed xml from news
      */
     public function feed()
     {

@@ -6,6 +6,7 @@ use THCFrame\Core\Base as Base;
 use THCFrame\Events\Events as Events;
 use THCFrame\Template as Template;
 use THCFrame\View\Exception as Exception;
+use THCFrame\Registry\Registry as Registry;
 
 /**
  * Description of View
@@ -270,5 +271,4 @@ class View extends Base
             return $this->get('longFlashMessage');
         }
     }
-
 }

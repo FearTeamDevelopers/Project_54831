@@ -76,9 +76,9 @@ class Admin_Controller_Photo extends Controller
             }
 
             $photo = new App_Model_Photo(array(
-                'description' => RequestMethods::post('description'),
-                'category' => RequestMethods::post('category'),
-                'priority' => RequestMethods::post('priority'),
+                'description' => RequestMethods::post('description', ''),
+                'category' => RequestMethods::post('category', ''),
+                'priority' => RequestMethods::post('priority', 0),
                 'photoName' => $uploaded->photo->name,
                 'thumbPath' => trim($uploaded->thumb->filename, '.'),
                 'path' => trim($uploaded->photo->filename, '.'),
@@ -227,9 +227,9 @@ class Admin_Controller_Photo extends Controller
         $photo->inSections = $sectionArr;
 
         if (RequestMethods::post('submitEditPhoto')) {
-            $photo->description = RequestMethods::post('description');
-            $photo->category = RequestMethods::post('category');
-            $photo->priority = RequestMethods::post('priority');
+            $photo->description = RequestMethods::post('description', '');
+            $photo->category = RequestMethods::post('category', '');
+            $photo->priority = RequestMethods::post('priority', 0);
             $photo->active = RequestMethods::post('active');
 
             $sectionsIds = (array) RequestMethods::post('sections');

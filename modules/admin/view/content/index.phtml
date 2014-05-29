@@ -33,7 +33,7 @@
                         <td>{echo $page->modified}</td>
                         <td>{echo $page->body}</td>
                         <td>
-                            <a href="/admin/content/edit/{echo $page->id}" class="btn btn3 btn_pencil" title="Edit"></a>
+                            {if $isAdmin}<a href="/admin/content/edit/{echo $page->id}" class="btn btn3 btn_pencil" title="Edit"></a>{/if}
                         </td>
                     </tr>
                 {/foreach}

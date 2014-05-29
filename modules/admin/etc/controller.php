@@ -121,15 +121,21 @@ class Controller extends BaseController
      */
     public function render()
     {
+        $security = Registry::get('security');
+        
         if ($this->getUser()) {
             if ($this->getActionView()) {
                 $this->getActionView()
-                        ->set('authUser', $this->getUser());
+                        ->set('authUser', $this->getUser())
+                        ->set('isAdmin', $security->isGranted('role_admin'))
+                        ->set('isSuperAdmin', $security->isGranted('role_superadmin'));
             }
 
             if ($this->getLayoutView()) {
                 $this->getLayoutView()
-                        ->set('authUser', $this->getUser());
+                        ->set('authUser', $this->getUser())
+                        ->set('isAdmin', $security->isGranted('role_admin'))
+                        ->set('isSuperAdmin', $security->isGranted('role_superadmin'));
             }
         }
 

@@ -13,7 +13,7 @@
                 <input name="title" type="text" class="longinput" 
                        value="{echo isset($announc)? $announc->title: ""}" />
                 {if isset($errors["title"])}
-                    <label class="error">{echo join("<br/>", $errors["title"])}</label>
+                <label class="error">{echo join("<br/>", $errors["title"])}</label>
                 {/if}
             </span>
         </p>
@@ -22,7 +22,7 @@
             <span class="field">
                 <textarea rows="10" name="text" class="longinput" id="ckeditor">{echo isset($announc)? $announc->body: ""}</textarea>
                 {if isset($errors["body"])}
-                    <label class="error">{echo join("<br/>", $errors["body"])}</label>
+                <label class="error">{echo join("<br/>", $errors["body"])}</label>
                 {/if}
             </span>
         </p>
@@ -32,7 +32,7 @@
                 <input type="text" name="signature" class="longinput" 
                        value="{echo isset($announc)? $announc->signature: ""}"/>
                 {if isset($errors["signature"])}
-                    <label class="error">{echo join("<br/>", $errors["signature"])}</label>
+                <label class="error">{echo join("<br/>", $errors["signature"])}</label>
                 {/if}
             </span>
         </p>
@@ -40,9 +40,9 @@
             <label>Start date</label>
             <span class="field">
                 <input type="text" name="datestart" class="longinput datepicker" 
-                       value="{echo isset($announc)? $announc->datestart: ""}"/>
-                {if isset($errors["datestart"])}
-                    <label class="error">{echo join("<br/>", $errors["datestart"])}</label>
+                       value="{echo isset($announc)? $announc->dateStart: ""}"/>
+                {if isset($errors["dateStart"])}
+                <label class="error">{echo join("<br/>", $errors["dateStart"])}</label>
                 {/if}
             </span>
         </p>
@@ -50,9 +50,9 @@
             <label>End date</label>
             <span class="field">
                 <input type="text" name="dateend" class="longinput datepicker" 
-                       value="{echo isset($announc)? $announc->dateend: ""}"/>
-                {if isset($errors["dateend"])}
-                    <label class="error">{echo join("<br/>", $errors["dateend"])}</label>
+                       value="{echo isset($announc)? $announc->dateEnd: ""}"/>
+                {if isset($errors["dateEnd"])}
+                <label class="error">{echo join("<br/>", $errors["dateEnd"])}</label>
                 {/if}
             </span>
         </p>
