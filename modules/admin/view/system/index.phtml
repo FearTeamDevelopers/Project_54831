@@ -8,6 +8,7 @@
     <div class="one_fifth">
         <div class="contenttitle"><h2 class="form"><span>Clear cache</span></h2></div>
         <form class="stdform stdform2" method="post" action="/admin/system/clearCache/">
+            <input type="hidden" name="tk" id="tk" value="{echo $token}" />
             <p class="stdformbutton">
                 <input name="clearCache" type="submit" value="Clear cache" class="submit radius2" />
             </p>
@@ -16,6 +17,7 @@
     <div class="one_fifth">
         <div class="contenttitle"><h2 class="form"><span>Database backup</span></h2></div>
         <form class="stdform stdform2" method="post" action="/admin/system/createDatabaseBackup/">
+            <input type="hidden" name="tk" id="tk" value="{echo $token}" />
             <p class="stdformbutton">
                 <input name="createBackup" type="submit" value="Create backup" class="submit radius2" />
             </p>
@@ -24,6 +26,7 @@
     <div class="one_fifth">
         <div class="contenttitle"><h2 class="form"><span>Archivate older news</span></h2></div>
         <form class="stdform stdform2" method="post" action="/admin/system/archivateNews/">
+            <input type="hidden" name="tk" id="tk" value="{echo $token}" />
             <p class="stdformbutton">
                 <input name="archivateNews" type="submit" value="Archivate" class="submit radius2" />
             </p>
@@ -33,6 +36,7 @@
     <div class="one_fifth">
         <div class="contenttitle"><h2 class="form"><span>Change Application Status</span></h2></div>
         <form class="stdform stdform2" method="post" action="/admin/system/changeApplicationStatus/">
+            <input type="hidden" name="tk" id="tk" value="{echo $token}" />
             <p class="stdformbutton">
                 <input name="changeStatus" type="submit" value="{echo $appstatus}" class="submit radius2" />
             </p>

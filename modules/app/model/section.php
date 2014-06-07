@@ -120,4 +120,26 @@ class App_Model_Section extends Model
         $this->setModified(date('Y-m-d H:i:s'));
     }
 
+    /**
+     * 
+     * @return type
+     */
+    public function getChildrens()
+    {
+        return self::all(
+                array('active = ?' => true, 'parentId = ?' => $this->getId())
+        );
+    }
+    
+    /**
+     * 
+     * @param type $id
+     * @return type
+     */
+    public static function fetchChildrens($id)
+    {
+        $section = new self(array('id' => $id));
+        
+        return $section->getChildrens();
+    }
 }

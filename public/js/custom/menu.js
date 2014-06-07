@@ -2,18 +2,26 @@ jQuery(document).ready(function() {
     jQuery('.close').click(function() {
         jQuery(this).parent().hide(1000)
     });
-    jQuery('#bio,#design,#styling,#contact,#partners,#news-detail').draggable();
-    jQuery('#news').draggable({
-        scroll: true,
-        handle: 'div.oneNews'
-    });
-    jQuery('#portfolio, #collection').draggable({
-        scroll: true,
-        handle: 'div.content'
-    });
+
+    if (jQuery(window).width() > 700) {
+        jQuery('#bio,#design,#styling,#contact,#partners,#news-detail,#provas').draggable();
+        jQuery('#news').draggable({
+            scroll: true,
+            handle: 'div.oneNews'
+        });
+        jQuery('#portfolio, #collection').draggable({
+            scroll: true,
+            handle: 'div.content'
+        });
+    }
 
     jQuery('#navi li a').click(function() {
         jQuery('#temptopdiv:visible').hide(1000);
+
+        if (jQuery(window).width() < 700) {
+            jQuery('#main').children('div:visible').hide();
+        }
+        
         jQuery('#main div, #main p, #main iframe, #main img').css({
             opacity: '0.5',
             zIndex: '10'
@@ -30,7 +38,7 @@ jQuery(document).ready(function() {
                     zIndex: '20'
                 });
                 jQuery('div, p, iframe, img', this).css('opacity', '1');
-                
+
                 jQuery('iframe').each(function() {
                     var a = jQuery(this).attr('src');
                     var b = 'wmode=transparent';
@@ -93,6 +101,30 @@ jQuery(document).ready(function() {
                                 });
                             });
                         });
+                    } else if (parts[1] == 'bio') {
+                        jQuery('#bio .content').load('/bio', function() {
+                            jQuery('#main div, #main p, #main iframe, #main img').css({
+                                opacity: '0.5',
+                                zIndex: '10'
+                            });
+                            jQuery('#main #bio').show(1000, function() {
+                                jQuery(this).css({
+                                    opacity: '1',
+                                    zIndex: '20'
+                                });
+                                jQuery('div, p, iframe, img', this).css('opacity', '1');
+
+                                jQuery('iframe').each(function() {
+                                    var a = jQuery(this).attr('src');
+                                    var b = 'wmode=transparent';
+                                    if (a.indexOf('?') != -1) {
+                                        jQuery(this).attr('src', a + '&' + b);
+                                    } else {
+                                        jQuery(this).attr('src', a + '?' + b);
+                                    }
+                                });
+                            });
+                        });
                     } else {
                         jQuery('#news-detail .content').load('/news/detail/' + parts[2], function() {
                             jQuery('#main div, #main p, #main iframe, #main img').css({
@@ -124,7 +156,6 @@ jQuery(document).ready(function() {
         });
     });
 
-
     jQuery('#main div').mousedown(function() {
         jQuery('#main div, #main p, #main iframe, #main img').css({
             opacity: '0.5',
@@ -135,7 +166,7 @@ jQuery(document).ready(function() {
             opacity: '1',
             zIndex: '80'
         });
-  
+
         jQuery('div, p, iframe, img', this).css('opacity', '1');
     });
 
@@ -150,4 +181,5 @@ jQuery(document).ready(function() {
         });
         jQuery('.content', this).css('opacity', '1');
     });
+
 });

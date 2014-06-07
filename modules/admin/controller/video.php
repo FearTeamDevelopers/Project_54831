@@ -57,6 +57,7 @@ class Admin_Controller_Video extends Controller
         );
 
         if (RequestMethods::post('submitAddVideo')) {
+            $this->checkToken();
             $path = str_replace('watch?v=', 'embed/', RequestMethods::post('path'));
             
             $video = new App_Model_Video(array(
@@ -130,6 +131,7 @@ class Admin_Controller_Video extends Controller
         $video->inSections = $sectionArr;
 
         if (RequestMethods::post('submitEditVideo')) {
+            $this->checkToken();
             $path = str_replace('watch?v=', 'embed/', RequestMethods::post('path'));
             
             $video->title = RequestMethods::post('title');
@@ -180,6 +182,7 @@ class Admin_Controller_Video extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
+        $this->checkToken();
 
         $video = App_Model_Video::first(
                         array('id = ?' => $id), array('id')
@@ -207,6 +210,7 @@ class Admin_Controller_Video extends Controller
         $errors = array();
 
         if (RequestMethods::post('performVideoAction')) {
+            $this->checkToken();
             $ids = RequestMethods::post('videoids');
             $action = RequestMethods::post('action');
 

@@ -200,6 +200,8 @@ class Controller extends Base
     }
 
     /**
+     * header('X-Frame-Options: deny') is implemented here as protection against
+     * clickjacking.
      * 
      * @throws View\Exception\Renderer
      */
@@ -227,10 +229,12 @@ class Controller extends Base
             if ($doLayout) {
                 $view = $this->layoutView;
                 $results = $view->render();
-
+                
+                header('X-Frame-Options: deny');
                 header("Content-type: {$defaultContentType}");
                 echo $results;
             } else if ($doAction) {
+                header('X-Frame-Options: deny');
                 header("Content-type: {$defaultContentType}");
                 echo $results;
             }

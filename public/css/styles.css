@@ -27,9 +27,9 @@ body {
     padding: 0;
     font:16px 'Calibri', sans-serif;
     color: white;
-    overflow: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
     min-width: 1000px;
-    min-height: 800px;
 }
 
 a { color: #999;}
@@ -48,52 +48,29 @@ a:hover{color: #ccc;}
 /* ---------- Index page style ---------- */
 
 #page {position: relative; width: 100%; z-index: 20;}
-#main {width: 100%;height: auto;}
-#temptopdiv{margin-top: 20%;}
+#main {position: relative; width: 100%; height: auto; }
+#temptopdiv{margin-top: 35%;}
 
-#news{
+#news,#bio,#design,#styling,#provas,
+#contact,#portfolio,#announcement,
+#collection, #partners,#news-detail{
     position: absolute;
-    left: 5%; top: 120px;
-    width: 550px;
-    height: 700px; 
+    top: 55px;
     overflow-y: auto;
     overflow-x: no-content;
+    min-width: 340px;
+    padding: 10px;
 }
 
-#news-detail{
-    position: absolute;
-    left: 15%; top: 120px;
-    min-width: 300px;
-    width: 50%;
-}
-
-#bio{
-    position: absolute;
-    left: 15%; top: 120px;
-    min-width: 600px;
-    width: 50%;
-}
-
-#design{
-    position: absolute;
-    left: 20%; top: 120px;
-    min-width: 700px;
-    width: 50%;
-}
-
-#styling{
-    position: absolute;
-    left: 20%; top: 120px;
-    min-width: 750px;
-    width: 50%;
-    height: auto;
-}
-
-#contact{
-    position: absolute;
-    left: 55%; top: 120px;
-    width: 350px;
-}
+#news{left: 5%; width: 550px; height: 700px;}
+#news-detail{left: 15%; width: 700px;}
+#provas{left: 15%; width: 800px;}
+#bio{left: 45%; width: 700px;}
+#design{left: 20%; width: 850px;}
+#styling{left: 25%; width: 900px;}
+#contact{left: 55%; width: 400px;}
+#portfolio{left: 20%; text-align: center; width: 900px;}
+#partners{left: 40%; width: 700px;}
 
 #announcement{
     position: fixed;
@@ -101,34 +78,14 @@ a:hover{color: #ccc;}
     width: 700px;
 }
 
-#portfolio{
-    position: absolute;
-    left: 20%; top: 120px;
-    padding: 10px;
-    text-align: center;
-    min-width: 700px;
-    width: 50%;
-}
-
 #collection{
-    position: absolute;
     left: 20%; top: 120px;
     width: 900px;
     height: 750px;
-    padding: 10px;
     text-align: center;
-    overflow-y: auto;
-    overflow-x: no-content;
 }
 
-#partners{
-    position: absolute;
-    left: 25%; top: 120px;
-    width: 700px;
-    padding: 10px;
-}
-
-#news,#bio,#design,#styling,
+#news,#bio,#design,#styling,#provas,
 #contact,#portfolio,#announcement,
 #collection, #partners,#news-detail{
     border-width: 4px;
@@ -139,7 +96,7 @@ a:hover{color: #ccc;}
     border-style:solid;
 }
 
-#news,#bio,#design,#styling,
+#news,#bio,#design,#styling,#provas,
 #contact,#portfolio,#announcement,
 #collection, #partners,#news-detail{
     background:url('../images/div_bg.png');
@@ -153,21 +110,22 @@ a:hover{color: #ccc;}
     width: 100%;
     text-align: center;
     color: white;
+    font-size: 13px;
 }
 
 #footer .mailto{color:white;}
 /* ---------- Menu ---------- */
 
 #navi{
+    margin-top: 20px;
     padding: 5px;
     line-height: 100%;
     height: 70px;
-    font-size: 30px;
-    background: url('../images/linka.png') 0 36% repeat-x;
+    font-size: 24px;
     width: 100%;
 }
 #navi li:first-child{
-    margin-left: 9%;
+    margin-left: 8%;
 }
 #navi li {
     width: 8%;
@@ -179,7 +137,6 @@ a:hover{color: #ccc;}
 }
 /* main level link */
 #navi a {
-    font-weight: bold;
     color: white;
     text-decoration: none;
     display: block;
@@ -221,7 +178,7 @@ a:hover{color: #ccc;}
     text-decoration: none;
     color: white;
 }
-
+.newsReadMore{text-decoration: none;}
 .newsAdded, .newsDetailAdded{
     margin-bottom: 5px;
     font-style: italic;
@@ -277,3 +234,109 @@ a.close {position: inherit; top:5px; left: 90%;}
 
 .stencilla {font-family: 'stencilla', sans-serif; font-size: 14px;}
 .ancSignature{margin-left: 75%;}
+
+
+@media screen and (max-width: 1024px) {
+    #temptopdiv{margin-top: 65%;}
+
+    #news,#bio,#design,#styling,#provas,
+    #contact,#portfolio,#announcement,
+    #collection, #partners,#news-detail{
+        position: absolute;
+        top: 55px; left: 5%;
+        overflow-y: auto;
+        overflow-x: no-content;
+        width: 80%;
+        padding: 10px;
+    }
+
+    iframe{width: 380px; height: 214px;}
+
+    #navi{
+        margin-top: 20px;
+        padding: 5px;
+        line-height: 100%;
+        height: 70px;
+        font-size: 20px;
+        width: 100%;
+    }
+    #navi li:first-child{
+        margin-left: 7%;
+    }
+    #navi li {
+        width: 9%;
+        margin-left: 6%;  
+        float: left;
+        position: relative;
+        list-style: none;
+        background: url('../images/KOLOGO.png') 50% 5% no-repeat;
+    }
+    /* main level link */
+    #navi a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        margin-top: 55px;
+        text-align: center;
+        text-shadow: 0 3px 3px rgba(0, 0, 0, .9); 
+        padding: 8px;
+    }
+}
+
+@media screen and (max-width: 650px) {
+    #temptopdiv{margin-top: 50%;}
+    iframe{width: 380px; height: 214px;}
+
+    #news,#bio,#design,#styling,#provas,
+    #contact,#portfolio,#announcement,
+    #collection, #partners,#news-detail{
+        position: absolute;
+        top: 55px;
+        left: 10px;
+        overflow-y: auto;
+        overflow-x: no-content;
+        width: 570px;
+        padding: 5px;
+    }
+
+    #announcement{position: fixed;bottom: 4%;}
+    #collection, #portfolio{text-align: center;}
+
+    #navi{
+        margin-top: 20px;
+        padding: 5px;
+        line-height: 100%;
+        height: 70px;
+        font-size: 18px;
+        width: 100%;
+    }
+    #navi li:first-child{
+        margin-left: 3%;
+    }
+    #navi li {
+        width: 75px;
+        margin-left: 2%;  
+        float: left;
+        position: relative;
+        list-style: none;
+        background: url('../images/KOLOGO.png') 50% 5% no-repeat;
+    }
+    /* main level link */
+    #navi a {
+        color: white;
+        text-decoration: none;
+        display: block;
+        margin-top: 55px;
+        text-align: center;
+        text-shadow: 0 3px 3px rgba(0, 0, 0, .9); 
+        padding: 8px;
+    }
+}
+
+@media screen and (max-width: 480px) {
+
+}
+
+@media screen and (max-width: 430px) {
+
+}

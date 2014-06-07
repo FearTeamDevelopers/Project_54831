@@ -23,6 +23,11 @@ jQuery(document).ready(function() {
         CKEDITOR.instances['ckeditor2'].setData('');
     });
     
+    jQuery('#news-readmore-link').click(function(event){
+        event.preventDefault();
+        CKEDITOR.instances['ckeditor2'].insertText('(!read_more!)');
+    });
+    
     jQuery('.img-to-text').click(function(event){
         event.preventDefault();
         var id = jQuery(this).attr('value');

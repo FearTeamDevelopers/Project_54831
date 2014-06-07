@@ -7,8 +7,9 @@
 <div class="content">
     <div class="contenttitle"><h2 class="form"><span>Collection menu Item</span></h2></div><br />
     <form class="stdform stdform2" method="post" action="#">
+        <input type="hidden" name="tk" value="{echo $token}" />
         <p>
-            <label>Title</label>
+            <label>Title*</label>
             <span class="field">
                 <input type="text" name="title" class="longinput" value="{echo $clmenu->title}"/>
                 {if isset($errors["title"])}
@@ -17,7 +18,7 @@
             </span>
         </p>
         <p>
-            <label>URL Key</label>
+            <label>URL Key*</label>
             <span class="field">
                 <input type="text" name="urlkey" class="longinput" value="{echo $clmenu->urlKey}"/>
                 {if isset($errors["urlKey"])}
@@ -35,7 +36,7 @@
             </span>
         </p>
         <p>
-            <label>Section</label>
+            <label>Section*</label>
            <span class="field">
                 <select name="section" class="longinput">
                     {foreach $section in $sections}
@@ -52,6 +53,21 @@
             <label>Rank<small>Max. 99</small></label>
             <span class="field">
                 <input type="text" name="rank" class="longinput" value="{echo $clmenu->rank}"/>
+            </span>
+        </p>
+        <p>
+            <label>Active</label>
+            <span class="field">
+                <select name="active" class="longinput">
+                    {if $clmenu->active}
+                    <option value="0">Inactive</option>
+                    <option value="1" selected>Active</option>
+                    {/if}
+                    {else}
+                    <option value="0" selected>Inactive</option>
+                    <option value="1">Active</option>
+                    {/else}
+                </select>
             </span>
         </p>
         <p class="stdformbutton">

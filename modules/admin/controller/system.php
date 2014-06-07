@@ -63,15 +63,20 @@ class Admin_Controller_System extends Controller
 
         if (RequestMethods::post('createBackup')) {
             Event::fire('admin.log');
-//            if (RequestMethods::post('downloadDump')) {
-//                $dump->create()->downloadDump();
-//                $view->flashMessage('Database backup has been successfully created');
-//                self::redirect('/admin/system/');
-//            } else {
-            $dump->create();
-            $view->successMessage('Database backup has been successfully created');
-            self::redirect('/admin/system/');
-//            }
+
+            if (RequestMethods::post('downloadDump')) {
+                $dump->create()->downloadDump();
+                $view->flashMessage('Database backup has been successfully created');
+                unset($fm);
+                unset($dump);
+                self::redirect('/admin/system/');
+            } else {
+                $dump->create();
+                $view->successMessage('Database backup has been successfully created');
+                unset($fm);
+                unset($dump);
+                self::redirect('/admin/system/');
+            }
         }
     }
 
@@ -153,6 +158,7 @@ class Admin_Controller_System extends Controller
         $view = $this->getActionView();
 
         if (RequestMethods::post('changeStatus')) {
+            $this->checkToken();
             $status = $this->loadConfigFromDb('appstatus');
 
             if ($status == 2) {
@@ -182,6 +188,7 @@ class Admin_Controller_System extends Controller
         $view->set('config', $config);
         
         if(RequestMethods::post('submitEditSet')){
+            $this->checkToken();
             $errors = array();
             
             foreach($config as $conf){

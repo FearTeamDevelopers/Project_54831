@@ -342,7 +342,12 @@ class Mysql extends Database\Connector
     }
 
     /**
-     * Creates and executes query base on provided model definition
+     * method converts the class/properties into a valid SQL query, and 
+     * ultimately into a physical database table. It does this by first 
+     * getting a list of the columns, by calling the model’s getColumns() method. 
+     * Looping over the columns, it creates arrays of indices and field strings.
+     * After all the field strings have been created, they are joined (along with the indices), 
+     * and applied to the CREATE TABLE $template string.
      * 
      * @param Model $model
      * @return \THCFrame\Database\Connector\Mysql

@@ -627,13 +627,14 @@ jQuery(document).ready(function() {
 
     //delete individual row
     jQuery('.stdtable a.deleteRow').click(function() {
+        var tk = jQuery('#tk').val();
         var c = confirm('Continue delete?');
         var parentTr = jQuery(this).parents('tr');
 
         if (c) {
             var url = jQuery(this).attr('href');
 
-            jQuery.post(url, function(msg) {
+            jQuery.post(url, {tk:tk}, function(msg) {
                 if (msg == 'ok') {
                     parentTr.fadeOut();
                 } else {

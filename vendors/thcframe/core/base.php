@@ -226,7 +226,11 @@ class Base
         if (Registry::get('database') instanceof \THCFrame\Database\Connector) {
             try {
                 $conf = Config::first(array('xkey = ?' => $key));
-                return $conf->getValue();
+                if ($conf !== null) {
+                    return $conf->getValue();
+                } else {
+                    return null;
+                }
             } catch (\Exception $e) {
                 return null;
             }

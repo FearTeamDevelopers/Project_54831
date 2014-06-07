@@ -3,7 +3,6 @@
 use Admin\Etc\Controller;
 use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
-use THCFrame\Core\StringMethods;
 
 /**
  * 
@@ -35,15 +34,13 @@ class Admin_Controller_Content extends Controller
         );
 
         if (RequestMethods::post('submitAddContent')) {
-            $urlKey = strtolower(
-                    str_replace(' ', '-', StringMethods::removeDiacriticalMarks(RequestMethods::post('page')))
-            );
-            
+            $this->checkToken();
+
             $content = new App_Model_PageContent(array(
                 'sectionId' => RequestMethods::post('section'),
-                'pageName' => RequestMethods::post('page'),
-                'urlKey' => $urlKey,
-                'body' => RequestMethods::post('text')
+                'pageName' => RequestMethods::post('page', ''),
+                'body' => RequestMethods::post('text', ''),
+                'bodyEn' => RequestMethods::post('texten', '')
             ));
 
             if ($content->validate()) {
@@ -82,15 +79,12 @@ class Admin_Controller_Content extends Controller
         }
 
         if (RequestMethods::post('submitEditContent')) {
+            $this->checkToken();
+            
             $content->sectionId = RequestMethods::post('section');
-            $content->pageName = RequestMethods::post('page');
-
-            $urlKey = strtolower(
-                    str_replace(' ', '-', StringMethods::removeDiacriticalMarks($content->pageName))
-            );
-
-            $content->urlKey = $urlKey;
-            $content->body = RequestMethods::post('text');
+            $content->pageName = RequestMethods::post('page', '');
+            $content->body = RequestMethods::post('text', '');
+            $content->bodyEn = RequestMethods::post('texten', '');
             $content->active = RequestMethods::post('active');
 
             if ($content->validate()) {
@@ -129,19 +123,15 @@ class Admin_Controller_Content extends Controller
         $view->set('content', $content);
 
         if (RequestMethods::post('submitDeleteContent')) {
-            if (NULL !== $content) {
-                if ($content->delete()) {
-                    Event::fire('admin.log', array('success', 'ID: ' . $id));
-                    $view->successMessage('Content has been deleted');
-                    self::redirect('/admin/content/');
-                } else {
-                    Event::fire('admin.log', array('fail', 'ID: ' . $id));
-                    $view->errorMessage('Unknown error eccured');
-                    self::redirect('/admin/content/');
-                }
+            $this->checkToken();
+
+            if ($content->delete()) {
+                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                $view->successMessage('Content has been deleted');
+                self::redirect('/admin/content/');
             } else {
                 Event::fire('admin.log', array('fail', 'ID: ' . $id));
-                $view->errorMessage('Unknown id provided');
+                $view->errorMessage('Unknown error eccured');
                 self::redirect('/admin/content/');
             }
         } elseif (RequestMethods::post('cancel')) {

@@ -33,6 +33,16 @@ class ImageManager extends Base
     /**
      * @readwrite
      */
+    protected $_maxImageHeight = 1080;
+
+    /**
+     * @readwrite
+     */
+    protected $_maxImageWidth = 1920;
+
+    /**
+     * @readwrite
+     */
     protected $_thumbWidth;
 
     /**
@@ -121,6 +131,12 @@ class ImageManager extends Base
                                 continue;
                             } else {
                                 $img = new Image('.' . $imageLocName);
+
+                                if ($img->getWidth() > $this->getMaxImageWidth() 
+                                        || $img->getHeight() > $this->getMaxImageHeight()) {
+                                    $img->bestFit($this->getMaxImageWidth(), $this->getMaxImageHeight())->save();
+                                }
+
                                 $returnArray['photos'][$i]['photo'] = $img->getDataForDb();
 
                                 switch ($this->thumbResizeBy) {
@@ -183,6 +199,12 @@ class ImageManager extends Base
                             throw new Exception(sprintf('Error while uploading image %s. Try again.', $filename));
                         } else {
                             $img = new Image('.' . $imageLocName);
+
+                            if ($img->getWidth() > $this->getMaxImageWidth() 
+                                    || $img->getHeight() > $this->getMaxImageHeight()) {
+                                $img->bestFit($this->getMaxImageWidth(), $this->getMaxImageHeight())->save();
+                            }
+
                             $returnArray['photo'] = $img->getDataForDb();
 
                             switch ($this->thumbResizeBy) {
@@ -262,7 +284,7 @@ class ImageManager extends Base
                             } else {
                                 $img = new Image('.' . $imageLocName);
                                 $returnArray['photos'][$i]['photo'] = $img->getDataForDb();
-                               
+
                                 unset($img);
                             }
                         }
@@ -308,7 +330,7 @@ class ImageManager extends Base
                         } else {
                             $img = new Image('.' . $imageLocName);
                             $returnArray['photo'] = $img->getDataForDb();
-                        
+
                             unset($img);
                             return $returnArray;
                         }
@@ -319,7 +341,7 @@ class ImageManager extends Base
             }
         }
     }
-    
+
     /**
      * 
      * @param type $file

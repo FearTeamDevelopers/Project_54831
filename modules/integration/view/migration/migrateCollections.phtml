@@ -1,0 +1,34 @@
+<ul class="maintabmenu multipletabmenu">
+    <li><a href="/admin/system/">Main</a></li>
+    <li><a href="/admin/system/settings/">Settings</a></li>
+    <li><a href="/admin/system/showAdminLog/">Admin log</a></li>
+    <li class="current"><a href="#">Migration</a></li>
+</ul><!--maintabmenu-->
+
+<div class="content">
+    <div class="contenttitle radiusbottom0">
+        <h2 class="table"><span>Collection Migration</span></h2>
+    </div><!--contenttitle-->
+
+    <form class="stdform stdform2" method="post" action="/integration/migration/migrateCollections/">
+        <p class="stdformbutton">
+            <input name="migrateCollections" type="submit" value="Migrate collections" class="submit radius2" />
+        </p>
+    </form>
+
+    <div>
+        {if isset($errors)}
+        {script print_r($errors)}
+        {/if}
+        {elseif isset($success)}
+        {echo $success}<br/>
+        New collections: {echo $status["new_collections"]}<br/>
+        New photos: {echo $status["new_photos"]}
+        {/elseif}
+        {else}
+        {echo $unknown}
+        {/else}
+    </div>
+
+</div>
+<br clear="all"/>

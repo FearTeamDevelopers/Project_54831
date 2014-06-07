@@ -11,6 +11,7 @@
             </div><!--contenttitle-->
 
             <form class="stdform stdform2" method="post" action="#" >
+                <input type="hidden" name="tk" id="tk" value="{echo $token}" />
                 <p>
                     <label>Title</label>
                     <span class="field">
@@ -66,6 +67,7 @@
                         {/if}
                         <br/>
                         <button id="news-clear-teaser">Clear</button>
+                        <button id="news-readmore-link">Add Read More link</button>
                     </span>
                 </p>
                 <p>

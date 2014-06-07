@@ -43,13 +43,16 @@ class Admin_Controller_Partner extends Controller
         );
 
         if (RequestMethods::post('submitAddPartner')) {
+            $this->checkToken();
             $errors = array();
 
             try {
                 $im = new ImageManager(array(
                     'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
                     'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
-                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby')
+                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
+                    'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
+                    'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
                 ));
 
                 $photoArr = $im->uploadWithoutThumb('logo', 'partners');
@@ -107,12 +110,16 @@ class Admin_Controller_Partner extends Controller
         }
 
         if (RequestMethods::post('submitEditPartner')) {
+            $this->checkToken();
+            
             if ($partner->logo == '') {
                 try {
                     $im = new ImageManager(array(
                         'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
                         'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
-                        'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby')
+                        'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
+                        'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
+                        'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
                     ));
 
                     $photoArr = $im->uploadWithoutThumb('logo', 'partners');
@@ -159,6 +166,7 @@ class Admin_Controller_Partner extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
+        $this->checkToken();
 
         $partner = App_Model_Partner::first(
                         array('id = ?' => $id), array('id', 'logo')
@@ -218,6 +226,7 @@ class Admin_Controller_Partner extends Controller
         $errors = array();
 
         if (RequestMethods::post('performPartnerAction')) {
+            $this->checkToken();
             $ids = RequestMethods::post('partnerids');
             $action = RequestMethods::post('action');
 

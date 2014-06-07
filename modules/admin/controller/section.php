@@ -33,6 +33,8 @@ class Admin_Controller_Section extends Controller
         );
 
         if (RequestMethods::post('submitAddSection')) {
+            $this->checkToken();
+            
             $section = new App_Model_Section(array(
                 'parentId' => RequestMethods::post('parent', 1),
                 'title' => RequestMethods::post('title'),
@@ -76,6 +78,8 @@ class Admin_Controller_Section extends Controller
         }
 
         if (RequestMethods::post('submitEditSection')) {
+            $this->checkToken();
+            
             $section->parentId = RequestMethods::post('partner', 1);
             $section->title = RequestMethods::post('title');
             $section->rank = RequestMethods::post('rank', 1);

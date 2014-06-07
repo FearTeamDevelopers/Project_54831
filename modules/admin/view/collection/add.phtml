@@ -9,6 +9,7 @@
     </div><!--contenttitle-->
 
     <form class="stdform stdform2" method="post" action="#">
+        <input type="hidden" name="tk" value="{echo $token}" />
         <p>
             <label>Collection Name</label>
             <span class="field">
@@ -78,9 +79,9 @@
                     <option value="{echo $item->id}">{echo $item->title}</option>
                     {/foreach}
                 </select>
-                {if isset($errors["collectionMenuId"])}
+                {if isset($errors["menuId"])}
                     <label class="error">
-                        {echo join("<br/>", $errors["collectionMenuId"])}
+                        {echo join("<br/>", $errors["menuId"])}
                     </label>
                 {/if}
             </span>
@@ -96,7 +97,12 @@
                 {/if}
             </span>
         </p>
-        
+        <p>
+            <label>Rank<small>Max. 99</small></label>
+            <span class="field">
+                <input type="text" name="rank" class="longinput" value="{echo isset($collection)? $collection->rank: ""}"/>
+            </span>
+        </p>
         <p class="stdformbutton">
             <input name="submitAddCollection" type="submit" value="Save" class="submit radius2" />
             <input type="reset" class="reset radius2" value="Reset" />

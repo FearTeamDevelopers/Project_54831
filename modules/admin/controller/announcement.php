@@ -30,6 +30,8 @@ class Admin_Controller_Announcement extends Controller
         $view = $this->getActionView();
 
         if (RequestMethods::post('submitAddAnc')) {
+            $this->checkToken();
+            
             $announc = new App_Model_Announcement(array(
                 'title' => RequestMethods::post('title'),
                 'body' => RequestMethods::post('text'),
@@ -70,6 +72,8 @@ class Admin_Controller_Announcement extends Controller
         }
 
         if (RequestMethods::post('submitEditAnc')) {
+            $this->checkToken();
+            
             $announc->title = RequestMethods::post('title');
             $announc->body = RequestMethods::post('text');
             $announc->signature = RequestMethods::post('signature', 'Marko.in');
@@ -99,6 +103,7 @@ class Admin_Controller_Announcement extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
+        $this->checkToken();
 
         $announc = App_Model_Announcement::first(
                         array('id = ?' => $id), array('id')

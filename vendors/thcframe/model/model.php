@@ -9,7 +9,11 @@ use THCFrame\Core\StringMethods as StringMethods;
 use THCFrame\Model\Exception as Exception;
 
 /**
- * Description of Model
+ * This class allow us to isolate all the direct database communication, 
+ * and most communication with third-party web services. Models can connect to any
+ * number of third-party data services, and provide a simple interface for use in our controllers.
+ * 
+ * An ORM library creates an opaque communication layer between two data-related systems
  *
  * @author Tomy
  */
@@ -121,25 +125,6 @@ class Model extends Base
 
     /**
      * 
-     * @param type $where
-     * @return type
-     */
-    protected function _count($where = array())
-    {
-        $query = $this
-                ->connector
-                ->query()
-                ->from($this->table);
-
-        foreach ($where as $clause => $value) {
-            $query->where($clause, $value);
-        }
-
-        return $query->count();
-    }
-
-    /**
-     * 
      * @param type $value
      * @return type
      */
@@ -200,8 +185,8 @@ class Model extends Base
         if ($value == '') {
             return true;
         } else {
-            return StringMethods::match($value, '#(<|&lt;)(strong|em|s|p|div|a|img|table|tr|td|thead|tbody|ol|li|ul|caption|span)(.*)(>|&gt;)'
-                            . '([a-zA-Zá-žÁ-Ž0-9_-\s\?\.,!:()+=\"&@\*]*)</\2>#');
+            return StringMethods::match($value, '#((<|&lt;)(strong|em|s|p|div|a|img|table|tr|td|thead|tbody|ol|li|ul|caption|span)(.*)(>|&gt;)'
+                            . '([a-zA-Zá-žÁ-Ž0-9_-\s\?\.,!:()+=\"&@\*]*)</\2>)*([a-zA-Zá-žÁ-Ž0-9_-\s\?\.,!:()+=\"&@\*]*)#');
         }
     }
 
@@ -335,6 +320,23 @@ class Model extends Base
     }
 
     /**
+     * Method simplifies record retrieval for us. 
+     * It determines the model’s primary column and checks to see whether 
+     * it is not empty. This tells us whether the primary key has been provided, 
+     * which gives us aviable means of finding the intended record. 
+     * 
+     * If the primary key class property is empty, we assume this model instance 
+     * is intended for the creation of a new record, and do nothing further. 
+     * To load the database record, we get the current model’s connector, 
+     * which halts execution if none is found. We create a database query 
+     * for the record, based on the primary key column property’s value. 
+     * 
+     * If no record is found, the Model\Exception\Primary exception is raised. 
+     * This happens when a primary key column value is provided, 
+     * but does not represent a valid identifier for a record in the database table.
+     * 
+     * Finally we loop over the loaded record’s data and only set property 
+     * values that were not set in the __construct() method.
      * 
      * @throws Exception\Primary
      */
@@ -367,6 +369,7 @@ class Model extends Base
     }
 
     /**
+     * Method removes records from the database
      * 
      * @return type
      */
@@ -397,6 +400,7 @@ class Model extends Base
     }
 
     /**
+     * Method removes records from the database
      * 
      * @param type $where
      * @return type
@@ -435,6 +439,15 @@ class Model extends Base
     }
 
     /**
+     * Method creates a query instance, and targets the table related to the Model class. 
+     * It applies a WHERE clause if the primary key property value is not empty, 
+     * and builds a data array based on columns returned by the getColumns() method. 
+     * 
+     * Finally, it calls the query instance’s save()method to commit the 
+     * data to the database. Since the Database\Connector class executes 
+     * either an INSERT or UPDATE statement, based on the WHERE clause criteria, 
+     * this method will either insert a new record, or update an existing record, 
+     * depending on whether the primary key property has a value or not.
      * 
      * @return type
      */
@@ -490,6 +503,8 @@ class Model extends Base
     }
 
     /**
+     * Method returns a user-defined table name based on the current 
+     * Model’s class name (using PHP’s get_class() method
      * 
      * @return type
      */
@@ -518,6 +533,8 @@ class Model extends Base
     }
 
     /**
+     * Method so that we can return the contents of the $_connector property,
+     * a connector instance stored in the Registry class, or raise a Model\Exception\Connector
      * 
      * @return type
      * @throws Exception\Connector
@@ -539,8 +556,17 @@ class Model extends Base
     }
 
     /**
+     * Method creates an Inspector instance and a utility function ($first) to return the
+     * first item in a metadata array. Next, it loops through all the properties in the model, 
+     * and sifts out all that have an @column flag. Any other properties are ignored at this point.
+     * The column’s @type flag is checked to make sure it is valid, raising a 
+     * Model\Exception\Type in the event that it is not. If the column’s type is valid, 
+     * it is added to the $_columns property. Every valid $primary column leads to the 
+     * incrementing of the $primaries variable, which is checked at the end 
+     * of the method to make sure that exactly one primary column has been defined. 
+     * In essence, this method takes the User model definition and returns an associative array of column data
      * 
-     * @return type
+     * @return array
      * @throws Exception\Type
      * @throws Exception\Primary
      */
@@ -614,6 +640,12 @@ class Model extends Base
     }
 
     /**
+     * Method returns a column by name. Class properties are assumed to begin 
+     * with an underscore (_) character. This assumption is continued by the 
+     * getColumn() method, which checks for a column without the _ character. 
+     * When declared as a column property, columns will look like _firstName, 
+     * but referenced by any public getters/setters/methods, 
+     * they will look like setFirstName/firstName.
      * 
      * @param type $name
      * @return null
@@ -627,6 +659,7 @@ class Model extends Base
     }
 
     /**
+     * Method loops through the columns, returning the one marked as primary
      * 
      * @return type
      */
@@ -649,6 +682,7 @@ class Model extends Base
     }
 
     /**
+     * Method is a simple, static wrapper method for the protected _first() method
      * 
      * @param type $where
      * @param type $fields
@@ -663,6 +697,7 @@ class Model extends Base
     }
 
     /**
+     * Method returns the first matched record
      * 
      * @param type $where
      * @param type $fields
@@ -698,6 +733,7 @@ class Model extends Base
     }
 
     /**
+     * Method is a simple, static wrapper method for the protected _all() method
      * 
      * @param type $where
      * @param type $fields
@@ -714,6 +750,11 @@ class Model extends Base
     }
 
     /**
+     * Method creates a query, taking into account the various filters and flags, 
+     * to return all matching records. The reason we go to the trouble of 
+     * wrapping an instance method within a static method is because we have 
+     * created a context wherein a model instance is equal to a database record. 
+     * Multirecord operations make more sense as class methods, in this context.
      * 
      * @param type $where
      * @param type $fields
@@ -765,6 +806,7 @@ class Model extends Base
     }
 
     /**
+     * Method is a simple, static wrapper method for the protected _getQuery() method
      * 
      * @return type
      */
@@ -775,6 +817,7 @@ class Model extends Base
     }
 
     /**
+     * Method return new query instance for current model
      * 
      * @return type
      */
@@ -809,6 +852,7 @@ class Model extends Base
     }
 
     /**
+     * Method is a simple, static wrapper method for the protected _count() method
      * 
      * @param type $where
      * @return type
@@ -818,8 +862,35 @@ class Model extends Base
         $model = new static();
         return $model->_count($where);
     }
+    
+    /**
+     * Method returns a count of the matched records
+     * 
+     * @param type $where
+     * @return type
+     */
+    protected function _count($where = array())
+    {
+        $query = $this
+                ->connector
+                ->query()
+                ->from($this->table);
+
+        foreach ($where as $clause => $value) {
+            $query->where($clause, $value);
+        }
+
+        return $query->count();
+    }
 
     /**
+     * Method begins by getting a list of columns and iterating over that list. 
+     * For each column, we determine whether validation should occur. 
+     * We then split the @validate metadata into a list of validation conditions. 
+     * If a condition has arguments (e.g., max(100)), we extract the arguments. 
+     * We then run each validation method on the column data and generate error 
+     * messages for those validation conditions that failed. 
+     * We return a final true/false to indicate whether the complete validation passed or failed.
      * 
      * @return type
      * @throws Exception\Validation

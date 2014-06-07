@@ -5,6 +5,7 @@ namespace Admin\Etc;
 use THCFrame\Events\Events as Events;
 use THCFrame\Registry\Registry;
 use THCFrame\Controller\Controller as BaseController;
+use THCFrame\Request\RequestMethods;
 
 /**
  * Description of Controller
@@ -14,8 +15,6 @@ use THCFrame\Controller\Controller as BaseController;
 class Controller extends BaseController
 {
 
-    protected static $_imageExtensions = array('gif', 'jpg', 'png', 'jpeg');
-
     /**
      * @protected
      */
@@ -24,7 +23,6 @@ class Controller extends BaseController
         $session = Registry::get('session');
         $security = Registry::get('security');
         $lastActive = $session->get('lastActive');
-
         $user = $this->getUser();
 
         if (!$user) {
@@ -106,6 +104,22 @@ class Controller extends BaseController
     }
 
     /**
+     * 
+     */
+    public function checkToken()
+    {
+        $session = Registry::get('session');
+        //$security = Registry::get('security');
+        $view = $this->getActionView();
+
+        if (base64_decode(RequestMethods::post('tk')) !== $session->get('csrftoken')) {
+            $view->errorMessage('Security token is not valid');
+            //$security->logout();
+            self::redirect('/admin/');
+        }
+    }
+
+    /**
      * load user from security context
      */
     public function getUser()
@@ -122,20 +136,22 @@ class Controller extends BaseController
     public function render()
     {
         $security = Registry::get('security');
-        
+
         if ($this->getUser()) {
             if ($this->getActionView()) {
                 $this->getActionView()
                         ->set('authUser', $this->getUser())
                         ->set('isAdmin', $security->isGranted('role_admin'))
-                        ->set('isSuperAdmin', $security->isGranted('role_superadmin'));
+                        ->set('isSuperAdmin', $security->isGranted('role_superadmin'))
+                        ->set('token', $security->getCsrfToken());
             }
 
             if ($this->getLayoutView()) {
                 $this->getLayoutView()
                         ->set('authUser', $this->getUser())
                         ->set('isAdmin', $security->isGranted('role_admin'))
-                        ->set('isSuperAdmin', $security->isGranted('role_superadmin'));
+                        ->set('isSuperAdmin', $security->isGranted('role_superadmin'))
+                        ->set('token', $security->getCsrfToken());
             }
         }
 

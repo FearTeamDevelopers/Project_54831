@@ -100,6 +100,16 @@ class App_Model_Collection extends Model
     /**
      * @column
      * @readwrite
+     * @type tinyint
+     * 
+     * @validate numeric, max(2)
+     * @label rank
+     */
+    protected $_rank;
+    
+    /**
+     * @column
+     * @readwrite
      * @type text
      * @length 100
      * 

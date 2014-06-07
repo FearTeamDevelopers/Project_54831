@@ -42,6 +42,8 @@ class Admin_Controller_Collection extends Controller
         );
 
         if (RequestMethods::post('submitAddCollection')) {
+            $this->checkToken();
+
             $collection = new App_Model_Collection(array(
                 'menuId' => RequestMethods::post('show'),
                 'title' => RequestMethods::post('title'),
@@ -49,7 +51,8 @@ class Admin_Controller_Collection extends Controller
                 'season' => RequestMethods::post('season', ''),
                 'date' => RequestMethods::post('date', date('Y-m-d', time())),
                 'photographer' => RequestMethods::post('photographer', ''),
-                'description' => RequestMethods::post('description', '')
+                'description' => RequestMethods::post('description', ''),
+                'rank' => RequestMethods::post('rank', 1)
             ));
 
             if ($collection->validate()) {
@@ -135,6 +138,8 @@ class Admin_Controller_Collection extends Controller
         );
 
         if (RequestMethods::post('submitEditCollection')) {
+            $this->checkToken();
+
             $collection->title = RequestMethods::post('title');
             $collection->menuId = RequestMethods::post('show');
             $collection->active = RequestMethods::post('active');
@@ -143,6 +148,7 @@ class Admin_Controller_Collection extends Controller
             $collection->date = RequestMethods::post('date', date('Y-m-d', time()));
             $collection->photographer = RequestMethods::post('photographer', '');
             $collection->description = RequestMethods::post('description', '');
+            $collection->rank = RequestMethods::post('rank', 1);
 
             if ($collection->validate()) {
                 $collection->save();
@@ -185,23 +191,19 @@ class Admin_Controller_Collection extends Controller
                 ->set('photocount', $photoCount);
 
         if (RequestMethods::post('submitDeleteCollection')) {
-            if (NULL !== $collection) {
-                if ($collection->delete()) {
-                    if (RequestMethods::post('action') == 1) {
-                        rmdir('./public/uploads/images/collections/' . $collection->getId());
-                    }
+            $this->checkToken();
 
-                    Event::fire('admin.log', array('success', 'ID: ' . $id));
-                    $view->successMessage('Collection has been deleted');
-                    self::redirect('/admin/collection/');
-                } else {
-                    Event::fire('admin.log', array('fail', 'ID: ' . $id));
-                    $view->errorMessage('Unknown error eccured');
-                    self::redirect('/admin/collection/');
+            if ($collection->delete()) {
+                if (RequestMethods::post('action') == 1) {
+                    rmdir('./public/uploads/images/collections/' . $collection->getId());
                 }
+
+                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                $view->successMessage('Collection has been deleted');
+                self::redirect('/admin/collection/');
             } else {
                 Event::fire('admin.log', array('fail', 'ID: ' . $id));
-                $view->errorMessage('Unknown id provided');
+                $view->errorMessage('Unknown error eccured');
                 self::redirect('/admin/collection/');
             }
         }
@@ -226,15 +228,19 @@ class Admin_Controller_Collection extends Controller
         $view->set('collection', $collection);
 
         if (RequestMethods::post('submitAddPhoto')) {
+            $this->checkToken();
             $errors = array();
+            
             try {
                 $uploadTo = 'collections/' . $id;
                 $im = new ImageManager(array(
                     'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
                     'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
-                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby')
+                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
+                    'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
+                    'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
                 ));
-                
+
                 $photoArr = $im->upload('photo', $uploadTo);
                 $uploaded = ArrayMethods::toObject($photoArr);
             } catch (Exception $ex) {
@@ -275,15 +281,19 @@ class Admin_Controller_Collection extends Controller
                 $view->set('errors', $errors + $photo->getErrors());
             }
         } elseif (RequestMethods::post('submitAddMultiPhoto')) {
+            $this->checkToken();
             $errors = array();
+            
             try {
                 $uploadTo = 'collections/' . $id;
                 $im = new ImageManager(array(
                     'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
                     'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
-                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby')
+                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
+                    'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
+                    'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
                 ));
-                
+
                 $result = $im->upload('photos', $uploadTo);
             } catch (Exception $ex) {
                 $errors['photo'] = $ex->getMessage();
@@ -350,10 +360,9 @@ class Admin_Controller_Collection extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
-
+        
         $photo = App_Model_Photo::first(
-                        array('id = ?' => $id), 
-                        array('id', 'path', 'thumbPath')
+                        array('id = ?' => $id), array('id', 'path', 'thumbPath')
         );
 
         if (null === $photo) {
@@ -428,7 +437,7 @@ class Admin_Controller_Collection extends Controller
         $collectionId = RequestMethods::post('collectionId');
 
         $photoQuery = App_Model_Photo::getQuery(array('ph.photoName'))
-                ->join('tb_collectionphoto', 'clp.photoId = ph.id', 'clp',
+                ->join('tb_collectionphoto', 'clp.photoId = ph.id', 'clp', 
                         array('clp.photoId', 'clp.collectionId'))
                 ->where('clp.collectionId = ?', $collectionId)
                 ->where('ph.photoName LIKE ?', $filename);
@@ -458,10 +467,11 @@ class Admin_Controller_Collection extends Controller
         );
 
         $view->set('collection', $collection);
-        
+
         if (RequestMethods::post('submitAddVideo')) {
+            $this->checkToken();
             $path = str_replace('watch?v=', 'embed/', RequestMethods::post('path'));
-            
+
             $video = new App_Model_Video(array(
                 'title' => RequestMethods::post('title'),
                 'path' => $path,
@@ -489,4 +499,5 @@ class Admin_Controller_Collection extends Controller
             }
         }
     }
+
 }

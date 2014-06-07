@@ -6,7 +6,7 @@
         <a href="#" class="ajaxLink newsTitle" id="show_news-detail_{echo $news->urlKey}">{echo $news->title}</a>
     </p>
     <p class="newsAdded">{echo $news->created}</p>
-    {echo nl2br(html_entity_decode($news->shortBody))}
+    {echo html_entity_decode($news->shortBody)}
     <br>
 </div>
 {/foreach}

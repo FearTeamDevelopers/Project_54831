@@ -60,13 +60,17 @@ class Admin_Controller_Photo extends Controller
         $view->set('sections', $sections);
 
         if (RequestMethods::post('submitAddPhoto')) {
+            $this->checkToken();
             $errors = array();
+            
             try {
                 $uploadTo = 'section_photos';
                 $im = new ImageManager(array(
                     'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
                     'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
-                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby')
+                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
+                    'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
+                    'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
                 ));
                 
                 $photoArr = $im->upload('photo', $uploadTo);
@@ -117,13 +121,17 @@ class Admin_Controller_Photo extends Controller
                         ->set('photo', $photo);
             }
         } elseif (RequestMethods::post('submitAddMultiPhoto')) {
+            $this->checkToken();
             $errors = $errors['photos'] = array();
+            
             try {
                 $uploadTo = 'section_photos';
                 $im = new ImageManager(array(
                     'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
                     'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
-                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby')
+                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
+                    'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
+                    'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
                 ));
                 
                 $result = $im->upload('photos', $uploadTo);
@@ -227,6 +235,8 @@ class Admin_Controller_Photo extends Controller
         $photo->inSections = $sectionArr;
 
         if (RequestMethods::post('submitEditPhoto')) {
+            $this->checkToken();
+            
             $photo->description = RequestMethods::post('description', '');
             $photo->category = RequestMethods::post('category', '');
             $photo->priority = RequestMethods::post('priority', 0);
@@ -274,6 +284,7 @@ class Admin_Controller_Photo extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
+        $this->checkToken();
 
         $photo = App_Model_Photo::first(
                         array('id = ?' => $id), array('id', 'thumbPath', 'path')
@@ -301,6 +312,7 @@ class Admin_Controller_Photo extends Controller
         $errors = array();
 
         if (RequestMethods::post('performPhotoAction')) {
+            $this->checkToken();
             $ids = RequestMethods::post('photoids');
             $action = RequestMethods::post('action');
 

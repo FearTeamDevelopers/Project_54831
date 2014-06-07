@@ -99,11 +99,9 @@ class Admin_Controller_User extends Controller
         $superAdmin = $security->isGranted('role_superadmin');
 
         if (RequestMethods::post('submitAddUser')) {
-            $passComparation = $security->comparePasswords(
-                    RequestMethods::post('password'), RequestMethods::post('password2')
-            );
-
-            if (!$passComparation) {
+            $this->checkToken();
+            
+            if (RequestMethods::post('password') !== RequestMethods::post('password2')) {
                 $errors['password2'] = array('Paswords doesnt match');
             }
 
@@ -113,13 +111,15 @@ class Admin_Controller_User extends Controller
                 $errors['email'] = array('Email is already used');
             }
 
-            $hash = $security->getHash(RequestMethods::post('password'));
+            $salt = $security->createSalt();
+            $hash = $security->getSaltedHash(RequestMethods::post('password'), $salt);
 
             $user = new App_Model_User(array(
                 'firstname' => RequestMethods::post('firstname'),
                 'lastname' => RequestMethods::post('lastname'),
                 'email' => RequestMethods::post('email'),
                 'password' => $hash,
+                'salt' => $salt,
                 'role' => RequestMethods::post('role', 'role_publisher'),
             ));
 
@@ -163,34 +163,38 @@ class Admin_Controller_User extends Controller
         }
 
         if (RequestMethods::post('submitEditUser')) {
-            $passComparation = $security->comparePasswords(
-                    RequestMethods::post('password'), RequestMethods::post('password2')
-            );
-
-            if (!$passComparation) {
+            $this->checkToken();
+            
+            if (RequestMethods::post('password') !== RequestMethods::post('password2')) {
                 $errors['password2'] = array('Paswords doesnt match');
             }
 
             if (RequestMethods::post('email') != $user->email) {
                 $email = App_Model_User::first(
-                                array('email = ?' => RequestMethods::post('email', $user->email)), array('email')
+                            array('email = ?' => RequestMethods::post('email', $user->email)), 
+                            array('email')
                 );
+                
                 if ($email) {
                     $errors['email'] = array('Email is already used');
                 }
             }
 
             $pass = RequestMethods::post('password');
-            if ($pass == '') {
-                $hash = $user->password;
+            
+            if ($pass === null || $pass == '') {
+                $salt = $user->getSalt();
+                $hash = $user->getPassword();
             } else {
-                $hash = $security->getHash($pass);
+                $salt = $security->createSalt();
+                $hash = $security->getSaltedHash($pass, $salt);
             }
 
             $user->firstname = RequestMethods::post('firstname');
             $user->lastname = RequestMethods::post('lastname');
             $user->email = RequestMethods::post('email');
             $user->password = $hash;
+            $user->salt = $salt;
             $user->role = RequestMethods::post('role');
             $user->active = RequestMethods::post('active');
 
@@ -219,6 +223,7 @@ class Admin_Controller_User extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
+        $this->checkToken();
 
         $user = App_Model_User::first(array('id = ?' => $id));
 

@@ -3,7 +3,6 @@
 namespace THCFrame\Registry;
 
 /**
- * Description of Registry
  * Registry is a Singleton, used to store instance of other 'normal' classes.
  * Instances of non-Singleton classes are given a key (identifier) and 
  * are 'kept' inside the Registry’s private storage

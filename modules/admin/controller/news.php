@@ -19,7 +19,8 @@ class Admin_Controller_News extends Controller
                         array('phs.photoId', 'phs.sectionId'))
                 ->join('tb_section', 'phs.sectionId = s.id', 's', 
                         array('s.urlKey'))
-                ->where('s.urlKey = ?', 'news');
+                ->where('s.urlKey = ?', 'news')
+                ->order('ph.created', 'DESC');
 
         $photos = App_Model_Photo::initialize($photoQuery);
 
@@ -38,7 +39,8 @@ class Admin_Controller_News extends Controller
                         array('vis.videoId', 'vis.sectionId'))
                 ->join('tb_section', 'vis.sectionId = s.id', 's',
                         array('s.urlKey'))
-                ->where('s.urlKey = ?', 'news');
+                ->where('s.urlKey = ?', 'news')
+                ->order('vi.created', 'DESC');
 
         $videos = App_Model_Video::initialize($videoQuery);
 
@@ -68,6 +70,7 @@ class Admin_Controller_News extends Controller
         $videos = $this->_getVideos();
 
         if (RequestMethods::post('submitAddNews')) {
+            $this->checkToken();
             $urlKey = StringMethods::removeDiacriticalMarks(RequestMethods::post('urlkey'));
 
             $news = new App_Model_News(array(
@@ -115,6 +118,7 @@ class Admin_Controller_News extends Controller
         }
 
         if (RequestMethods::post('submitEditNews')) {
+            $this->checkToken();
             $urlKey = StringMethods::removeDiacriticalMarks(RequestMethods::post('urlkey'));
 
             $news->title = RequestMethods::post('title');
@@ -150,7 +154,8 @@ class Admin_Controller_News extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
-
+        $this->checkToken();
+        
         $news = App_Model_News::first(
                         array('id = ?' => $id), array('id')
         );
@@ -177,6 +182,7 @@ class Admin_Controller_News extends Controller
         $errors = array();
 
         if (RequestMethods::post('performNewsAction')) {
+            $this->checkToken();
             $ids = RequestMethods::post('newsids');
             $action = RequestMethods::post('action');
 

@@ -42,13 +42,14 @@ class Mysqldump extends Base
      */
     public function __construct($settings = null)
     {
+//        ini_set('default_charset', 'UTF-8');
         $this->_database = Registry::get('database');
         $this->_database->connect();
 
         $this->_settings = $this->_extend($this->_defaultSettings, $settings);
         $this->_filename = APP_PATH . '/temp/db/' . $this->_database->getSchema() . '_' . date('Y-m-d') . '.sql';
     }
-    
+
     public function __destruct()
     {
         $this->_database->disconnect();
@@ -63,7 +64,7 @@ class Mysqldump extends Base
     {
         $header = '-- mysqldump-php SQL Dump' . PHP_EOL .
                 '--' . PHP_EOL .
-                '-- Host: {$this->_database->getHost()}' . PHP_EOL .
+                "-- Host: {$this->_database->getHost()}" . PHP_EOL .
                 '-- Generation Time: ' . date('r') . PHP_EOL .
                 '--' . PHP_EOL .
                 "-- Database: `{$this->_database->getSchema()}`" . PHP_EOL .
@@ -131,7 +132,7 @@ class Mysqldump extends Base
 
             if ($onlyOnce || !$this->_settings['extended-insert']) {
                 $lineSize += $this->_write(html_entity_decode(
-                        "INSERT INTO `$tablename` VALUES ('" . implode("', '", $vals) . "')"));
+                                "INSERT INTO `$tablename` VALUES ('" . implode("', '", $vals) . "')"));
                 $onlyOnce = false;
             } else {
                 $lineSize += $this->_write(html_entity_decode(",('" . implode("', '", $vals) . "')"));
@@ -207,6 +208,8 @@ class Mysqldump extends Base
     private function _write($str)
     {
         $bytesWritten = 0;
+//        $str = iconv(mb_detect_encoding($str, mb_detect_order(), true), "UTF-8", $str);
+//        $str = html_entity_decode($str);
         if (false === ($bytesWritten = fwrite($this->_fileHandler, $str))) {
             throw new Exception\Backup('Writting to file failed!', 4);
         }
@@ -272,26 +275,24 @@ class Mysqldump extends Base
         Events::fire('framework.mysqldump.create.after', array($this->_filename));
 
         $this->_close();
-        
+
         return $this;
     }
 
     /**
-     * 
+     * Extension for view:
+     * <p><span class="labeled-checkbox block">
+      <input type="checkbox" name="downloadDump" value="1">
+      Download database dump</span></p>
      */
     public function downloadDump()
     {
         $this->_mime = 'text/x-sql';
-
-        header('Pragma: public');
-        header('Expires: 0');
-        header('Cache-Control: must-revalidate, post-check=0, pre-check=0');
-        header('Cache-Control: private', false);
-        header("Content-Type: text/html; charset=utf-8");
-        header("Content-Disposition: attachment; filename='" . basename($this->_filename) . "'");
+        header('Content-Type: application/octet-stream');
+        header("Content-Transfer-Encoding: Binary");
+        header("Content-Disposition: attachment; filename=\"" . basename($this->_filename) . "\"");
         header('Content-Length: ' . filesize($this->_filename));
         ob_clean();
-        flush();
         readfile($this->_filename);
         exit;
     }

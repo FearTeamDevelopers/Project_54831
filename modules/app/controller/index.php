@@ -28,6 +28,7 @@ class App_Controller_Index extends Controller
             return $content;
         } else {
             $section = $this->getSection($urlKey);
+            $videos = $photos = array();
 
             $contentText = App_Model_PageContent::first(
                             array(
@@ -115,6 +116,37 @@ class App_Controller_Index extends Controller
         $this->willRenderActionView = true;
 
         $content = $this->_getSectionContent('bio');
+
+        $contentText = $content['text'];
+        $photos = $content['photos'];
+        $videos = $content['videos'];
+        $collections = $content['collectionlist'];
+
+        $view->set('text', $contentText)
+                ->set('photos', $photos)
+                ->set('videos', $videos)
+                ->set('collectionlist', $collections);
+    }
+    
+    /**
+     * 
+     */
+    public function provas()
+    {
+        $view = $this->getActionView();
+
+        if ($view->getHttpReferer() === null) {
+            $this->willRenderLayoutView = true;
+            $layoutView = $this->getLayoutView();
+            $layoutView->set('hidetop', true)
+                    ->set('showcust', true);
+        } else {
+            $this->willRenderLayoutView = false;
+        }
+
+        $this->willRenderActionView = true;
+
+        $content = $this->_getSectionContent('provas');
 
         $contentText = $content['text'];
         $photos = $content['photos'];

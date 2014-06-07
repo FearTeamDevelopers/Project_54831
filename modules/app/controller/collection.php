@@ -31,6 +31,7 @@ class App_Controller_Collection extends Controller
                             array('clm.urlKey',))
                     ->where('clm.urlKey = ?', $urlKey)
                     ->where('cl.active = ?', true)
+                    ->order('cl.rank', 'ASC')
                     ->order('cl.created', 'DESC');
 
             $collections = App_Model_Collection::initialize($collectionQuery);

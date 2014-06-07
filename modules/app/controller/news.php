@@ -16,7 +16,7 @@ class App_Controller_News extends Controller
      */
     private function _parseNewsBody(\App_Model_News $news, $parsedField)
     {
-        preg_match_all('/\(\!(video|photo)_[0-9]+\!\)/', $news->$parsedField, $matches);
+        preg_match_all('/\(\!(video|photo|read)_[0-9a-z]+\!\)/', $news->$parsedField, $matches);
         $m = array_shift($matches);
         
         foreach ($m as $match) {
@@ -39,7 +39,7 @@ class App_Controller_News extends Controller
                 $body = str_replace("(!photo_{$id}!)", $tag, $body);
                 
                 $news->$parsedField = $body;
-            } 
+            }
             
             if ($type == 'video') {
                 $video = App_Model_Video::first(
@@ -53,6 +53,12 @@ class App_Controller_News extends Controller
                         . "src=\"{$video->path}\" frameborder=\"0\" allowfullscreen></iframe>";
 
                 $body = str_replace("(!video_{$id}!)", $tag, $body);
+                $news->$parsedField = $body;
+            }
+            
+            if ($type == 'read'){
+                $tag = "<a href=\"#\" class=\"ajaxLink newsReadMore\" id=\"show_news-detail_{$news->getUrlKey()}\">[Celý článek]</a>";
+                $body = str_replace("(!read_more!)", $tag, $body);
                 $news->$parsedField = $body;
             }
         }
@@ -70,6 +76,10 @@ class App_Controller_News extends Controller
         
         if($view->getHttpReferer() === null){
             $this->willRenderLayoutView = true;
+            $this->willRenderLayoutView = true;
+            $layoutView = $this->getLayoutView();
+            $layoutView->set('hidetop', true)
+                    ->set('shownews', true);
         }else{
             $this->willRenderLayoutView = false;
         }

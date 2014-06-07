@@ -53,6 +53,12 @@ class App_Etc_Module extends Module{
             'action' => 'design',
         ),
         array(
+            'pattern' => '/provas',
+            'module' => 'app',
+            'controller' => 'index',
+            'action' => 'provas',
+        ),
+        array(
             'pattern' => '/styling',
             'module' => 'app',
             'controller' => 'index',

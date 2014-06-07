@@ -41,6 +41,7 @@ class Admin_Controller_CollectionMenu extends Controller
         );
 
         if (RequestMethods::post('submitAddClmenu')) {
+            $this->checkToken();
             $urlKey = StringMethods::removeDiacriticalMarks(RequestMethods::post('urlkey'));
             
             $clm = new App_Model_CollectionMenu(array(
@@ -90,6 +91,7 @@ class Admin_Controller_CollectionMenu extends Controller
         }
 
         if (RequestMethods::post('submitEditClmenu')) {
+            $this->checkToken();
             $urlKey = StringMethods::removeDiacriticalMarks(RequestMethods::post('urlkey'));
 
             $clm->sectionId = RequestMethods::post('section');
@@ -123,7 +125,8 @@ class Admin_Controller_CollectionMenu extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
-
+        $this->checkToken();
+        
         $clm = App_Model_CollectionMenu::first(
                         array('id = ?' => $id), array('id')
         );
@@ -150,6 +153,7 @@ class Admin_Controller_CollectionMenu extends Controller
         $errors = array();
 
         if (RequestMethods::post('performClmAction')) {
+            $this->checkToken();
             $ids = RequestMethods::post('clmids');
             $action = RequestMethods::post('action');
 
