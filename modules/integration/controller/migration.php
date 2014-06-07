@@ -39,15 +39,7 @@ class Integration_Controller_Migration extends Controller
             'password' => '',
             'schema' => 'markoin_db'
         );
-        /*
-          $database->options = array(
-          'host' => 'mysql-g1.gransy.com',
-          'username' => 'markoin_marko',
-          'password' => 'M12Ar28Ko*',
-          'schema' => 'markoin_db'
-          );
-         */
-
+       
         return $database->initialize();
     }
 
