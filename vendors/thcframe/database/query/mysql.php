@@ -21,7 +21,6 @@ class Mysql extends Database\Query
     public function all()
     {
         $sql = $this->_buildSelect();
-
         $result = $this->connector->execute($sql);
 
         if ($result === false) {

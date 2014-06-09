@@ -11,6 +11,8 @@ class Admin_Controller_Announcement extends Controller
 {
 
     /**
+     * Action method returns a list of all announcements
+     * 
      * @before _secured, _publisher
      */
     public function index()
@@ -23,6 +25,8 @@ class Admin_Controller_Announcement extends Controller
     }
 
     /**
+     * Action method used for creating new announcements
+     * 
      * @before _secured, _publisher
      */
     public function add()
@@ -56,6 +60,9 @@ class Admin_Controller_Announcement extends Controller
     }
 
     /**
+     * Action method used for edititg existing announcements
+     * 
+     * @param int    $id     announcement id
      * @before _secured, _publisher
      */
     public function edit($id)
@@ -97,6 +104,10 @@ class Admin_Controller_Announcement extends Controller
     }
 
     /**
+     * Method called via ajax used for deleting specific announcement base on 
+     * id parameter
+     * 
+     * @param int    $id     announcement id
      * @before _secured, _admin
      */
     public function delete($id)

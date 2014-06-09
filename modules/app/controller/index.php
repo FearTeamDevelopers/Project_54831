@@ -39,7 +39,8 @@ class App_Controller_Index extends Controller
 
             if ($section->getSupportPhoto()) {
                 $query = App_Model_Photo::getQuery(array('ph.*'))
-                        ->join('tb_photosection', 'ph.id = phs.photoId', 'phs', array('phs.photoId', 'phs.sectionId'))
+                        ->join('tb_photosection', 'ph.id = phs.photoId', 'phs', 
+                                array('phs.photoId', 'phs.sectionId'))
                         ->where('phs.sectionId = ?', $section->getId())
                         ->order('ph.priority', 'DESC')
                         ->order('ph.created', 'DESC');
@@ -49,7 +50,8 @@ class App_Controller_Index extends Controller
 
             if ($section->getSupportVideo()) {
                 $queryVi = App_Model_Video::getQuery(array('vi.*'))
-                        ->join('tb_videosection', 'vi.id = vis.videoId', 'vis', array('vis.videoId', 'vis.sectionId'))
+                        ->join('tb_videosection', 'vi.id = vis.videoId', 'vis', 
+                                array('vis.videoId', 'vis.sectionId'))
                         ->where('vis.sectionId = ?', $section->getId())
                         ->order('vi.priority', 'DESC')
                         ->order('vi.created', 'DESC');
@@ -85,6 +87,7 @@ class App_Controller_Index extends Controller
     public function index()
     {
         $view = $this->getActionView();
+        $layoutView = $this->getLayoutView();
 
         $lastAnnouncement = App_Model_Announcement::first(
                         array(
@@ -94,7 +97,25 @@ class App_Controller_Index extends Controller
                         )
         );
 
+        $npp = (int) $this->loadConfigFromDb('news_per_page');
+
+        $newsCount = App_Model_News::count(
+                        array('active = ?' => true,
+                            'expirationDate >= ?' => date('Y-m-d H:i:s'))
+        );
+
+        $newsPageCount = ceil($newsCount / $npp);
+        $maxPageCount = (int) $this->loadConfigFromDb('news_max_page_count');
+
+        if ((int) $newsPageCount > $maxPageCount) {
+            $newsPageCount = $maxPageCount;
+        }
+
         $view->set('lastannouncement', $lastAnnouncement);
+        $layoutView->set('newspagecount', $newsPageCount)
+                ->set('metadescription', $this->loadConfigFromDb('meta_description'))
+                ->set('metarobots', $this->loadConfigFromDb('meta_robots'))
+                ->set('metakeywords', $this->loadConfigFromDb('meta_keywords'));
     }
 
     /**
@@ -103,16 +124,7 @@ class App_Controller_Index extends Controller
     public function bio()
     {
         $view = $this->getActionView();
-
-        if ($view->getHttpReferer() === null) {
-            $this->willRenderLayoutView = true;
-            $layoutView = $this->getLayoutView();
-            $layoutView->set('hidetop', true)
-                    ->set('showbio', true);
-        } else {
-            $this->willRenderLayoutView = false;
-        }
-
+        $this->checkRefferer('showbio');
         $this->willRenderActionView = true;
 
         $content = $this->_getSectionContent('bio');
@@ -127,23 +139,14 @@ class App_Controller_Index extends Controller
                 ->set('videos', $videos)
                 ->set('collectionlist', $collections);
     }
-    
+
     /**
      * 
      */
     public function provas()
     {
         $view = $this->getActionView();
-
-        if ($view->getHttpReferer() === null) {
-            $this->willRenderLayoutView = true;
-            $layoutView = $this->getLayoutView();
-            $layoutView->set('hidetop', true)
-                    ->set('showcust', true);
-        } else {
-            $this->willRenderLayoutView = false;
-        }
-
+        $this->checkRefferer('showcust');
         $this->willRenderActionView = true;
 
         $content = $this->_getSectionContent('provas');
@@ -165,16 +168,7 @@ class App_Controller_Index extends Controller
     public function design()
     {
         $view = $this->getActionView();
-
-        if ($view->getHttpReferer() === null) {
-            $this->willRenderLayoutView = true;
-            $layoutView = $this->getLayoutView();
-            $layoutView->set('hidetop', true)
-                    ->set('showdesign', true);
-        } else {
-            $this->willRenderLayoutView = false;
-        }
-
+        $this->checkRefferer('showdesign');
         $this->willRenderActionView = true;
 
         $content = $this->_getSectionContent('design');
@@ -196,16 +190,7 @@ class App_Controller_Index extends Controller
     public function styling()
     {
         $view = $this->getActionView();
-
-        if ($view->getHttpReferer() === null) {
-            $this->willRenderLayoutView = true;
-            $layoutView = $this->getLayoutView();
-            $layoutView->set('hidetop', true)
-                    ->set('showstyling', true);
-        } else {
-            $this->willRenderLayoutView = false;
-        }
-
+        $this->checkRefferer('showstyling');
         $this->willRenderActionView = true;
 
         $content = $this->_getSectionContent('styling');
@@ -227,16 +212,7 @@ class App_Controller_Index extends Controller
     public function contact()
     {
         $view = $this->getActionView();
-
-        if ($view->getHttpReferer() === null) {
-            $this->willRenderLayoutView = true;
-            $layoutView = $this->getLayoutView();
-            $layoutView->set('hidetop', true)
-                    ->set('showcontact', true);
-        } else {
-            $this->willRenderLayoutView = false;
-        }
-
+        $this->checkRefferer('showcontact');
         $this->willRenderActionView = true;
 
         $content = $this->_getSectionContent('contact');
@@ -258,16 +234,7 @@ class App_Controller_Index extends Controller
     public function partners()
     {
         $view = $this->getActionView();
-
-        if ($view->getHttpReferer() === null) {
-            $this->willRenderLayoutView = true;
-            $layoutView = $this->getLayoutView();
-            $layoutView->set('hidetop', true)
-                    ->set('showpartners', true);
-        } else {
-            $this->willRenderLayoutView = false;
-        }
-
+        $this->checkRefferer('showpartners');
         $this->willRenderActionView = true;
 
         $partnerSections = $this->getSectionsByParentId(6);
@@ -307,20 +274,20 @@ class App_Controller_Index extends Controller
             'imageWidth' => $this->loadConfigFromDb('feed_image_width'),
             'imageHeight' => $this->loadConfigFromDb('feed_image_height')
         ));
-        
+
         $news = App_Model_News::all(
-                array('active = ?' => true, 
-                    'rssFeedBody <> ?' => '', 
-                    'expirationDate >= ?' => date('Y-m-d H:i:s')),
-                array('urlKey', 'title', 'rssFeedBody'),
+                        array('active = ?' => true,
+                    'rssFeedBody <> ?' => '',
+                    'expirationDate >= ?' => date('Y-m-d H:i:s')), 
+                array('urlKey', 'title', 'rssFeedBody'), 
                 array('created' => 'desc'), 10
         );
 
         foreach ($news as $nws) {
-            $link = 'http://'.RequestMethods::server('HTTP_HOST').'/news/detail/'.$nws->getUrlKey();
+            $link = 'http://' . RequestMethods::server('HTTP_HOST') . '/news/detail/' . $nws->getUrlKey();
             $rss->addItem($nws->getTitle(), $link, $nws->getRssFeedBody());
         }
-        
+
         header("Content-Type: application/xml; charset=UTF-8");
         echo $rss->getFeed();
     }

@@ -325,8 +325,6 @@ class Security extends Base
         }
     }
 
-    
-
     /**
      * Method creates new salt and salted password and 
      * returns new hash with salt as string.

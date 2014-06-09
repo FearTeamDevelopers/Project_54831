@@ -37,14 +37,14 @@ class App_Etc_Module extends Module{
             'module' => 'app',
             'controller' => 'news',
             'action' => 'index',
-            'args' => 'page'
+            'args' => ':page'
         ),
         array(
             'pattern' => '/news/detail/:title',
             'module' => 'app',
             'controller' => 'news',
             'action' => 'detail',
-            'args' => 'title'
+            'args' => ':title'
         ),
         array(
             'pattern' => '/design',

@@ -18,7 +18,7 @@ class Admin_Controller_User extends Controller
      */
     public function login()
     {
-        $this->_willRenderLayoutView = false;
+        $this->willRenderLayoutView = false;
         $view = $this->getActionView();
 
         if (RequestMethods::post('submitLogin')) {

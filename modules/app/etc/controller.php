@@ -33,17 +33,6 @@ class Controller extends BaseController
     }
 
     /**
-     * load user from security context
-     */
-    public function getUser()
-    {
-        $security = Registry::get('security');
-        $user = $security->getUser();
-
-        return $user;
-    }
-
-    /**
      * 
      * @param type $sections
      * @param type $order
@@ -119,21 +108,27 @@ class Controller extends BaseController
 
     /**
      * 
+     * @param type $newVar
+     */
+    protected function checkRefferer($newVar){
+        $view = $this->getActionView();
+
+        if ($view->getHttpReferer() === null) {
+            $this->willRenderLayoutView = true;
+            $layoutView = $this->getLayoutView();
+            $layoutView->set('hidetop', true)
+                    ->set('showaction', true)
+                    ->set($newVar, true);
+        } else {
+            $this->willRenderLayoutView = false;
+        }
+    }
+    
+    /**
+     * 
      */
     public function render()
     {
-        if ($this->getUser()) {
-            if ($this->getActionView()) {
-                $this->getActionView()
-                        ->set('authUser', $this->getUser());
-            }
-
-            if ($this->getLayoutView()) {
-                $this->getLayoutView()
-                        ->set('authUser', $this->getUser());
-            }
-        }
-
         parent::render();
     }
 

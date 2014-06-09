@@ -39,8 +39,9 @@ jQuery(document).ready(function() {
             } else {
                 jQuery('.pagination .previous a, .pagination .first a').removeClass('disable');
             }
-            var pageNum = jQuery(this).attr('id');
-            jQuery("#news .text").load("/news/" + pageNum, function() {
+
+            var pageNum = jQuery(this).attr('title');
+            jQuery("#news .content").load("/news/" + pageNum, function() {
                 jQuery("#news a.close").focus();
             });
         }
@@ -60,6 +61,11 @@ jQuery(document).ready(function() {
         if (!jQuery('.pagination a.current').parent().prev().hasClass('previous')) {
             jQuery('.pagination .previous a, .pagination .first a').removeClass('disable');
         }
+        var pageNum = jQuery(this).attr('title');
+
+        jQuery("#news .content").load("/news/" + pageNum, function() {
+            jQuery("#news a.close").focus();
+        });
 
     });
 
@@ -76,6 +82,11 @@ jQuery(document).ready(function() {
         if (!jQuery('.pagination a.current').parent().next().hasClass('next')) {
             jQuery('.pagination .next a, .pagination .last a').removeClass('disable');
         }
+        var pageNum = jQuery(this).attr('title');
+
+        jQuery("#news .content").load("/news/" + pageNum, function() {
+            jQuery("#news a.close").focus();
+        });
 
     });
 
@@ -86,6 +97,11 @@ jQuery(document).ready(function() {
         jQuery('.pagination .current').removeClass('current');
         jQuery('.pagination .next a').parent().prev().find('a').addClass('current');
         jQuery('.pagination .first a, .pagination .previous a').removeClass('disable');
+        var pageNum = jQuery(this).attr('title');
+
+        jQuery("#news .content").load("/news/" + pageNum, function() {
+            jQuery("#news a.close").focus();
+        });
     });
 
     //clicking last button
@@ -95,5 +111,10 @@ jQuery(document).ready(function() {
         jQuery('.pagination .current').removeClass('current');
         jQuery('.pagination .previous a').parent().next().find('a').addClass('current');
         jQuery('.pagination .last a, .pagination .next a').removeClass('disable');
+        var pageNum = jQuery(this).attr('title');
+
+        jQuery("#news .content").load("/news/" + pageNum, function() {
+            jQuery("#news a.close").focus();
+        });
     });
 });

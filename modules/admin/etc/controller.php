@@ -136,20 +136,25 @@ class Controller extends BaseController
     public function render()
     {
         $security = Registry::get('security');
+        $view = $this->getActionView();
+        $layoutView = $this->getLayoutView();
+        $user = $this->getUser();
+        
+        if ($view) {
+            $view->set('authUser', $this->getUser());
 
-        if ($this->getUser()) {
-            if ($this->getActionView()) {
-                $this->getActionView()
-                        ->set('authUser', $this->getUser())
-                        ->set('isAdmin', $security->isGranted('role_admin'))
+            if ($user) {
+                $view->set('isAdmin', $security->isGranted('role_admin'))
                         ->set('isSuperAdmin', $security->isGranted('role_superadmin'))
                         ->set('token', $security->getCsrfToken());
             }
+        }
 
-            if ($this->getLayoutView()) {
-                $this->getLayoutView()
-                        ->set('authUser', $this->getUser())
-                        ->set('isAdmin', $security->isGranted('role_admin'))
+        if ($layoutView) {
+            $layoutView->set('authUser', $this->getUser());
+
+            if ($user) {
+                $layoutView->set('isAdmin', $security->isGranted('role_admin'))
                         ->set('isSuperAdmin', $security->isGranted('role_superadmin'))
                         ->set('token', $security->getCsrfToken());
             }

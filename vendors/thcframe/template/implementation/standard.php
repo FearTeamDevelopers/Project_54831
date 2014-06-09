@@ -217,11 +217,11 @@ class Standard extends Template\Implementation
     protected function _loop($tree, $inner)
     {
         $number = $tree["number"];
-        $object = $tree["arguments"]["object"];
+        $object = isset($tree["arguments"]["object"])? $tree["arguments"]["object"] : null;
         $children = $tree["parent"]["children"];
-        $objectCount = count($object);
 
-        if (!empty($children[$number + 1]["tag"]) && $children[$number + 1]["tag"] == "else") {
+        if ($object && !empty($children[$number + 1]["tag"]) && $children[$number + 1]["tag"] == "else") {
+            $objectCount = count($object);
             return "if (is_array({$object}) && {$objectCount} > 0) {{$inner}}";
         }
 

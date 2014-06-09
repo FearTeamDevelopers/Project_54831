@@ -49,7 +49,7 @@ a:hover{color: #ccc;}
 
 #page {position: relative; width: 100%; z-index: 20;}
 #main {position: relative; width: 100%; height: auto; }
-#temptopdiv{margin-top: 35%;}
+#temptopdiv{margin-top: 40%;}
 
 #news,#bio,#design,#styling,#provas,
 #contact,#portfolio,#announcement,
@@ -111,6 +111,7 @@ a:hover{color: #ccc;}
     text-align: center;
     color: white;
     font-size: 13px;
+    z-index: 999;
 }
 
 #footer .mailto{color:white;}
@@ -216,13 +217,13 @@ a.close {position: inherit; top:5px; left: 90%;}
     padding: 10px 25px 25px; 
 }
 
-.pagination { list-style: none; overflow: hidden; }
+.pagination { list-style: none; overflow: hidden;}
 .pagination li { display: inline-block; float: left; margin-right: 5px; }
 .pagination li.first, .pagination li.previous, .pagination li.next, .pagination li.last { font-size: 18px; }
 .pagination li a { display: block; font-weight: bold; border: 1px solid #ccc; padding: 5px 10px; color: #333; line-height: 21px; vertical-align: top; }
 .pagination li a { background: #f7f7f7; -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px; }
 .pagination li a:hover { cursor: pointer; text-decoration: none; background: #eee; }
-.pagination li a.current { background: #888; color: #fff; border: 1px solid #272727; }
+.pagination li a.current { background: #666; color: #fff; border: 1px solid #272727; }
 .pagination li.first a:active, .pagination li.previous a:active, .pagination li.next a:active, .pagination li.last a:active {
     background: #333; color: #fff; border: 1px solid #272727;
 }
@@ -236,8 +237,8 @@ a.close {position: inherit; top:5px; left: 90%;}
 .ancSignature{margin-left: 75%;}
 
 
-@media screen and (max-width: 1024px) {
-    #temptopdiv{margin-top: 65%;}
+@media screen and (max-width: 1200px) {
+    #temptopdiv{margin-top: 55%;}
 
     #news,#bio,#design,#styling,#provas,
     #contact,#portfolio,#announcement,
@@ -246,7 +247,8 @@ a.close {position: inherit; top:5px; left: 90%;}
         top: 55px; left: 5%;
         overflow-y: auto;
         overflow-x: no-content;
-        width: 80%;
+        width: 83%;
+        height: auto;
         padding: 10px;
     }
 
@@ -284,7 +286,7 @@ a.close {position: inherit; top:5px; left: 90%;}
 }
 
 @media screen and (max-width: 650px) {
-    #temptopdiv{margin-top: 50%;}
+    #temptopdiv{margin-top: 55%;}
     iframe{width: 380px; height: 214px;}
 
     #news,#bio,#design,#styling,#provas,
@@ -331,12 +333,4 @@ a.close {position: inherit; top:5px; left: 90%;}
         text-shadow: 0 3px 3px rgba(0, 0, 0, .9); 
         padding: 8px;
     }
-}
-
-@media screen and (max-width: 480px) {
-
-}
-
-@media screen and (max-width: 430px) {
-
 }

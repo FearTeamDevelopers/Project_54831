@@ -3,7 +3,7 @@ jQuery(document).ready(function() {
         jQuery(this).parent().hide(1000)
     });
 
-    if (jQuery(window).width() > 700) {
+    if (jQuery(window).width() > 1000) {
         jQuery('#bio,#design,#styling,#contact,#partners,#news-detail,#provas').draggable();
         jQuery('#news').draggable({
             scroll: true,
@@ -18,7 +18,7 @@ jQuery(document).ready(function() {
     jQuery('#navi li a').click(function() {
         jQuery('#temptopdiv:visible').hide(1000);
 
-        if (jQuery(window).width() < 700) {
+        if (jQuery(window).width() < 1000) {
             jQuery('#main').children('div:visible').hide();
         }
         

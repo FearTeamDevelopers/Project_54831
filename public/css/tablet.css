@@ -11,7 +11,6 @@ root {
 html{
     background:black url('../images/Marko_In_bg.jpg') center center fixed no-repeat;
     background-size: Contain;
-    -webkit-text-size-adjust: none;
 }
 
 @font-face { 
@@ -30,8 +29,7 @@ body {
     color: white;
     overflow-y: auto;
     overflow-x: hidden;
-    width: 100%;
-    min-width: 480px;
+    min-width: 600px;
 }
 
 a { color: #999;}
@@ -55,12 +53,12 @@ a:hover{color: #ccc;}
 
 #news, #collection, #news-detail, #showaction{
     position: absolute;
-    top: 55px; left: 5px;
+    top: 55px; left: 7%;
     overflow-y: auto;
     overflow-x: no-content;
-    width: 90%;
+    width: 83%;
     height: auto;
-    padding: 5px;
+    padding: 10px;
 }
 
 iframe{width: 380px; height: 214px;}
@@ -86,7 +84,7 @@ iframe{width: 380px; height: 214px;}
     width: 100%;
     text-align: center;
     color: white;
-    font-size: 11px;
+    font-size: 13px;
 }
 
 #footer .mailto{color:white;}
@@ -101,7 +99,7 @@ iframe{width: 380px; height: 214px;}
     width: 100%;
 }
 #navi li:first-child{
-    margin-left: 6%;
+    margin-left: 8%;
 }
 #navi li {
     width: 9%;

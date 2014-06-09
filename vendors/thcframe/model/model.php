@@ -143,7 +143,7 @@ class Model extends Base
         if ($value == '') {
             return true;
         } else {
-            return StringMethods::match($value, '#^([a-zA-Zá-žÁ-Ž_-\s\?\.,!]*)$#');
+            return StringMethods::match($value, '#^([a-zA-Zá-žÁ-Ž_-\s\?\.,!\/]*)$#');
         }
     }
 
@@ -171,7 +171,7 @@ class Model extends Base
         if ($value == '') {
             return true;
         } else {
-            return StringMethods::match($value, '#^([a-zA-Zá-žÁ-Ž0-9_-\s\?\.,!:()+=\"&@\*]*)$#');
+            return StringMethods::match($value, '#^([a-zA-Zá-žÁ-Ž0-9_-\s\?\.,!:()+=\"&@\*\/]*)$#');
         }
     }
 
@@ -316,7 +316,7 @@ class Model extends Base
     public function __construct($options = array())
     {
         parent::__construct($options);
-        $this->load();
+        //$this->load();
     }
 
     /**

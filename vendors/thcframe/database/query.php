@@ -183,7 +183,7 @@ class Query extends Base
             $_offset = $this->offset;
 
             if ($_offset) {
-                $limit = "LIMIT {$_limit}, {$_offset}";
+                $limit = "LIMIT {$_offset}, {$_limit}";
             } else {
                 $limit = "LIMIT {$_limit}";
             }
@@ -461,11 +461,11 @@ class Query extends Base
         if (empty($limit)) {
             throw new Exception\Argument('Invalid argument');
         }
-
+        
         $this->_limit = $this->_quote($limit);
-        $page = $this->_quote($page);
+        $page = (int)$this->_quote($page);
 
-        if ($page - 1 < 0) {
+        if ($page - 1 <= 0) {
             $this->_offset = 0;
         } else {
             $this->_offset = $limit * ($page - 1);

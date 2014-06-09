@@ -13,6 +13,8 @@ class Admin_Controller_Collection extends Controller
 {
 
     /**
+     * Action method returns list of all collections
+     * 
      * @before _secured, _publisher
      */
     public function index()
@@ -32,6 +34,8 @@ class Admin_Controller_Collection extends Controller
     }
 
     /**
+     * Action method shows and processes form used for new collection creation
+     * 
      * @before _secured, _publisher
      */
     public function add()
@@ -72,6 +76,8 @@ class Admin_Controller_Collection extends Controller
     }
 
     /**
+     * Method shows detail of specific collection based on param id. 
+     * From here can user upload photos and videos into collection.
      * 
      * @before _secured, _publisher
      * @param int $id   collection id
@@ -116,6 +122,8 @@ class Admin_Controller_Collection extends Controller
     }
 
     /**
+     * Action method shows and processes form used for editing specific 
+     * collection based on param id
      * 
      * @before _secured, _publisher
      * @param int $id   collection id
@@ -167,6 +175,9 @@ class Admin_Controller_Collection extends Controller
     }
 
     /**
+     * Action method shows and processes form used for deleting specific 
+     * collection based on param id. If is collection delete confirmed, 
+     * there is option used for deleting all photos in collection.
      * 
      * @before _secured, _admin
      * @param int $id   collection id
@@ -210,6 +221,8 @@ class Admin_Controller_Collection extends Controller
     }
 
     /**
+     * Action method shows and processes form used for uploading photos into
+     * collection specified by param id
      * 
      * @before _secured, _publisher
      * @param int $id   collection id
@@ -351,7 +364,7 @@ class Admin_Controller_Collection extends Controller
     }
 
     /**
-     * Ajax
+     * Method is called via ajax and deletes photo specified by param id
      * 
      * @before _secured, _publisher
      * @param int $id   photo id
@@ -384,7 +397,8 @@ class Admin_Controller_Collection extends Controller
     }
 
     /**
-     * Ajax
+     * Method is called via ajax and activate or deactivate photo specified by
+     * param id
      * 
      * @before _secured, _publisher
      * @param int $id   photo id
@@ -424,7 +438,8 @@ class Admin_Controller_Collection extends Controller
     }
 
     /**
-     * Ajax
+     * Method called via ajax checks if photo with specific filename already
+     * exists or not
      * 
      * @before _secured, _publisher
      */
@@ -452,8 +467,11 @@ class Admin_Controller_Collection extends Controller
     }
 
     /**
+     * Action method shows and processes form used for adding video into collection.
+     * Manipulation with video is done via video controller.
+     * 
      * @before _secured, _publisher
-     * @param int $id   photo id
+     * @param int $id   collection id
      */
     public function addVideo($id)
     {

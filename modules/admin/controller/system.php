@@ -14,7 +14,7 @@ class Admin_Controller_System extends Controller
 {
 
     /**
-     * @befor _secured, _admin
+     * @before _secured, _admin
      */
     public function index()
     {
@@ -31,7 +31,7 @@ class Admin_Controller_System extends Controller
     }
 
     /**
-     * @befor _secured, _admin
+     * @before _secured, _admin
      */
     public function clearCache()
     {
@@ -49,7 +49,7 @@ class Admin_Controller_System extends Controller
     /**
      * Create and download db bakcup
      * 
-     * @befor _secured, _admin
+     * @before _secured, _admin
      */
     public function createDatabaseBackup()
     {
@@ -81,7 +81,7 @@ class Admin_Controller_System extends Controller
     }
 
     /**
-     * @befor _secured, _superadmin
+     * @before _secured, _superadmin
      */
     public function showAdminLog()
     {
@@ -98,7 +98,7 @@ class Admin_Controller_System extends Controller
     }
 
     /**
-     * @befor _secured, _admin
+     * @before _secured, _admin
      */
     public function archivateNews()
     {
@@ -151,7 +151,7 @@ class Admin_Controller_System extends Controller
     }
 
     /**
-     * @befor _secured, _admin
+     * @before _secured, _admin
      */
     public function changeApplicationStatus()
     {
@@ -179,7 +179,7 @@ class Admin_Controller_System extends Controller
     }
 
     /**
-     * @befor _secured, _admin
+     * @before _secured, _admin
      */
     public function settings()
     {
