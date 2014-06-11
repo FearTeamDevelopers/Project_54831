@@ -19,23 +19,22 @@ class App_Controller_Collection extends Controller
     protected function _getContent($urlKey)
     {
         $cache = Registry::get('cache');
-
+        $urlKey = strtolower($urlKey);
         $collectionCache = $cache->get('cache_collection_' . $urlKey);
 
         if (NULL !== $collectionCache) {
-            $collections = $collectionCache;
-            return $collections;
+            return $collectionCache;
         } else {
             $collectionQuery = App_Model_Collection::getQuery(array('cl.*'))
                     ->join('tb_collectionmenu', 'cl.menuId = clm.id', 'clm', 
-                            array('clm.urlKey',))
+                            array('clm.urlKey'))
                     ->where('clm.urlKey = ?', $urlKey)
                     ->where('cl.active = ?', true)
                     ->order('cl.rank', 'ASC')
                     ->order('cl.created', 'DESC');
 
             $collections = App_Model_Collection::initialize($collectionQuery);
-
+            
             if (NULL !== $collections) {
                 foreach ($collections as $collection) {
                     $query = App_Model_Photo::getQuery(array('ph.*'));
@@ -79,7 +78,7 @@ class App_Controller_Collection extends Controller
             return $collections;
         }
     }
-
+    
     /**
      * 
      * @param type $urlKey
@@ -97,7 +96,6 @@ class App_Controller_Collection extends Controller
         $this->willRenderActionView = true;
 
         $content = $this->_getContent($urlKey);
-
-        $view->set('collections', $content);
+        $view->set('collecarr', $content);
     }
 }

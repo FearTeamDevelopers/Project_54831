@@ -40,7 +40,7 @@ class Filecache extends Cache\Driver
             $this->_fileManager = new FileManager();
 
             if (!is_dir($this->_cacheFilePath)) {
-                $this->_fileManager->mkdir($this->_cacheFilePath);
+                $this->_fileManager->mkdir($this->_cacheFilePath, 0777);
             }
         } else {
             throw new \Exception('Error in configuration file');

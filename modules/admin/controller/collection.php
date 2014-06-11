@@ -44,6 +44,8 @@ class Admin_Controller_Collection extends Controller
         $menu = App_Model_CollectionMenu::all(
                         array('active = ?' => true), array('id', 'title')
         );
+        
+        $view->set('menu', $menu);
 
         if (RequestMethods::post('submitAddCollection')) {
             $this->checkToken();
@@ -71,8 +73,6 @@ class Admin_Controller_Collection extends Controller
                         ->set('errors', $collection->getErrors());
             }
         }
-
-        $view->set('menu', $menu);
     }
 
     /**
@@ -94,7 +94,8 @@ class Admin_Controller_Collection extends Controller
                         array('s.id' => 'sectId', 's.title' => 'sectionTitle'))
                 ->where('cl.id = ?', $id);
 
-        $collection = array_shift(App_Model_Collection::initialize($collectionQuery));
+        $collectionArray = App_Model_Collection::initialize($collectionQuery);
+        $collection = array_shift($collectionArray);
 
         if (!empty($collection)) {
             $collectionPhotoCount = App_Model_CollectionPhoto::count(array('collectionId = ?' => $id));
@@ -144,7 +145,10 @@ class Admin_Controller_Collection extends Controller
         $menu = App_Model_CollectionMenu::all(
                         array('active = ?' => true), array('id', 'title')
         );
-
+        
+        $view->set('collection', $collection)
+                ->set('menu', $menu);
+        
         if (RequestMethods::post('submitEditCollection')) {
             $this->checkToken();
 
@@ -169,9 +173,6 @@ class Admin_Controller_Collection extends Controller
                 $view->set('errors', $collection->getErrors());
             }
         }
-
-        $view->set('collection', $collection)
-                ->set('menu', $menu);
     }
 
     /**
@@ -206,7 +207,7 @@ class Admin_Controller_Collection extends Controller
 
             if ($collection->delete()) {
                 if (RequestMethods::post('action') == 1) {
-                    rmdir('./public/uploads/images/collections/' . $collection->getId());
+                    rmdir(APP_PATH.'/public/uploads/images/collections/' . $collection->getId());
                 }
 
                 Event::fire('admin.log', array('success', 'ID: ' . $id));
@@ -292,6 +293,7 @@ class Admin_Controller_Collection extends Controller
             } else {
                 Event::fire('admin.log', array('fail'));
                 $view->set('errors', $errors + $photo->getErrors());
+                var_dump($errors);
             }
         } elseif (RequestMethods::post('submitAddMultiPhoto')) {
             $this->checkToken();

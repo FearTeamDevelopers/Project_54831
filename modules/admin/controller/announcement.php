@@ -77,6 +77,8 @@ class Admin_Controller_Announcement extends Controller
             $view->errorMessage('Announcement not found');
             self::redirect('/admin/announcement/');
         }
+        
+        $view->set('announcement', $announc);
 
         if (RequestMethods::post('submitEditAnc')) {
             $this->checkToken();
@@ -99,8 +101,6 @@ class Admin_Controller_Announcement extends Controller
                 $view->set('errors', $announc->getErrors());
             }
         }
-
-        $view->set('announcement', $announc);
     }
 
     /**

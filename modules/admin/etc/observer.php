@@ -18,7 +18,7 @@ class Admin_Etc_Observer
         $route = $router->getLastRoute();
 
         $security = Registry::get('security');
-        $userId = $security->getUser()->getId();
+        $userId = $security->getUser()->getWholeName();
 
         $module = $route->getModule();
         $controller = $route->getController();

@@ -46,9 +46,9 @@ class Controller extends BaseController
     public function _publisher()
     {
         $security = Registry::get('security');
-        $view = $this->getActionView();
 
         if ($security->getUser() && !$security->isGranted('role_publisher')) {
+            $view = $this->getActionView();
             $view->infoMessage('Access denied! Publisher access level required.');
             $security->logout();
             self::redirect('/admin/login');
@@ -61,9 +61,9 @@ class Controller extends BaseController
     public function _admin()
     {
         $security = Registry::get('security');
-        $view = $this->getActionView();
-
+        
         if ($security->getUser() && !$security->isGranted('role_admin')) {
+            $view = $this->getActionView();
             $view->infoMessage('Access denied! Administrator access level required.');
             $security->logout();
             self::redirect('/admin/login');
@@ -76,9 +76,9 @@ class Controller extends BaseController
     public function _superadmin()
     {
         $security = Registry::get('security');
-        $view = $this->getActionView();
 
         if ($security->getUser() && !$security->isGranted('role_superadmin')) {
+            $view = $this->getActionView();
             $view->infoMessage('Access denied! Super admin access level required.');
             $security->logout();
             self::redirect('/admin/login');

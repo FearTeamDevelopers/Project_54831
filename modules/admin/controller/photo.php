@@ -233,6 +233,9 @@ class Admin_Controller_Photo extends Controller
         }
 
         $photo->inSections = $sectionArr;
+        
+        $view->set('photo', $photo)
+                ->set('sections', $sections);
 
         if (RequestMethods::post('submitEditPhoto')) {
             $this->checkToken();
@@ -271,9 +274,6 @@ class Admin_Controller_Photo extends Controller
                 $view->set('errors', $errors + $photo->getErrors());
             }
         }
-
-        $view->set('photo', $photo)
-                ->set('sections', $sections);
     }
 
     /**

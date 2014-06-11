@@ -32,6 +32,8 @@ class Admin_Controller_Content extends Controller
                     'active = ?' => true
                         ), array('id', 'parentId', 'title')
         );
+        
+        $view->set('sections', $sections);
 
         if (RequestMethods::post('submitAddContent')) {
             $this->checkToken();
@@ -54,8 +56,6 @@ class Admin_Controller_Content extends Controller
                 $view->set('errors', $content->getErrors());
             }
         }
-
-        $view->set('sections', $sections);
     }
 
     /**
@@ -77,6 +77,9 @@ class Admin_Controller_Content extends Controller
             $view->errorMessage('Content not found');
             self::redirect('/admin/content/');
         }
+        
+        $view->set('sections', $sections)
+                ->set('content', $content);
 
         if (RequestMethods::post('submitEditContent')) {
             $this->checkToken();
@@ -98,9 +101,6 @@ class Admin_Controller_Content extends Controller
                 $view->set('errors', $content->getErrors());
             }
         }
-
-        $view->set('sections', $sections)
-                ->set('content', $content);
     }
 
     /**

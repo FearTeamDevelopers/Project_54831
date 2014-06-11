@@ -10,7 +10,7 @@
         <h2 class="table"><span>Collection Migration</span></h2>
     </div><!--contenttitle-->
 
-    <form class="stdform stdform2" method="post" action="/integration/migration/migrateCollections/">
+    <form class="stdform stdform2" method="post" action="#">
         <p class="stdformbutton">
             <input name="migrateCollections" type="submit" value="Migrate collections" class="submit radius2" />
         </p>
@@ -18,12 +18,11 @@
 
     <div>
         {if isset($errors)}
-        {script print_r($errors)}
+            {script print_r($errors)}
         {/if}
         {elseif isset($success)}
-        {echo $success}<br/>
-        New collections: {echo $status["new_collections"]}<br/>
-        New photos: {echo $status["new_photos"]}
+            {echo $success}<br/><br/>
+            {echo $status}
         {/elseif}
         {else}
         {echo $unknown}

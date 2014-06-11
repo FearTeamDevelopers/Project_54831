@@ -75,16 +75,6 @@ class Security extends Base
     {
         return new Exception\Implementation(sprintf('%s method not implemented', $method));
     }
-
-    /**
-     * Method generates 20chars lenght salt for salting passwords
-     * 
-     * @return string
-     */
-    private function createSalt()
-    {
-        return substr(rtrim(base64_encode(md5(microtime())), "="), 8, 20);
-    }
     
     /**
      * Method creates token as a protection from cross-site request forgery.
@@ -197,6 +187,16 @@ class Security extends Base
 
         $this->_user = NULL;
         @session_regenerate_id();
+    }
+    
+    /**
+     * Method generates 20chars lenght salt for salting passwords
+     * 
+     * @return string
+     */
+    public function createSalt()
+    {
+        return substr(rtrim(base64_encode(md5(microtime())), "="), 8, 20);
     }
 
     /**

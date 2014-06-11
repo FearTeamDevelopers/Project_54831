@@ -69,6 +69,9 @@ class Admin_Controller_News extends Controller
         $photos = $this->_getPhotos();
         $videos = $this->_getVideos();
 
+        $view->set('photos', $photos)
+                ->set('videos', $videos);
+        
         if (RequestMethods::post('submitAddNews')) {
             $this->checkToken();
             $urlKey = StringMethods::removeDiacriticalMarks(RequestMethods::post('urlkey'));
@@ -95,9 +98,6 @@ class Admin_Controller_News extends Controller
                 Event::fire('admin.log', array('fail', 'ID:'));
             }
         }
-
-        $view->set('photos', $photos)
-                ->set('videos', $videos);
     }
 
     /**
@@ -116,6 +116,10 @@ class Admin_Controller_News extends Controller
             $view->errorMessage('News not found');
             self::redirect('/admin/news/');
         }
+        
+        $view->set('news', $news)
+                ->set('photos', $photos)
+                ->set('videos', $videos);
 
         if (RequestMethods::post('submitEditNews')) {
             $this->checkToken();
@@ -141,10 +145,6 @@ class Admin_Controller_News extends Controller
                 Event::fire('admin.log', array('fail', 'ID: ' . $id));
             }
         }
-
-        $view->set('news', $news)
-                ->set('photos', $photos)
-                ->set('videos', $videos);
     }
 
     /**

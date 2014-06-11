@@ -15,35 +15,25 @@
             <col class="con0" /><col class="con1" />
             <col class="con0" /><col class="con1" />
             <col class="con0" /><col class="con1" />
-            <col class="con0" />
         </colgroup>
         <thead>
             <tr>
                 <th class="head0">Created</th><th class="head1">Username</th>
-                <th class="head0">Role</th><th class="head1">Module</th>
-                <th class="head0">Controller</th><th class="head1">Action</th>
-                <th class="head0">Params</th>
-
+                <th class="head0">Module</th><th class="head1">Controller</th>
+                <th class="head0">Action</th><th class="head1">Params</th>
             </tr>
         </thead>
 
         <tbody>
-            {if !empty($log)}
-            {foreach $_log in $log}
+            {if !empty($adminlog)}
+            {foreach $logitem in $adminlog}
             <tr>
-                <td>{echo $_log->created}</td><td>{echo $_log->firstname} {echo $_log->lastname}</td>
-                <td>
-                    {if $_log->role == 'role_superadmin'}
-                    role_admin
-                    {/if}
-                    {else}
-                    {echo $_log->role}
-                    {/else}
-                </td>
-
-                <td>{echo $_log->module}</td>
-                <td>{echo $_log->controller}</td><td>{echo $_log->action}</td>
-                <td>{echo $_log->params}</td>
+                <td>{echo $logitem->created}</td>
+                <td>{echo $logitem->userId}</td>
+                <td>{echo $logitem->module}</td>
+                <td>{echo $logitem->controller}</td>
+                <td>{echo $logitem->action}</td>
+                <td>{echo $logitem->params}</td>
             </tr>
             {/foreach}
             {/if}

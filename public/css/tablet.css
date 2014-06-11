@@ -9,7 +9,7 @@ root {
     display: block;
 }
 html{
-    background:black url('../images/Marko_In_bg.jpg') center center fixed no-repeat;
+    background:black url('../images/marko_in_bg.jpg') center center fixed no-repeat;
     background-size: Contain;
 }
 

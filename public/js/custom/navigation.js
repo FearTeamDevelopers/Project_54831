@@ -1,3 +1,5 @@
+jQuery.noConflict();
+
 jQuery(document).ready(function() {
     jQuery('.close').click(function() {
         jQuery(this).parent().hide(1000)
@@ -21,7 +23,7 @@ jQuery(document).ready(function() {
         if (jQuery(window).width() < 1000) {
             jQuery('#main').children('div:visible').hide();
         }
-        
+
         jQuery('#main div, #main p, #main iframe, #main img').css({
             opacity: '0.5',
             zIndex: '10'
@@ -77,7 +79,8 @@ jQuery(document).ready(function() {
                                 });
                             });
                         });
-                    } else if (parts[1] == 'design') {
+                    }
+                    if (parts[1] == 'design') {
                         jQuery('#collection .content').load('/collection/show/' + parts[2], function() {
                             jQuery('#main div, #main p, #main iframe, #main img').css({
                                 opacity: '0.5',
@@ -101,7 +104,8 @@ jQuery(document).ready(function() {
                                 });
                             });
                         });
-                    } else if (parts[1] == 'bio') {
+                    }
+                    if (parts[1] == 'bio') {
                         jQuery('#bio .content').load('/bio', function() {
                             jQuery('#main div, #main p, #main iframe, #main img').css({
                                 opacity: '0.5',
@@ -125,7 +129,8 @@ jQuery(document).ready(function() {
                                 });
                             });
                         });
-                    } else {
+                    }
+                    if (parts[1] == 'news-detail') {
                         jQuery('#news-detail .content').load('/news/detail/' + parts[2], function() {
                             jQuery('#main div, #main p, #main iframe, #main img').css({
                                 opacity: '0.5',

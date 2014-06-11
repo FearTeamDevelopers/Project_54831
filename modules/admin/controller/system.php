@@ -57,8 +57,8 @@ class Admin_Controller_System extends Controller
         $dump = new Mysqldump(array('exclude-tables' => array('tb_user')));
         $fm = new THCFrame\Filesystem\FileManager();
 
-        if (!is_dir('./temp/db/')) {
-            $fm->mkdir('./temp/db/');
+        if (!is_dir(APP_PATH.'/temp/db/')) {
+            $fm->mkdir(APP_PATH.'/temp/db/');
         }
 
         if (RequestMethods::post('createBackup')) {
@@ -86,15 +86,8 @@ class Admin_Controller_System extends Controller
     public function showAdminLog()
     {
         $view = $this->getActionView();
-
-        $logQuery = Admin_Model_AdminLog::getQuery(array('tb_adminlog.*'))
-                ->join('tb_user', 'tb_adminlog.userId = u.id', 'u', 
-                        array('u.firstname', 'u.lastname', 'u.role'))
-                ->order('tb_adminlog.created', 'desc');
-
-        $log = Admin_Model_AdminLog::initialize($logQuery);
-
-        $view->set('log', $log);
+        $log = Admin_Model_AdminLog::all(array(), array('*'), array('created' => 'DESC'));
+        $view->set('adminlog', $log);
     }
 
     /**

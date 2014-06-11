@@ -15,8 +15,11 @@ class Core
     private static $_loadedClass = array();
     private static $_modules = array();
     private static $_relPaths = array(
+        '/vendors',
         './vendors',
+        '/application',
         './application',
+        '/modules',
         './modules',
         '.'
     );
@@ -167,7 +170,11 @@ class Core
             foreach (self::$_relPaths as $path) {
                 $combined = $path . DIRECTORY_SEPARATOR . $file;
 
-                if (file_exists($combined)) {
+                if(file_exists(APP_PATH.$combined)){
+                    self::$_loadedClass[$class] = APP_PATH.$combined;
+                    require_once(APP_PATH.$combined);
+                    return;
+                }elseif (file_exists($combined)) {
                     self::$_loadedClass[$class] = $combined;
                     require_once($combined);
                     return;
@@ -178,7 +185,11 @@ class Core
             foreach (self::$_relPaths as $path) {
                 $combined = $path . DIRECTORY_SEPARATOR . $file;
 
-                if (file_exists($combined)) {
+                if(file_exists(APP_PATH.$combined)){
+                    self::$_loadedClass[$class] = APP_PATH.$combined;
+                    require_once(APP_PATH.$combined);
+                    return;
+                }elseif (file_exists($combined)) {
                     self::$_loadedClass[$class] = $combined;
                     require_once($combined);
                     return;

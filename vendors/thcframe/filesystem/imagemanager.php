@@ -69,8 +69,8 @@ class ImageManager extends Base
         $configuration = Registry::get('config');
 
         if (!empty($configuration->files)) {
-            $this->_pathToImages = $configuration->files->pathToImages;
-            $this->_pathToThumbs = $configuration->files->pathToThumbs;
+            $this->_pathToImages = trim($configuration->files->pathToImages, '/');
+            $this->_pathToThumbs = trim($configuration->files->pathToThumbs, '/');
         } else {
             throw new \Exception('Error in configuration file');
         }
@@ -80,15 +80,50 @@ class ImageManager extends Base
 
     /**
      * 
+     * @return type
+     */
+    private function getPathToImages()
+    {
+        if (is_dir('/' . $this->_pathToImages)) {
+            return '/' . $this->_pathToImages;
+        } elseif (is_dir('./' . $this->_pathToImages)) {
+            return './' . $this->_pathToImages;
+        } elseif (is_dir(APP_PATH . '/' . $this->_pathToImages)) {
+            return APP_PATH . '/' . $this->_pathToImages;
+        }
+    }
+
+    /**
+     * 
+     * @return type
+     */
+    private function getPathToThumbs()
+    {
+        if (is_dir('/' . $this->_pathToThumbs)) {
+            return '/' . $this->_pathToThumbs;
+        } elseif (is_dir('./' . $this->_pathToThumbs)) {
+            return './' . $this->_pathToThumbs;
+        } elseif (is_dir(APP_PATH . '/' . $this->_pathToThumbs)) {
+            return APP_PATH . '/' . $this->_pathToThumbs;
+        }
+    }
+
+    /**
+     * 
      * @param type $postField
      * @param type $namePrefix
      */
     public function upload($postField, $uploadto, $namePrefix = '')
     {
-        $path = $this->getPathToImages() . $uploadto . '/';
+        $path = $this->getPathToImages() . '/' . $uploadto . '/';
+        $pathToThumbs = $this->getPathToThumbs() . '/' . $uploadto . '/';
 
-        if (!is_dir('.' . $path)) {
-            $this->fileManager->mkdir('.' . $path, 0666, true);
+        if (!is_dir($path)) {
+            $this->fileManager->mkdir($path, 0755);
+        }
+
+        if (!is_dir($pathToThumbs)) {
+            $this->fileManager->mkdir($pathToThumbs, 0755);
         }
 
         if (is_array($_FILES[$postField]['tmp_name'])) {
@@ -118,22 +153,25 @@ class ImageManager extends Base
                             $imageName = $filename . '.' . $extension;
                             $thumbName = $filename . '_thumb.' . $extension;
                             $imageLocName = $path . $namePrefix . $imageName;
-                            $thumbLocName = $path . $namePrefix . $thumbName;
+                            $thumbLocName = $pathToThumbs . $namePrefix . $thumbName;
 
-                            if (file_exists('.' . $imageLocName)) {
-                                $this->backup('.' . $imageLocName);
+                            if (file_exists($imageLocName)) {
+                                $this->backup($imageLocName);
                             }
 
-                            $copy = move_uploaded_file($_FILES[$postField]['tmp_name'][$i], '.' . $imageLocName);
+                            if (file_exists($thumbLocName)) {
+                                $this->backup($thumbLocName);
+                            }
+
+                            $copy = move_uploaded_file($_FILES[$postField]['tmp_name'][$i], $imageLocName);
 
                             if (!$copy) {
                                 $returnArray['errors'][] = sprintf('Error while uploading image %s. Try again.', $filename);
                                 continue;
                             } else {
-                                $img = new Image('.' . $imageLocName);
+                                $img = new Image($imageLocName);
 
-                                if ($img->getWidth() > $this->getMaxImageWidth() 
-                                        || $img->getHeight() > $this->getMaxImageHeight()) {
+                                if ($img->getWidth() > $this->getMaxImageWidth() || $img->getHeight() > $this->getMaxImageHeight()) {
                                     $img->bestFit($this->getMaxImageWidth(), $this->getMaxImageHeight())->save();
                                 }
 
@@ -141,15 +179,15 @@ class ImageManager extends Base
 
                                 switch ($this->thumbResizeBy) {
                                     case 'height':
-                                        $img->resizeToHeight($this->thumbHeight)->save('.' . $thumbLocName);
+                                        $img->resizeToHeight($this->thumbHeight)->save($thumbLocName);
                                         $returnArray['photos'][$i]['thumb'] = $img->getDataForDb();
                                         break;
                                     case 'width':
-                                        $img->resizeToWidth($this->thumbWidth)->save('.' . $thumbLocName);
+                                        $img->resizeToWidth($this->thumbWidth)->save($thumbLocName);
                                         $returnArray['photos'][$i]['thumb'] = $img->getDataForDb();
                                         break;
                                     default:
-                                        $img->thumbnail($this->thumbWidth, $this->thumbHeight)->save('.' . $thumbLocName);
+                                        $img->thumbnail($this->thumbWidth, $this->thumbHeight)->save($thumbLocName);
                                         $returnArray['photos'][$i]['thumb'] = $img->getDataForDb();
                                         break;
                                 }
@@ -187,21 +225,24 @@ class ImageManager extends Base
                         $imageName = $filename . '.' . $extension;
                         $thumbName = $filename . '_thumb.' . $extension;
                         $imageLocName = $path . $namePrefix . $imageName;
-                        $thumbLocName = $path . $namePrefix . $thumbName;
+                        $thumbLocName = $pathToThumbs . $namePrefix . $thumbName;
 
-                        if (file_exists('.' . $imageLocName)) {
-                            $this->backup('.' . $imageLocName);
+                        if (file_exists($imageLocName)) {
+                            $this->backup($imageLocName);
                         }
 
-                        $copy = move_uploaded_file($_FILES[$postField]['tmp_name'], '.' . $imageLocName);
+                        if (file_exists($thumbLocName)) {
+                            $this->backup($thumbLocName);
+                        }
+
+                        $copy = move_uploaded_file($_FILES[$postField]['tmp_name'], $imageLocName);
 
                         if (!$copy) {
                             throw new Exception(sprintf('Error while uploading image %s. Try again.', $filename));
                         } else {
-                            $img = new Image('.' . $imageLocName);
+                            $img = new Image($imageLocName);
 
-                            if ($img->getWidth() > $this->getMaxImageWidth() 
-                                    || $img->getHeight() > $this->getMaxImageHeight()) {
+                            if ($img->getWidth() > $this->getMaxImageWidth() || $img->getHeight() > $this->getMaxImageHeight()) {
                                 $img->bestFit($this->getMaxImageWidth(), $this->getMaxImageHeight())->save();
                             }
 
@@ -209,15 +250,15 @@ class ImageManager extends Base
 
                             switch ($this->thumbResizeBy) {
                                 case 'height':
-                                    $img->resizeToHeight($this->thumbHeight)->save('.' . $thumbLocName);
+                                    $img->resizeToHeight($this->thumbHeight)->save($thumbLocName);
                                     $returnArray['thumb'] = $img->getDataForDb();
                                     break;
                                 case 'width':
-                                    $img->resizeToWidth($this->thumbWidth)->save('.' . $thumbLocName);
+                                    $img->resizeToWidth($this->thumbWidth)->save($thumbLocName);
                                     $returnArray['thumb'] = $img->getDataForDb();
                                     break;
                                 default:
-                                    $img->thumbnail($this->thumbWidth, $this->thumbHeight)->save('.' . $thumbLocName);
+                                    $img->thumbnail($this->thumbWidth, $this->thumbHeight)->save($thumbLocName);
                                     $returnArray['thumb'] = $img->getDataForDb();
                                     break;
                             }
@@ -239,10 +280,10 @@ class ImageManager extends Base
      */
     public function uploadWithoutThumb($postField, $uploadto, $namePrefix = '')
     {
-        $path = $this->getPathToImages() . $uploadto . '/';
+        $path = $this->getPathToImages() . '/' . $uploadto . '/';
 
-        if (!is_dir('.' . $path)) {
-            $this->fileManager->mkdir('.' . $path, 0666, true);
+        if (!is_dir($path)) {
+            $this->fileManager->mkdir($path, 0755);
         }
 
         if (is_array($_FILES[$postField]['tmp_name'])) {
@@ -272,17 +313,17 @@ class ImageManager extends Base
                             $imageName = $filename . '.' . $extension;
                             $imageLocName = $path . $namePrefix . $imageName;
 
-                            if (file_exists('.' . $imageLocName)) {
-                                $this->backup('.' . $imageLocName);
+                            if (file_exists($imageLocName)) {
+                                $this->backup($imageLocName);
                             }
 
-                            $copy = move_uploaded_file($_FILES[$postField]['tmp_name'][$i], '.' . $imageLocName);
+                            $copy = move_uploaded_file($_FILES[$postField]['tmp_name'][$i], $imageLocName);
 
                             if (!$copy) {
                                 $returnArray['errors'][] = sprintf('Error while uploading image %s. Try again.', $filename);
                                 continue;
                             } else {
-                                $img = new Image('.' . $imageLocName);
+                                $img = new Image($imageLocName);
                                 $returnArray['photos'][$i]['photo'] = $img->getDataForDb();
 
                                 unset($img);
@@ -319,16 +360,16 @@ class ImageManager extends Base
                         $imageName = $filename . '.' . $extension;
                         $imageLocName = $path . $namePrefix . $imageName;
 
-                        if (file_exists('.' . $imageLocName)) {
-                            $this->backup('.' . $imageLocName);
+                        if (file_exists($imageLocName)) {
+                            $this->backup($imageLocName);
                         }
 
-                        $copy = move_uploaded_file($_FILES[$postField]['tmp_name'], '.' . $imageLocName);
+                        $copy = move_uploaded_file($_FILES[$postField]['tmp_name'], $imageLocName);
 
                         if (!$copy) {
                             throw new Exception(sprintf('Error while uploading image %s. Try again.', $filename));
                         } else {
-                            $img = new Image('.' . $imageLocName);
+                            $img = new Image($imageLocName);
                             $returnArray['photo'] = $img->getDataForDb();
 
                             unset($img);
@@ -353,7 +394,7 @@ class ImageManager extends Base
         $filename = $this->fileManager->getFileName($file);
         $newFile = dirname($file) . '/' . $filename . '_backup.' . $ext;
 
-        if (strlen($newFile) > 50) {
+        if (strlen($filename) > 50) {
             $newFile = dirname($file) . '/' . substr($filename, 0, 50) . '_backup.' . $ext;
         }
 

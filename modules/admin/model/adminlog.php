@@ -3,7 +3,7 @@
 use THCFrame\Model\Model;
 
 /**
- * Description of AdminLog
+ * Description of Admin_Model_AdminLog
  *
  * @author Tomy
  */
@@ -21,9 +21,10 @@ class Admin_Model_AdminLog extends Model
     /**
      * @column
      * @readwrite
-     * @type integer
+     * @type text
+     * @length 50
      * 
-     * @validate required, numeric, max(8)
+     * @validate alphanumeric, max(50)
      */
     protected $_userId;
 

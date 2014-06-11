@@ -1,14 +1,12 @@
 <?php
 
 // initialize logger
-
-require_once 'logger.php';
-
-$logger = new Logger(array(
-    'file' => APP_PATH . '/application/logs/' . date('Y-m-d') . '.txt'
-        ));
-
 if (ENV == 'dev') {
+    require_once 'logger.php';
+
+    $logger = new Logger(array(
+        'file' => APP_PATH . '/application/logs/' . date('Y-m-d') . '.txt'
+    ));
 
 // log cache events
 

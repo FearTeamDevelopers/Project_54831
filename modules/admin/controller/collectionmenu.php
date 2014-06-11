@@ -39,6 +39,8 @@ class Admin_Controller_CollectionMenu extends Controller
                     'supportCollection = ?' => true
                         ), array('id', 'urlKey', 'title')
         );
+        
+        $view->set('sections', $sections);
 
         if (RequestMethods::post('submitAddClmenu')) {
             $this->checkToken();
@@ -64,8 +66,6 @@ class Admin_Controller_CollectionMenu extends Controller
                 Event::fire('admin.log', array('fail'));
             }
         }
-
-        $view->set('sections', $sections);
     }
 
     /**
@@ -89,6 +89,9 @@ class Admin_Controller_CollectionMenu extends Controller
             $view->errorMessage('Item not found');
             self::redirect('/admin/collectionmenu/');
         }
+        
+        $view->set('clmenu', $clm)
+                ->set('sections', $sections);
 
         if (RequestMethods::post('submitEditClmenu')) {
             $this->checkToken();
@@ -112,9 +115,6 @@ class Admin_Controller_CollectionMenu extends Controller
                 Event::fire('admin.log', array('fail', 'ID: ' . $id));
             }
         }
-
-        $view->set('clmenu', $clm)
-                ->set('sections', $sections);
     }
 
     /**

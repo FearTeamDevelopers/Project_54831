@@ -5,11 +5,20 @@
     Description: Marko.in stylesheet
         
 */
+
+* {
+    margin:0;
+    padding:0;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
 root { 
     display: block;
 }
 html{
-    background:black url('../images/Marko_In_bg.jpg') center center fixed no-repeat;
+    background:black url('../images/marko_in_bg.jpg') center center fixed no-repeat;
     background-size: Contain;
     -webkit-text-size-adjust: none;
 }
@@ -30,8 +39,7 @@ body {
     color: white;
     overflow-y: auto;
     overflow-x: hidden;
-    width: 100%;
-    min-width: 480px;
+
 }
 
 a { color: #999;}
@@ -51,14 +59,14 @@ a:hover{color: #ccc;}
 
 #page {position: relative; width: 100%; z-index: 20;}
 #main {position: relative; width: 100%; height: auto; }
-#temptopdiv{margin-top: 45%;}
+#temptopdiv{margin-top: 50%;}
 
 #news, #collection, #news-detail, #showaction{
     position: absolute;
-    top: 55px; left: 5px;
+    top: 40px; left: 5px;
     overflow-y: auto;
-    overflow-x: no-content;
-    width: 90%;
+    overflow-x: no-display;
+    width: 97%;
     height: auto;
     padding: 5px;
 }
@@ -92,40 +100,48 @@ iframe{width: 380px; height: 214px;}
 #footer .mailto{color:white;}
 /* ---------- Menu ---------- */
 
-#navi{
-    margin-top: 20px;
-    padding: 5px;
-    line-height: 100%;
-    height: 70px;
-    font-size: 20px;
-    width: 100%;
+.styled-select select::-ms-expand {
+    display: none; /* hide default arrow in IE10 */
 }
-#navi li:first-child{
-    margin-left: 6%;
+.styled-select select {
+    width: 70%; /* Set width. Do not set height else it will fail in IE8-10. Use padding for height. */
+    color: #333;
+    font-weight: normal;
+    font-size: 1em;
+    line-height:1.2em;
+    margin: 0 0 10px;
+    padding: 6px 0; /* use this to set a specific height for your dropdown (DO NOT use the attribute 'height') */
+    border: 0 none;
+    cursor: pointer;
+    text-indent: 0.01px;
+    text-overflow: "";
+    background: url('../images/select_arrow.png') no-repeat 100% 4px #fff; /* add your own arrow image */
+    *background-image:none; /* turn bg image for IE7 */
+    background: url('../images/select_arrow.png') no-repeat 100% 0px #fff; /* fallback bg image*/
+    background: url('../images/select_arrow.png') no-repeat 100% 0px, -webkit-linear-gradient(top, #fff, #9c9c9c);
+    background: url('../images/select_arrow.png') no-repeat 100% 0px, -moz-linear-gradient(top, #fff, #9c9c9c);
+    background: url('../images/select_arrow.png') no-repeat 100% 0px, -ms-linear-gradient(top, #fff, #9c9c9c);
+    background: url('../images/select_arrow.png') no-repeat 100% 0px, -o-linear-gradient(top, #fff, #9c9c9c);
+    background: url('../images/select_arrow.png') no-repeat 100% 0px, linear-gradient(top, #fff, #9c9c9c);
+    -webkit-appearance: none; /* gets rid of default appearance in Webkit browsers*/
+    -moz-appearance: none; /* Get rid of default appearance for older Firefox browsers */
+    -ms-appearance: none; /* get rid of default appearance for IE8, 9 and 10*/
+    appearance: none;
 }
-#navi li {
-    width: 9%;
-    margin-left: 6%;  
-    float: left;
-    position: relative;
-    list-style: none;
-    background: url('../images/KOLOGO.png') 50% 5% no-repeat;
-}
-/* main level link */
-#navi a {
-    color: white;
-    text-decoration: none;
-    display: block;
-    margin-top: 55px;
-    text-align: center;
-    text-shadow: 0 3px 3px rgba(0, 0, 0, .9); 
-    padding: 8px;
+.styled-select select option {
+    background: #fff; /* style the dropdown bg color */
 }
 
-/* main level link hover */
-#navi .active a, #navi li:hover a{
-    text-shadow: 0 3px 3px rgba(0, 0, 0, .9);
-    color: grey;
+#navi{
+    margin-top: 40px;
+    font-size: 20px;
+    padding: 5px;
+}
+
+#navi img {
+    float: left;
+    margin-right: 2%;
+    margin-left: 6%;
 }
 
 /* clearfix */
@@ -185,7 +201,7 @@ iframe{width: 380px; height: 214px;}
 .nodisplay {display: none;}
 .fs25{font-size: 25px;}
 
-a.close {position: inherit; top:5px; left: 90%;}
+a.close {position: inherit; top:5px; left: 80%;}
 
 /* --------- pagination --------------- */
 .paginationCont{

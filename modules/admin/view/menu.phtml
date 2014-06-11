@@ -9,7 +9,7 @@
     <li><a href="/admin/collectionmenu/" class="media"><span>Collection Menu</span></a></li>
     <li><a href="/admin/partner/" class="users"><span>Partners</span></a></li>
     <li><a href="/admin/content/" class="editor"><span>Page content</span></a></li>
-    {if $authUser->getRole() == "role_admin" || $authUser->getRole() == "role_superadmin"}
+    {if $isAdmin || $isSuperAdmin}
     <li><a href="/admin/user/" class="users"><span>Users</span></a></li>
     <li><a href="/admin/system/" class="error"><span>System</span></a></li>
     {/if}

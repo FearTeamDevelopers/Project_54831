@@ -28,19 +28,22 @@ class Admin_Controller_Section extends Controller
     {
         $view = $this->getActionView();
         $sections = App_Model_Section::all(
-                        array('active = ?' => true), 
-                        array('id', 'parentId', 'title')
+                    array('active = ?' => true), 
+                    array('id', 'parentId', 'title')
         );
+
+        $view->set('sections', $sections);
 
         if (RequestMethods::post('submitAddSection')) {
             $this->checkToken();
-            
+
             $section = new App_Model_Section(array(
                 'parentId' => RequestMethods::post('parent', 1),
                 'title' => RequestMethods::post('title'),
                 'rank' => RequestMethods::post('rank', 1),
                 'supportVideo' => RequestMethods::post('supportVideo', 0),
-                'supportPhoto' => RequestMethods::post('supportPhoto', 0)
+                'supportPhoto' => RequestMethods::post('supportPhoto', 0),
+                'supportCollection' => RequestMethods::post('supportCollection', 0)
             ));
 
             if ($section->validate()) {
@@ -52,8 +55,6 @@ class Admin_Controller_Section extends Controller
                 $view->set('errors', $section->getErrors());
             }
         }
-
-        $view->set('sections', $sections);
     }
 
     /**
@@ -64,8 +65,8 @@ class Admin_Controller_Section extends Controller
         $view = $this->getActionView();
 
         $sections = App_Model_Section::all(
-                        array('active = ?' => true), 
-                        array('id', 'parentId', 'title')
+                    array('active = ?' => true), 
+                    array('id', 'parentId', 'title')
         );
 
         $section = App_Model_Section::first(array(
@@ -77,14 +78,18 @@ class Admin_Controller_Section extends Controller
             self::redirect('/admin/section/');
         }
 
+        $view->set('section', $section)
+                ->set('sections', $sections);
+
         if (RequestMethods::post('submitEditSection')) {
             $this->checkToken();
-            
+
             $section->parentId = RequestMethods::post('partner', 1);
             $section->title = RequestMethods::post('title');
             $section->rank = RequestMethods::post('rank', 1);
             $section->supportVideo = RequestMethods::post('supportVideo', 0);
             $section->supportPhoto = RequestMethods::post('supportPhoto', 0);
+            $section->supportCollection = RequestMethods::post('supportCollection', 0);
             $section->active = RequestMethods::post('active');
 
             if ($section->validate()) {
@@ -96,8 +101,6 @@ class Admin_Controller_Section extends Controller
                 $view->set('errors', $section->getErrors());
             }
         }
-        $view->set('section', $section)
-             ->set('sections', $sections);
     }
 
 }

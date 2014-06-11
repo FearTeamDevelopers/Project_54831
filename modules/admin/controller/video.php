@@ -55,6 +55,8 @@ class Admin_Controller_Video extends Controller
                     'supportVideo = ?' => true
                         ), array('id', 'urlKey', 'title')
         );
+        
+        $view->set('sections', $sections);
 
         if (RequestMethods::post('submitAddVideo')) {
             $this->checkToken();
@@ -93,8 +95,6 @@ class Admin_Controller_Video extends Controller
                 Event::fire('admin.log', array('fail'));
             }
         }
-
-        $view->set('sections', $sections);
     }
 
     /**
@@ -128,7 +128,10 @@ class Admin_Controller_Video extends Controller
         foreach ($videoSections as $section) {
             $sectionArr[] = $section->secTitle;
         }
+        
         $video->inSections = $sectionArr;
+        $view->set('video', $video)
+                ->set('sections', $sections);
 
         if (RequestMethods::post('submitEditVideo')) {
             $this->checkToken();
@@ -170,9 +173,6 @@ class Admin_Controller_Video extends Controller
                 Event::fire('admin.log', array('fail', 'ID: ' . $id));
             }
         }
-
-        $view->set('video', $video)
-                ->set('sections', $sections);
     }
 
     /**

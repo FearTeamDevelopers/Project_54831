@@ -47,6 +47,13 @@ class App_Etc_Module extends Module{
             'args' => ':title'
         ),
         array(
+            'pattern' => '/collection/show/:urlkey',
+            'module' => 'app',
+            'controller' => 'collection',
+            'action' => 'show',
+            'args' => ':urlkey'
+        ),
+        array(
             'pattern' => '/design',
             'module' => 'app',
             'controller' => 'index',

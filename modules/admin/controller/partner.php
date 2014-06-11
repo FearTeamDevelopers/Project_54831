@@ -42,6 +42,8 @@ class Admin_Controller_Partner extends Controller
                         ), array('id', 'parentId', 'title')
         );
 
+        $view->set('sections', $sections);
+        
         if (RequestMethods::post('submitAddPartner')) {
             $this->checkToken();
             $errors = array();
@@ -83,8 +85,6 @@ class Admin_Controller_Partner extends Controller
                         ->set('partner', $partner);
             }
         }
-
-        $view->set('sections', $sections);
     }
 
     /**
@@ -108,6 +108,9 @@ class Admin_Controller_Partner extends Controller
             $view->errorMessage('Partner not found');
             self::redirect('/admin/partner/');
         }
+        
+        $view->set('sections', $sections)
+                ->set('partner', $partner);
 
         if (RequestMethods::post('submitEditPartner')) {
             $this->checkToken();
@@ -152,9 +155,6 @@ class Admin_Controller_Partner extends Controller
                 $view->set('errors', $errors + $partner->getErrors());
             }
         }
-
-        $view->set('sections', $sections)
-                ->set('partner', $partner);
     }
 
     /**

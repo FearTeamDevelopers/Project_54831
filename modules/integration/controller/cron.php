@@ -30,8 +30,8 @@ class Integration_Controller_Cron extends Controller
         $dump = new Mysqldump(array('exclude-tables' => array('tb_user')));
         $fm = new FileManager();
 
-        if (!is_dir('./temp/db/')) {
-            $fm->mkdir('./temp/db/');
+        if (!is_dir(APP_PATH.'/temp/db/')) {
+            $fm->mkdir(APP_PATH.'/temp/db/');
         }
 
         if (RequestMethods::post('createBackup')) {

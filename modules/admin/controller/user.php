@@ -97,6 +97,7 @@ class Admin_Controller_User extends Controller
 
         $errors = array();
         $superAdmin = $security->isGranted('role_superadmin');
+        $view->set('superadmin', $superAdmin);
 
         if (RequestMethods::post('submitAddUser')) {
             $this->checkToken();
@@ -136,8 +137,6 @@ class Admin_Controller_User extends Controller
                         ->set('user', $user);
             }
         }
-
-        $view->set('superadmin', $superAdmin);
     }
 
     /**
@@ -151,7 +150,6 @@ class Admin_Controller_User extends Controller
 
         $errors = array();
         $superAdmin = $security->isGranted('role_superadmin');
-
         $user = App_Model_User::first(array('id = ?' => $id));
 
         if (NULL === $user) {
@@ -161,6 +159,9 @@ class Admin_Controller_User extends Controller
             $view->errorMessage('You dont have permissions to update this user');
             self::redirect('/admin/user/');
         }
+        
+        $view->set('user', $user)
+                ->set('superadmin', $superAdmin);
 
         if (RequestMethods::post('submitEditUser')) {
             $this->checkToken();
@@ -210,8 +211,7 @@ class Admin_Controller_User extends Controller
             }
         }
 
-        $view->set('user', $user)
-                ->set('superadmin', $superAdmin);
+        
     }
 
     /**

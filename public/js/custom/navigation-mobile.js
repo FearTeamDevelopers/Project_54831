@@ -7,11 +7,11 @@ jQuery(document).ready(function() {
 
     jQuery('#announcement').hide();
 
-    jQuery('#navi li a').click(function() {
+    jQuery('#navi-select').change(function() {
         jQuery('#temptopdiv:visible').hide(1000);
         jQuery('#main').children('div:visible').hide();
 
-        var id = jQuery(this).parent().attr('id');
+        var id = jQuery(this).children('option:selected').val();
         var n = id.replace('navi_', '');
 
         if (n == 'news') {

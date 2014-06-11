@@ -24,7 +24,7 @@
         </thead>
         <tbody>
 
-            {if (!empty(users))}
+            {if (!empty($users))}
                 {foreach $user in $users}
                     <tr>
                         <td>{echo $user->getFirstname()}</td>
