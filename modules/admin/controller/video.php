@@ -220,13 +220,12 @@ class Admin_Controller_Video extends Controller
                                 'id IN ?' => $ids
                     ));
 
-                    foreach ($videos as $video) {
-                        if (NULL !== $video) {
+                    if (NULL !== $videos) {
+                        foreach ($videos as $video) {
+
                             if (!$video->delete()) {
                                 $errors[] = 'An error occured while deleting ' . $video->getTitle();
                             }
-                        } else {
-                            $errors[] = "Video with id {$video->getId()} not found<br/>";
                         }
                     }
 
@@ -247,18 +246,16 @@ class Admin_Controller_Video extends Controller
                                 'id IN ?' => $ids
                     ));
 
-                    foreach ($videos as $video) {
-                        if (NULL !== $video) {
+                    if (NULL !== $videos) {
+                        foreach ($videos as $video) {
                             $video->active = true;
 
                             if ($video->validate()) {
                                 $video->save();
                             } else {
-                                $errors[] = "Video id {$video->getId()} - {$video->getTitle()} errors: " 
-                                          . join(', ', $video->getErrors());
+                                $errors[] = "Video id {$video->getId()} - {$video->getTitle()} errors: "
+                                        . join(', ', $video->getErrors());
                             }
-                        } else {
-                            $errors[] = "Video with id {$video->getId()} not found";
                         }
                     }
 
@@ -279,18 +276,16 @@ class Admin_Controller_Video extends Controller
                                 'id IN ?' => $ids
                     ));
 
-                    foreach ($videos as $video) {
-                        if (NULL !== $video) {
+                    if (NULL !== $videos) {
+                        foreach ($videos as $video) {
                             $video->active = false;
 
                             if ($video->validate()) {
                                 $video->save();
                             } else {
-                                $errors[] = "Video id {$video->getId()} - {$video->getTitle()} errors: " 
-                                          . join(', ', $video->getErrors());
+                                $errors[] = "Video id {$video->getId()} - {$video->getTitle()} errors: "
+                                        . join(', ', $video->getErrors());
                             }
-                        } else {
-                            $errors[] = "Video with id {$video->getId()} not found";
                         }
                     }
 

@@ -1,0 +1,63 @@
+<ul class="maintabmenu multipletabmenu">
+    <li><a href="/admin/partner/">All Partners</a></li>
+    {if $isAdmin}<li class="current"><a href="#">Partner Sections</a></li>{/if}
+    <li><a href="/admin/partner/add/">Add Partner</a></li>
+    
+</ul><!--maintabmenu-->
+
+<div class="content">
+    <div class="contenttitle radiusbottom0">
+        <h2 class="image"><span>Partner Sections</span></h2>
+    </div><!--contenttitle-->
+
+    <form method="post" class="massActionForm" action="/admin/partner/sectionMassAction/">
+        <input type="hidden" name="tk" id="tk" value="{echo $token}" />
+        <table cellpadding="0" cellspacing="0" border="0" class="stdtable mediatable">
+            <colgroup>
+                <col class="con0" /> <col class="con1" />
+                <col class="con0" /> <col class="con1" />
+                <col class="con0" />
+            </colgroup>
+            <thead>
+                <tr>
+                    <th class="head0 width50"><input type="checkbox" class="checkall" /></th>
+                    <td class="head1">Title</td>
+                    <td class="head0">Url Key</td>
+                    <td class="head1">Rank</td>
+                    <td class="head0">&nbsp;</td>
+                </tr>
+            </thead>
+            <tbody>
+                {if !empty($sections)}
+                    {foreach $section in $sections}
+                        {if ($section->active)}
+                            <tr class="rowActive">
+                        {/if} 
+                        {else}
+                            <tr>
+                        {/else}
+                            <td class="center">
+                                <input type="checkbox" name="sectionids[]" value="{echo $section->getId()}" />
+                            </td>
+                            <td>{echo $section->getTitle()}</td>
+                            <td>{echo $section->getUrlKey()}</td>
+                            <td>{echo $section->getRank()}</td>
+                            <td>
+                                <a href="/admin/partner/sectionedit/{echo $section->getId()}" class="btn btn3 btn_pencil" title="Edit"></a>
+                            </td>
+                        </tr>
+                    {/foreach}
+                {/if}
+            </tbody>
+        </table>
+        <div class="tableoptions">
+            Selected:
+            <select class="radius3" name="action">
+                <option value="activate">Activate</option>
+                <option value="deactivate">Deactivate</option>
+            </select> &nbsp;
+            <input class="radius3" type="submit" name="performPartnerSectionAction" value="Execute"/>
+        </div><!--tableoptions-->
+    </form>
+</div>
+<br clear="all"/><br />

@@ -191,14 +191,11 @@ class Admin_Controller_News extends Controller
                     $news = App_Model_News::all(array(
                                 'id IN ?' => $ids
                     ));
-
-                    foreach ($news as $_news) {
-                        if (NULL !== $_news) {
+                    if (NULL !== $news) {
+                        foreach ($news as $_news) {
                             if (!$_news->delete()) {
                                 $errors[] = 'An error occured while deleting ' . $_news->getTitle();
                             }
-                        } else {
-                            $errors[] = "News with id {$_news->getId()} not found<br/>";
                         }
                     }
 
@@ -218,9 +215,8 @@ class Admin_Controller_News extends Controller
                     $news = App_Model_News::all(array(
                                 'id IN ?' => $ids
                     ));
-
-                    foreach ($news as $_news) {
-                        if (NULL !== $_news) {
+                    if (NULL !== $news) {
+                        foreach ($news as $_news) {
                             $_news->active = true;
 
                             if ($_news->validate()) {
@@ -229,8 +225,6 @@ class Admin_Controller_News extends Controller
                                 $errors[] = "News id {$_news->getId()} - {$_news->getTitle()} errors: "
                                         . join(', ', $_news->getErrors());
                             }
-                        } else {
-                            $errors[] = "News with id {$_news->getId()} not found";
                         }
                     }
 
@@ -250,9 +244,8 @@ class Admin_Controller_News extends Controller
                     $news = App_Model_News::all(array(
                                 'id IN ?' => $ids
                     ));
-
-                    foreach ($news as $_news) {
-                        if (NULL !== $_news) {
+                    if (NULL !== $news) {
+                        foreach ($news as $_news) {
                             $_news->active = false;
 
                             if ($_news->validate()) {
@@ -261,8 +254,6 @@ class Admin_Controller_News extends Controller
                                 $errors[] = "News id {$_news->getId()} - {$_news->getTitle()} errors: "
                                         . join(', ', $_news->getErrors());
                             }
-                        } else {
-                            $errors[] = "News with id {$_news->getId()} not found";
                         }
                     }
 
@@ -283,4 +274,5 @@ class Admin_Controller_News extends Controller
             }
         }
     }
+
 }

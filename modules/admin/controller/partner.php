@@ -43,7 +43,7 @@ class Admin_Controller_Partner extends Controller
         );
 
         $view->set('sections', $sections);
-        
+
         if (RequestMethods::post('submitAddPartner')) {
             $this->checkToken();
             $errors = array();
@@ -108,13 +108,13 @@ class Admin_Controller_Partner extends Controller
             $view->errorMessage('Partner not found');
             self::redirect('/admin/partner/');
         }
-        
+
         $view->set('sections', $sections)
                 ->set('partner', $partner);
 
         if (RequestMethods::post('submitEditPartner')) {
             $this->checkToken();
-            
+
             if ($partner->logo == '') {
                 try {
                     $im = new ImageManager(array(
@@ -236,8 +236,8 @@ class Admin_Controller_Partner extends Controller
                                 'id IN ?' => $ids
                     ));
 
-                    foreach ($partners as $partner) {
-                        if (NULL !== $partner) {
+                    if (NULL !== $partners) {
+                        foreach ($partners as $partner) {
                             if (unlink($partner->getUnlinkLogoPath())) {
                                 if (!$partner->delete()) {
                                     $errors[] = 'An error occured while deleting ' . $partner->getTitle();
@@ -245,8 +245,6 @@ class Admin_Controller_Partner extends Controller
                             } else {
                                 $errors[] = 'An error occured while deleting logo of ' . $partner->getTitle();
                             }
-                        } else {
-                            $errors[] = "Partner with id {$partner->getId()} not found<br/>";
                         }
                     }
 
@@ -267,8 +265,8 @@ class Admin_Controller_Partner extends Controller
                                 'id IN ?' => $ids
                     ));
 
-                    foreach ($partners as $partner) {
-                        if (NULL !== $partner) {
+                    if (NULL !== $partners) {
+                        foreach ($partners as $partner) {
                             $partner->active = true;
 
                             if ($partner->validate()) {
@@ -278,8 +276,6 @@ class Admin_Controller_Partner extends Controller
                                         . "{$partner->getTitle()} errors: "
                                         . join(', ', array_shift($partner->getErrors()));
                             }
-                        } else {
-                            $errors[] = "Partner with id {$partner->getId()} not found";
                         }
                     }
 
@@ -300,8 +296,8 @@ class Admin_Controller_Partner extends Controller
                                 'id IN ?' => $ids
                     ));
 
-                    foreach ($partners as $partner) {
-                        if (NULL !== $partner) {
+                    if (NULL !== $partners) {
+                        foreach ($partners as $partner) {
                             $partner->active = false;
 
                             if ($partner->validate()) {
@@ -311,8 +307,6 @@ class Admin_Controller_Partner extends Controller
                                         . "{$partner->getTitle()} errors: "
                                         . join(', ', array_shift($partner->getErrors()));
                             }
-                        } else {
-                            $errors[] = "Partner with id {$partner->getId()} not found";
                         }
                     }
 
@@ -329,6 +323,141 @@ class Admin_Controller_Partner extends Controller
                     break;
                 default:
                     self::redirect('/admin/partner/');
+                    break;
+            }
+        }
+    }
+
+    /**
+     * @before _secured, _admin
+     */
+    public function sections()
+    {
+        $view = $this->getActionView();
+
+        $sections = App_Model_Section::all(array('parentId = ?' => 6));
+
+        $view->set('sections', $sections);
+    }
+
+    /**
+     * @before _secured, _admin
+     */
+    public function sectionEdit($id)
+    {
+        $view = $this->getActionView();
+
+        $section = App_Model_Section::first(array('id = ?' => $id));
+
+        if (NULL === $section) {
+            $view->errorMessage('Section not found');
+            self::redirect('/admin/partner/sections/');
+        }
+
+        $view->set('section', $section);
+
+        if (RequestMethods::post('submitEditPartnerSection')) {
+            $this->checkToken();
+
+            $section->title = RequestMethods::post('title');
+            $section->urlKey = RequestMethods::post('urlkey');
+            $section->rank = RequestMethods::post('rank', 1);
+            $section->supportVideo = $section->getSupportVideo();
+            $section->supportPhoto = $section->getSupportPhoto();
+            $section->supportCollection = $section->getSupportCollection();
+            $section->parentId = $section->getParentId();
+            $section->active = RequestMethods::post('active');
+
+            if ($section->validate()) {
+                $section->save();
+
+                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                $view->successMessage('All changes were successfully saved');
+                self::redirect('/admin/partner/sections/');
+            } else {
+                Event::fire('admin.log', array('fail', 'ID: ' . $id));
+                $view->set('errors', $section->getErrors());
+            }
+        }
+    }
+
+    /**
+     * @before _secured, _admin
+     */
+    public function sectionMassAction()
+    {
+        $view = $this->getActionView();
+        $errors = array();
+
+        if (RequestMethods::post('performPartnerSectionAction')) {
+            $this->checkToken();
+            $ids = RequestMethods::post('sectionids');
+            $action = RequestMethods::post('action');
+
+            switch ($action) {
+                case 'activate':
+                    $sections = App_Model_Section::all(array(
+                                'id IN ?' => $ids
+                    ));
+
+                    if (NULL !== $sections) {
+                        foreach ($sections as $section) {
+                            $section->active = true;
+
+                            if ($section->validate()) {
+                                $section->save();
+                            } else {
+                                $errors[] = "Section id {$section->getId()} - "
+                                        . "{$section->getTitle()} errors: "
+                                        . join(', ', array_shift($section->getErrors()));
+                            }
+                        }
+                    }
+
+                    if (empty($errors)) {
+                        Event::fire('admin.log', array('activate success', 'IDs: ' . join(',', $ids)));
+                        $view->successMessage('Sections have been activated');
+                    } else {
+                        Event::fire('admin.log', array('activate fail', 'Error count:' . count($errors)));
+                        $message = join('<br/>', $errors);
+                        $view->longFlashMessage($message);
+                    }
+
+                    self::redirect('/admin/partner/sections/');
+
+                    break;
+                case 'deactivate':
+                    $sections = App_Model_Section::all(array(
+                                'id IN ?' => $ids
+                    ));
+
+                    if (NULL !== $sections) {
+                        foreach ($sections as $section) {
+                            $section->active = false;
+
+                            if ($section->validate()) {
+                                $section->save();
+                            } else {
+                                $errors[] = "Section id {$section->getId()} - "
+                                        . "{$section->getTitle()} errors: "
+                                        . join(', ', array_shift($section->getErrors()));
+                            }
+                        }
+                    }
+
+                    if (empty($errors)) {
+                        Event::fire('admin.log', array('deactivate success', 'IDs: ' . join(',', $ids)));
+                        $view->successMessage('Sections have been deactivated');
+                    } else {
+                        Event::fire('admin.log', array('deactivate fail', 'Error count:' . count($errors)));
+                        $message = join('<br/>', $errors);
+                        $view->longFlashMessage($message);
+                    }
+
+                    self::redirect('/admin/partner/sections/');
+                    break;
+                default:
+                    self::redirect('/admin/partner/sections/');
                     break;
             }
         }

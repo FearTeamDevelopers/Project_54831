@@ -326,8 +326,9 @@ class Admin_Controller_Photo extends Controller
                                 'id IN ?' => $ids
                     ));
 
-                    foreach ($photos as $photo) {
-                        if (NULL !== $photo) {
+                    if (NULL !== $photos) {
+                        foreach ($photos as $photo) {
+
                             if (unlink($photo->getUnlinkPath()) && unlink($photo->getUnlinkThumbPath())) {
                                 if (!$photo->delete()) {
                                     $errors[] = 'An error occured while deleting ' . $photo->getPhotoName();
@@ -335,8 +336,6 @@ class Admin_Controller_Photo extends Controller
                             } else {
                                 $errors[] = 'An error occured while deleting files of ' . $photo->getPhotoName();
                             }
-                        } else {
-                            $errors[] = "Photo with id {$photo->getId()} not found<br/>";
                         }
                     }
 
@@ -357,8 +356,8 @@ class Admin_Controller_Photo extends Controller
                                 'id IN ?' => $ids
                     ));
 
-                    foreach ($photos as $photo) {
-                        if (NULL !== $photo) {
+                    if (NULL !== $photos) {
+                        foreach ($photos as $photo) {
                             $photo->active = true;
 
                             if ($photo->validate()) {
@@ -368,8 +367,6 @@ class Admin_Controller_Photo extends Controller
                                         . "{$photo->getPhotoName()} errors: "
                                         . join(', ', array_shift($photo->getErrors()));
                             }
-                        } else {
-                            $errors[] = "Photo with id {$photo->getId()} not found";
                         }
                     }
 
@@ -390,8 +387,8 @@ class Admin_Controller_Photo extends Controller
                                 'id IN ?' => $ids
                     ));
 
-                    foreach ($photos as $photo) {
-                        if (NULL !== $photo) {
+                    if (NULL !== $photos) {
+                        foreach ($photos as $photo) {
                             $photo->active = false;
 
                             if ($photo->validate()) {
@@ -401,8 +398,6 @@ class Admin_Controller_Photo extends Controller
                                         . "{$photo->getPhotoName()} errors: "
                                         . join(', ', array_shift($photo->getErrors()));
                             }
-                        } else {
-                            $errors[] = "Photo with id {$photo->getId()} not found";
                         }
                     }
 

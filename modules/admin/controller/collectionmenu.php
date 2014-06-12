@@ -22,7 +22,7 @@ class Admin_Controller_CollectionMenu extends Controller
                 ->join('tb_section', 'clm.sectionId = s.id', 's', 
                         array('s.title' => 'secTitle'));
         $clmenu = App_Model_CollectionMenu::initialize($clmenuQuery);
-        
+
         $view->set('clmenu', $clmenu);
     }
 
@@ -39,13 +39,13 @@ class Admin_Controller_CollectionMenu extends Controller
                     'supportCollection = ?' => true
                         ), array('id', 'urlKey', 'title')
         );
-        
+
         $view->set('sections', $sections);
 
         if (RequestMethods::post('submitAddClmenu')) {
             $this->checkToken();
             $urlKey = StringMethods::removeDiacriticalMarks(RequestMethods::post('urlkey'));
-            
+
             $clm = new App_Model_CollectionMenu(array(
                 'sectionId' => RequestMethods::post('section'),
                 'title' => RequestMethods::post('title'),
@@ -89,7 +89,7 @@ class Admin_Controller_CollectionMenu extends Controller
             $view->errorMessage('Item not found');
             self::redirect('/admin/collectionmenu/');
         }
-        
+
         $view->set('clmenu', $clm)
                 ->set('sections', $sections);
 
@@ -126,7 +126,7 @@ class Admin_Controller_CollectionMenu extends Controller
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
         $this->checkToken();
-        
+
         $clm = App_Model_CollectionMenu::first(
                         array('id = ?' => $id), array('id')
         );
@@ -162,14 +162,12 @@ class Admin_Controller_CollectionMenu extends Controller
                     $clms = App_Model_CollectionMenu::all(array(
                                 'id IN ?' => $ids
                     ));
+                    if (NULL !== $clms) {
+                        foreach ($clms as $clm) {
 
-                    foreach ($clms as $clm) {
-                        if (NULL !== $clm) {
                             if (!$clm->delete()) {
                                 $errors[] = 'An error occured while deleting ' . $clm->getTitle();
                             }
-                        } else {
-                            $errors[] = "Item with id {$clm->getId()} not found<br/>";
                         }
                     }
 
@@ -190,18 +188,16 @@ class Admin_Controller_CollectionMenu extends Controller
                                 'id IN ?' => $ids
                     ));
 
-                    foreach ($clms as $clm) {
-                        if (NULL !== $clm) {
+                    if (NULL !== $clms) {
+                        foreach ($clms as $clm) {
                             $clm->active = true;
 
                             if ($clm->validate()) {
                                 $clm->save();
                             } else {
-                                $errors[] = "Item id {$clm->getId()} - {$clm->getTitle()} errors: " 
-                                          . join(', ', $clm->getErrors());
+                                $errors[] = "Item id {$clm->getId()} - {$clm->getTitle()} errors: "
+                                        . join(', ', $clm->getErrors());
                             }
-                        } else {
-                            $errors[] = "Item with id {$clm->getId()} not found";
                         }
                     }
 
@@ -221,19 +217,16 @@ class Admin_Controller_CollectionMenu extends Controller
                     $clms = App_Model_CollectionMenu::all(array(
                                 'id IN ?' => $ids
                     ));
-
-                    foreach ($clms as $clm) {
-                        if (NULL !== $clm) {
+                    if (NULL !== $clms) {
+                        foreach ($clms as $clm) {
                             $clm->active = false;
 
                             if ($clm->validate()) {
                                 $clm->save();
                             } else {
-                                $errors[] = "Item id {$clm->getId()} - {$clm->getTitle()} errors: " 
-                                          . join(', ', $clm->getErrors());
+                                $errors[] = "Item id {$clm->getId()} - {$clm->getTitle()} errors: "
+                                        . join(', ', $clm->getErrors());
                             }
-                        } else {
-                            $errors[] = "Item with id {$clm->getId()} not found";
                         }
                     }
 
@@ -254,4 +247,5 @@ class Admin_Controller_CollectionMenu extends Controller
             }
         }
     }
+
 }

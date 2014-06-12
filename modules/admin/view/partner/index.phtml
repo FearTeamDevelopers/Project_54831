@@ -1,6 +1,8 @@
 <ul class="maintabmenu multipletabmenu">
     <li class="current"><a href="#">All Partners</a></li>
+    {if $isAdmin}<li><a href="/admin/partner/sections/">Partner Sections</a></li>{/if}
     <li><a href="/admin/partner/add/">Add Partner</a></li>
+    
 </ul><!--maintabmenu-->
 
 <div class="content">
@@ -29,7 +31,6 @@
                 </tr>
             </thead>
             <tbody>
-
                 {if !empty($partners)}
                     {foreach $partner in $partners}
                         {if ($partner->active)}
