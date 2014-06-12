@@ -156,7 +156,7 @@ class App_Model_Photo extends Model
      * @label thumb height
      */
     protected $_thumbHeight;
-    
+
     /**
      * @column
      * @readwrite
@@ -229,8 +229,8 @@ class App_Model_Photo extends Model
     public function getUnlinkPath($type = true)
     {
         if ($type) {
-            if (file_exists($this->_path)) {
-                return $this->_path;
+            if (file_exists(APP_PATH . $this->_path)) {
+                return APP_PATH . $this->_path;
             } elseif (file_exists('.' . $this->_path)) {
                 return '.' . $this->_path;
             } elseif (file_exists('./' . $this->_path)) {
@@ -248,8 +248,8 @@ class App_Model_Photo extends Model
     public function getUnlinkThumbPath($type = true)
     {
         if ($type) {
-            if (file_exists($this->_thumbPath)) {
-                return $this->_thumbPath;
+            if (file_exists(APP_PATH . $this->_thumbPath)) {
+                return APP_PATH . $this->_thumbPath;
             } elseif (file_exists('.' . $this->_thumbPath)) {
                 return '.' . $this->_thumbPath;
             } elseif (file_exists('./' . $this->_thumbPath)) {

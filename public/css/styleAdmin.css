@@ -516,17 +516,6 @@ button,input,select,textarea { font-size: 13px; font-family: Arial, Helvetica, s
 
 .photoEdit { width: 480px; }
 
-/***** WYSIWYG EDITOR *****/
-.wysiwyg-dialog-content input.submit, .ui-dialog .wysiwyg input.submit { 
-    background: #333; color: #ccc; font-weight: bold; -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px;
-    cursor: pointer; border: 1px solid #333;
-}
-.wysiwyg-dialog-content input.submit:hover, .ui-dialog .wysiwyg input.submit:hover { background: #ffdd00; border: 1px solid #ff9900; color: #333; }
-.wysiwyg-dialog-content input.reset, .ui-dialog .wysiwyg input.reset { 
-    -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px; cursor: pointer; font-weight: bold; color: #666; background: #f7f7f7; 
-}
-.wysiwyg-dialog-content input.reset:hover, .ui-dialog .wysiwyg input.reset:hover { background: #eee; }
-
 /***** FORM WIZARD *****/
 .wizard .hormenu { list-style: none; }
 .wizard .hormenu li { float: left; width: 33%; }
@@ -581,27 +570,6 @@ button,input,select,textarea { font-size: 13px; font-family: Arial, Helvetica, s
     color: #333; text-shadow: none; font-weight: bold; -moz-border-radius: 1px; -webkit-border-radius: 1px; border-radius: 1px; 
 }
 .actionBar .msgBox .close:hover { background: #333; color: #eee; }
-
-/** VERTICAL WIZARD **/
-.verwizard .verticalmenu { list-style: none; float: left; width: 180px; }
-.verwizard .verticalmenu li { margin-bottom: 2px; }
-.verwizard .verticalmenu a { display: block; padding: 5px; color: #999; }
-.verwizard .verticalmenu a:hover { text-decoration: none; }
-.verwizard .verticalmenu a.selected { background: #333; color: #fff; }
-.verwizard .verticalmenu a.done { background: #333; color: #aaa; }
-.verwizard .verticalmenu a span { font-weight: bold; }
-.verwizard .stepContainer { margin-left: 200px; }
-.verwizard .actionBar { margin: 10px 0 0 200px; }
-
-/***** ELEMENT STYLES *****/
-.colorselector { 
-    display: inline-block; height: 28px; width: 28x; vertical-align: middle; 
-    position: relative; vertical-align: middle; margin-left: 5px; 
-}
-.colorselector span { 
-    display: block; height: 28px; width: 28px; position: absolute; left: 0; top: 0; 
-    background: #000 url(../../images/colorpicker/select2.html) no-repeat -4px -4px; 
-}
 
 /*** NOTIFICATION MESSAGES ***/
 .notification { 
@@ -828,48 +796,6 @@ a.btn_table { background-position: -82px -480px; }
 .btn_orange:active { background: #ff9702; }
 .btn_red:active { background: #eb2f30; }
 
-
-/***** CHAT *****/
-.contactlist { list-style: none; }
-.contactlist li { border-top: 1px solid #eee; position: relative; padding: 1px; }
-.contactlist li:first-child { border-top: 0; }
-.contactlist li span.msgcount { 
-    position: absolute; top: 12px; right: 30px; font-size: 10px; padding: 3px 5px; line-height: 10px; color: #fff; background: #dd0000; font-weight: bold;  
-    -moz-border-radius: 50px; -webkit-border-radius: 50px; border-radius: 50px;
-}
-.contactlist li a { padding: 8px 10px; display: block; color: #666; }
-.contactlist li.online a { background: url(../images/admin/online.png) no-repeat right 16px; }
-.contactlist li.new a { font-weight: bold; }
-.contactlist li a:hover { background-color: #fcfcfc; text-decoration: none; }
-.contactlist li a img { vertical-align: middle; display: inline-block; margin-right: 10px; }
-
-.chatsearch { padding: 5px; background: #eee; border-bottom: 1px solid #ddd; overflow: hidden; }
-.chatsearch input { 
-    float: left; border: 1px solid #ddd; padding: 7px 5px 7px 35px; width: 245px; background: #fff url(../images/admin/search.png) no-repeat left center; 
-    color: #ccc;
-}
-.chatsearch input:focus { color: #333; }
-.chatbottom { padding: 8px 10px; background: #f7f7f7; border-top: 1px solid #ddd; }
-.chatbottom a { color: #666; font-weight: bold; font-size: 11px; border: 1px solid #ddd; background: #fcfcfc; display: inline-block; padding: 2px 10px; }
-.chatbottom a:hover { text-decoration: none; border: 1px solid #bbb; -moz-box-shadow: 0 0 1px #ddd; -webkit-box-shadow: 0 0 1px #ddd; box-shadow: 0 0 1px #ddd; }
-
-.chatcontent { height: 500px; position: relative; padding: 0; }
-.chatcontent .messagebox { position: absolute; bottom: 0; left: 0; width: 100%; background: #f7f7f7; border-top: 1px solid #ddd; padding: 10px 0; }
-.chatcontent .messagebox input { 
-    border: 1px solid #ccc; padding: 8px 5px 8px 30px; width: 78.6%; display: inline-block; -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px;
-    margin-left: 1%; background: #fff url(../images/icons/default/chat.png) no-repeat 8px 8px;
-}
-.chatcontent .messagebox input:focus { -moz-box-shadow: 0 0 5px #eee; -webkit-box-shadow: 0 0 5px #eee; box-shadow: 0 0 5px #eee; }
-.chatcontent .messagebox button { 
-    border: 0; padding: 7px 0; text-align: center; font-weight: bold; background: #333; color: #fff; display: inline-block; margin-left: 1%; 
-    -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px; width: 13%;
-}
-.chatcontent .messagebox button:hover { background: #111; color: #fff; cursor: pointer; }
-.chatmessage { height: 425px; border: 1px solid #ddd; margin: 10px; overflow: auto; position: relative; }
-
-#chatmessageinner { }
-#chatmessageinner p { padding: 10px; border-bottom: 1px dotted #ddd; }
-
 /***** PAGINATION *****/
 .pagination { list-style: none; overflow: hidden; }
 .pagination li { display: inline-block; float: left; margin-right: 5px; }
@@ -912,28 +838,18 @@ a.btn_table { background-position: -82px -480px; }
 .center { text-align: center; }
 .block { display: block; }
 .margintop10 { margin-top: 10px; }
+.marginright15 { margin-right: 15px; }
 .textright { text-align: right; }
-.tooltipflot { font-size: 11px; padding: 5px 10px; background: url(../images/admin/blacktrans.png); color: #eee; }
 .noright { margin-right: 0; }
 .radiusbottom0 { -moz-border-radius: 2px 2px 0 0; -webkit-border-radius: 2px 2px 0 0; border-radius: 2px 2px 0 0; }
 .padding0 { padding: 0 !important; }
-.width50 { width: 100px !important; }
+.width50 { width: 50px !important; }
 .width100 { width: 100px !important; }
-#popwizard { padding: 20px; }
-#popwizard .stepContainer { height: 268px !important; }
-#popwizard .actionBar { padding-top: 30px; }
-.pie { font-size:10px; text-align:center; padding:2px; color:#fff; text-shadow: 1px 1px #444; }
-.quickform .notifyMessage  { margin: 0; margin-bottom: 20px; }
 .stdform .vsmallinput { width: 60px; }
-.borderTop0 { border-top: 0; }
-.color333 { color: #333; }
 .floatleft { float: left; }
 .floatright { float: right; }
-.loaders img { margin-right: 10px; display: inline-block; }
+.fs15{font-size: 15px;}
 
-.chartplace { margin-bottom: 10px; height: 150px; }
-.average { font-size: 10px; text-transform: uppercase; color: #069; font-weight: bold; border-top: 1px dashed #ccc; padding-top: 5px; }
-.average h3 { display: inline-block; vertical-align: bottom; margin-left: 10px; font-size: 16px; }
 .ui-datepicker-inline .ui-datepicker-calendar td a:hover { background: #ddd; text-decoration: none; color: #666; text-shadow: none; }
 .ui-datepicker-inline .ui-datepicker-calendar td.ui-datepicker-today a { 
     background: #333; text-decoration: none; color: #fff; text-shadow: none; font-weight: bold; 
@@ -944,11 +860,8 @@ a.btn_table { background-position: -82px -480px; }
 .photoactive img{border: 3px solid green;}
 .photoinactive img{border: 3px solid red;}
 
-.labeled-checkbox{font-size: 16px; margin-right: 20px;cursor: pointer; }
-.labeled-checkbox:hover{text-decoration: underline;}
 .rowActive{background-color: #bbbbbb;}
 .showText{cursor: pointer;}
-#messageTable tr{cursor: pointer;}
 
 #loader{
     position: absolute;

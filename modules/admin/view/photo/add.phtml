@@ -17,13 +17,13 @@
                     <label>Section</label>
                     <span class="field">
                         {foreach $section in $sections}
-                            <span class="labeled-checkbox block">
+                            <span class="block fs15 margintop10">
                                 <input type="checkbox" name="sections[]" value="{echo $section->id}">
                                     {echo ucfirst($section->title)}
                             </span>
                         {/foreach}
                         {if isset($errors["sections"])}
-                            <label class="error">{echo join("<br/>", $errors["sections"])}</label>
+                          <label class="error">{echo join("<br/>", $errors["sections"])}</label>
                         {/if}
                     </span>
                 </p>
@@ -107,7 +107,7 @@
                     <label>Section</label>
                     <span class="field">
                         {foreach $section in $sections}
-                            <span class="labeled-checkbox block">
+                            <span class="block fs15 margintop10">
                                 <input type="checkbox" name="sections[]" value="{echo $section->id}">
                                     {echo ucfirst($section->title)}
                             </span>

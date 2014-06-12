@@ -412,13 +412,10 @@ class Admin_Controller_Collection extends Controller
             echo 'Photo not found';
         } else {
             if ($photo->delete()) {
-                if (unlink($photo->getUnlinkPath()) && unlink($photo->getUnlinkThumbPath())) {
-                    Event::fire('admin.log', array('success', 'ID: ' . $id));
-                    echo 'ok';
-                } else {
-                    Event::fire('admin.log', array('fail', 'ID: ' . $id));
-                    echo 'Unknown error eccured while deleting images';
-                }
+                @unlink($photo->getUnlinkPath());
+                @unlink($photo->getUnlinkThumbPath());
+                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                echo 'ok';
             } else {
                 Event::fire('admin.log', array('fail', 'ID: ' . $id));
                 echo 'Unknown error eccured';

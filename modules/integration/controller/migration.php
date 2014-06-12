@@ -59,8 +59,8 @@ class Integration_Controller_Migration extends Controller
             return '/' . $this->_pathToImages;
         } elseif (is_dir('./' . $this->_pathToImages)) {
             return './' . $this->_pathToImages;
-        } elseif (is_dir($this->_pathToImages)) {
-            return $this->_pathToImages;
+        } elseif (is_dir(APP_PATH . '/' . $this->_pathToImages)) {
+            return APP_PATH . '/' . $this->_pathToImages;
         }
     }
 

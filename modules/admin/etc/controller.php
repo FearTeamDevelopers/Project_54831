@@ -118,6 +118,21 @@ class Controller extends BaseController
             self::redirect('/admin/');
         }
     }
+    
+    /**
+     * 
+     * @return boolean
+     */
+    public function checkTokenAjax()
+    {
+        $session = Registry::get('session');
+
+        if (base64_decode(RequestMethods::post('tk')) === $session->get('csrftoken')) {
+            return true;
+        }else{
+            return false;
+        }
+    }
 
     /**
      * load user from security context

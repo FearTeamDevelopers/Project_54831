@@ -132,10 +132,10 @@ class Mysqldump extends Base
 
             if ($onlyOnce || !$this->_settings['extended-insert']) {
                 $lineSize += $this->_write(html_entity_decode(
-                                "INSERT INTO `$tablename` VALUES ('" . implode("', '", $vals) . "')"));
+                                "INSERT INTO `$tablename` VALUES ('" . implode("', '", $vals) . "')", ENT_QUOTES, 'UTF-8'));
                 $onlyOnce = false;
             } else {
-                $lineSize += $this->_write(html_entity_decode(",('" . implode("', '", $vals) . "')"));
+                $lineSize += $this->_write(html_entity_decode(",('" . implode("', '", $vals) . "')", ENT_QUOTES, 'UTF-8'));
             }
 
             if (($lineSize > Mysqldump::MAXLINESIZE) || !$this->_settings['extended-insert']) {
@@ -208,8 +208,6 @@ class Mysqldump extends Base
     private function _write($str)
     {
         $bytesWritten = 0;
-//        $str = iconv(mb_detect_encoding($str, mb_detect_order(), true), "UTF-8", $str);
-//        $str = html_entity_decode($str);
         if (false === ($bytesWritten = fwrite($this->_fileHandler, $str))) {
             throw new Exception\Backup('Writting to file failed!', 4);
         }

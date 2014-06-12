@@ -47,8 +47,9 @@
             <label>Section*</label>
             <span class="field">
                 {foreach $section in $sections}
-                <span class="labeled-checkbox">
-                    <input type="checkbox" name="sections[]" value="{echo $section->id}">{echo ucfirst($section->title)}
+                <span class="fs15 marginright15">
+                    <input type="checkbox" name="sections[]" value="{echo $section->id}">
+                    {echo ucfirst($section->title)}
                 </span>
                 {/foreach}
                 {if isset($errors["sections"])}

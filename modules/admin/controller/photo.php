@@ -101,7 +101,7 @@ class Admin_Controller_Photo extends Controller
             if (empty($sectionsIds[0])) {
                 $errors['sections'] = array('At least one section has to be selected');
             }
-
+            
             if (empty($errors) && $photo->validate()) {
                 $photoId = $photo->save();
 
@@ -110,7 +110,6 @@ class Admin_Controller_Photo extends Controller
                         'photoId' => $photoId,
                         'sectionId' => (int) $section
                     ));
-
                     $photoSection->save();
                 }
 
@@ -286,24 +285,27 @@ class Admin_Controller_Photo extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
-        $this->checkToken();
 
-        $photo = App_Model_Photo::first(
-                        array('id = ?' => $id), array('id', 'thumbPath', 'path')
-        );
+        if ($this->checkTokenAjax()) {
+            $photo = App_Model_Photo::first(
+                            array('id = ?' => $id), array('id', 'thumbPath', 'path')
+            );
 
-        if (NULL === $photo) {
-            echo 'Photo not found';
-        } else {
-            if ($photo->delete()) {
-                unlink($photo->getUnlinkPath());
-                unlink($photo->getUnlinkThumbPath());
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
-                echo 'ok';
+            if (NULL === $photo) {
+                echo 'Photo not found';
             } else {
-                Event::fire('admin.log', array('fail', 'ID: ' . $id));
-                echo 'Unknown error eccured';
+                if ($photo->delete()) {
+                    unlink($photo->getUnlinkPath());
+                    unlink($photo->getUnlinkThumbPath());
+                    Event::fire('admin.log', array('success', 'ID: ' . $id));
+                    echo 'ok';
+                } else {
+                    Event::fire('admin.log', array('fail', 'ID: ' . $id));
+                    echo 'Unknown error eccured';
+                }
             }
+        } else {
+            echo 'Security token is not valid';
         }
     }
 

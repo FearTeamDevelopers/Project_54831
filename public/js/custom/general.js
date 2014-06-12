@@ -412,7 +412,7 @@ jQuery(document).ready(function() {
             var file_data = this.files[0];
             var filename = file_data.name;
 
-            jQuery.post('/admin/collection/checkPhoto/', {filename: filename, collectionId:collectionId}, function(msg) {
+            jQuery.post('/admin/collection/checkPhoto/', {filename: filename, collectionId: collectionId}, function(msg) {
                 if (msg == 'ok') {
                     jQuery('.uploadCollectionPhotoForm input[type=submit]').removeAttr('disabled');
                 } else {
@@ -497,13 +497,14 @@ jQuery(document).ready(function() {
 
     //delete image in table list
     jQuery('.mediatable a.btn_trash').click(function() {
-        var c = confirm('Delete this image?');
+        var c = confirm('Continue delete?');
         var parentTr = jQuery(this).parents('tr');
 
         if (c) {
             var url = jQuery(this).attr('href');
+            var token = jQuery('#tk').val();
 
-            jQuery.post(url, function(msg) {
+            jQuery.post(url, {tk: token}, function(msg) {
                 if (msg == 'ok') {
                     parentTr.fadeOut();
                 } else {
@@ -512,29 +513,6 @@ jQuery(document).ready(function() {
             });
         }
         return false;
-    });
-
-    //for checkbox
-    jQuery('input[type=checkbox]').each(function() {
-        var t = jQuery(this);
-        t.wrap('<span class="checkbox"></span>');
-        t.click(function() {
-            if (jQuery(this).is(':checked')) {
-                t.attr('checked', true);
-                t.parent().addClass('checked');
-            } else {
-                t.attr('checked', false);
-                t.parent().removeClass('checked');
-            }
-        });
-
-        if (jQuery(this).is(':checked')) {
-            t.attr('checked', true);
-            t.parent().addClass('checked');
-        } else {
-            t.attr('checked', false);
-            t.parent().removeClass('checked');
-        }
     });
 
     /* ------------- BUTTONS --------------- */
@@ -634,7 +612,7 @@ jQuery(document).ready(function() {
         if (c) {
             var url = jQuery(this).attr('href');
 
-            jQuery.post(url, {tk:tk}, function(msg) {
+            jQuery.post(url, {tk: tk}, function(msg) {
                 if (msg == 'ok') {
                     parentTr.fadeOut();
                 } else {
@@ -664,15 +642,26 @@ jQuery(document).ready(function() {
         }
     });
 
-    jQuery('.labeled-checkbox').click(function() {
-        var ch = jQuery(this).find('input[type=checkbox]');
+    //for checkbox
+    jQuery('input[type=checkbox]').each(function() {
+        var t = jQuery(this);
+        t.wrap('<span class="checkbox"></span>');
+        t.click(function() {
+            if (jQuery(this).is(':checked')) {
+                t.attr('checked', true);
+                t.parent().addClass('checked');
+            } else {
+                t.attr('checked', false);
+                t.parent().removeClass('checked');
+            }
+        });
 
-        if (ch.parents('span.checkbox').hasClass('checked')) {
-            ch.parents('span.checkbox').removeClass('checked');
-            ch.removeAttr('checked');
+        if (jQuery(this).is(':checked')) {
+            t.attr('checked', true);
+            t.parent().addClass('checked');
         } else {
-            ch.parents('span.checkbox').addClass('checked');
-            ch.attr('checked', 'checked');
+            t.attr('checked', false);
+            t.parent().removeClass('checked');
         }
     });
 
