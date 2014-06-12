@@ -5,6 +5,8 @@ use THCFrame\Filesystem\ImageManager;
 use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
 use THCFrame\Core\ArrayMethods;
+use THCFrame\Filesystem\FileManager;
+use THCFrame\Registry\Registry;
 
 /**
  * 
@@ -197,17 +199,43 @@ class Admin_Controller_Collection extends Controller
             self::redirect('/admin/collection/');
         }
 
-        $photoCount = App_Model_CollectionPhoto::count(array('collectionId = ?' => $collection->getId()));
+        $colPhotos = App_Model_CollectionPhoto::all(array('collectionId = ?' => $collection->getId()));
 
         $view->set('collection', $collection)
-                ->set('photocount', $photoCount);
+                ->set('photocount', count($colPhotos));
 
         if (RequestMethods::post('submitDeleteCollection')) {
             $this->checkToken();
 
             if ($collection->delete()) {
                 if (RequestMethods::post('action') == 1) {
-                    rmdir(APP_PATH.'/public/uploads/images/collections/' . $collection->getId());
+                    $fm = new FileManager();
+                    $configuration = Registry::get('config');
+
+                    if (!empty($configuration->files)) {
+                        $pathToImages = trim($configuration->files->pathToImages, '/');
+                        $pathToThumbs = trim($configuration->files->pathToThumbs, '/');
+                    } else {
+                        $pathToImages = 'public/uploads/images';
+                        $pathToThumbs = 'public/uploads/images';
+                    }
+                    
+                    $ids = array();
+                    foreach ($colPhotos as $colPhoto) {
+                        $ids[] = $colPhoto->getPhotoId();
+                    }
+                    
+                    App_Model_Photo::deleteAll(array('id IN ?' => $ids));
+                    
+                    $path = APP_PATH . '/' . $pathToImages . '/collections/' . $collection->getId();
+                    $pathThumbs = APP_PATH . '/' . $pathToThumbs . '/collections/' . $collection->getId();
+
+                    if ($path == $pathThumbs) {
+                        $fm->remove($path);
+                    } else {
+                        $fm->remove($path);
+                        $fm->remove($pathThumbs);
+                    }
                 }
 
                 Event::fire('admin.log', array('success', 'ID: ' . $id));

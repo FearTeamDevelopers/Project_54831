@@ -72,6 +72,8 @@
 
             <form class="stdform stdform2 uploadCollectionPhotoForm" method="post" action="#" enctype="multipart/form-data">
                 <input type="hidden" name="MAX_FILE_SIZE" value="5000000"/>
+                <input type="hidden" name="collectionid" class="collid" value="{echo $collection->id}" />
+                <input type="hidden" name="tk" value="{echo $token}" />
                 <p>
                     <label>Collection Name</label>
                     <span class="field">

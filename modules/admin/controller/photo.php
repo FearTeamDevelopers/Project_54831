@@ -32,11 +32,13 @@ class Admin_Controller_Photo extends Controller
 
             $sections = App_Model_PhotoSection::initialize($photoSectionQuery);
 
-            foreach ($sections as $section) {
-                $sectionArr[] = ucfirst($section->secTitle);
+            if ($sections !== null) {
+                foreach ($sections as $section) {
+                    $sectionArr[] = ucfirst($section->secTitle);
+                }
+                $sectionString = join(', ', $sectionArr);
+                $photo->inSections = $sectionString;
             }
-            $sectionString = join(', ', $sectionArr);
-            $photo->inSections = $sectionString;
         }
 
         $view->set('photos', $photos);
@@ -112,7 +114,7 @@ class Admin_Controller_Photo extends Controller
                     $photoSection->save();
                 }
 
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'ID: ' . $photoId));
                 $view->successMessage('Photo has been successfully uploaded');
                 self::redirect('/admin/photo/');
             } else {
@@ -293,7 +295,9 @@ class Admin_Controller_Photo extends Controller
         if (NULL === $photo) {
             echo 'Photo not found';
         } else {
-            if ($photo->delete() && unlink($photo->getUnlinkPath()) && unlink($photo->getUnlinkThumbPath())) {
+            if ($photo->delete()) {
+                unlink($photo->getUnlinkPath());
+                unlink($photo->getUnlinkThumbPath());
                 Event::fire('admin.log', array('success', 'ID: ' . $id));
                 echo 'ok';
             } else {

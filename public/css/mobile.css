@@ -1,18 +1,10 @@
 /* 
-    Document   : styles
-    Created on : 7.5.2012, 15:35:36
+    Document   : mobile
+    Created on : 9.6.2014, 15:35:36
     Author     : Tomy
-    Description: Marko.in stylesheet
+    Description: Marko.in stylesheet for mobile devices
         
 */
-
-* {
-    margin:0;
-    padding:0;
-    -moz-box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    box-sizing: border-box;
-}
 
 root { 
     display: block;
@@ -20,6 +12,9 @@ root {
 html{
     background:black url('../images/marko_in_bg.jpg') center center fixed no-repeat;
     background-size: Contain;
+    -webkit-background-size: Contain;
+    -moz-background-size: Contain;
+    -o-background-size: Contain;
     -webkit-text-size-adjust: none;
 }
 

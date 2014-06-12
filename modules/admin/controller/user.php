@@ -138,6 +138,72 @@ class Admin_Controller_User extends Controller
             }
         }
     }
+    
+    /**
+     * @before _secured, _publisher
+     */
+    public function updateProfile()
+    {
+        $view = $this->getActionView();
+        $loggedUser = $this->getUser();
+        
+        $user = App_Model_User::first(array('id = ?' => $loggedUser->getId()));
+        
+        if (NULL === $user) {
+            $view->errorMessage('User not found');
+            self::redirect('/admin/user/');
+        }
+        $view->set('user', $user);
+        
+        if (RequestMethods::post('submitUpdateProfile')) {
+            $security = Registry::get('security');
+            $this->checkToken();
+            
+            if (RequestMethods::post('password') !== RequestMethods::post('password2')) {
+                $errors['password2'] = array('Paswords doesnt match');
+            }
+
+            if (RequestMethods::post('email') != $user->email) {
+                $email = App_Model_User::first(
+                            array('email = ?' => RequestMethods::post('email', $user->email)), 
+                            array('email')
+                );
+                
+                if ($email) {
+                    $errors['email'] = array('Email is already used');
+                }
+            }
+
+            $pass = RequestMethods::post('password');
+            
+            if ($pass === null || $pass == '') {
+                $salt = $user->getSalt();
+                $hash = $user->getPassword();
+            } else {
+                $salt = $security->createSalt();
+                $hash = $security->getSaltedHash($pass, $salt);
+            }
+
+            $user->firstname = RequestMethods::post('firstname');
+            $user->lastname = RequestMethods::post('lastname');
+            $user->email = RequestMethods::post('email');
+            $user->password = $hash;
+            $user->salt = $salt;
+            $user->role = $user->getRole();
+            $user->active = $user->getActive();
+
+            if (empty($errors) && $user->validate()) {
+                $user->save();
+
+                Event::fire('admin.log', array('success', 'ID: ' . $user->getId()));
+                $view->successMessage('All changes were successfully saved');
+                self::redirect('/admin/');
+            } else {
+                Event::fire('admin.log', array('fail', 'ID: ' . $user->getId()));
+                $view->set('errors', $errors + $user->getErrors());
+            }
+        }
+    }
 
     /**
      * @before _secured, _admin
@@ -210,8 +276,6 @@ class Admin_Controller_User extends Controller
                 $view->set('errors', $errors + $user->getErrors());
             }
         }
-
-        
     }
 
     /**

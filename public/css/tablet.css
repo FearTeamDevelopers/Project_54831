@@ -1,8 +1,8 @@
 /* 
-    Document   : styles
-    Created on : 7.5.2012, 15:35:36
+    Document   : tablet
+    Created on : 7.6.2014, 12:21:15
     Author     : Tomy
-    Description: Marko.in stylesheet
+    Description: Marko.in stylesheet for tables
         
 */
 root { 
@@ -49,14 +49,14 @@ a:hover{color: #ccc;}
 
 #page {position: relative; width: 100%; z-index: 20;}
 #main {position: relative; width: 100%; height: auto; }
-#temptopdiv{margin-top: 45%;}
+#temptopdiv{margin-top: 41%;}
 
 #news, #collection, #news-detail, #showaction{
     position: absolute;
     top: 55px; left: 7%;
     overflow-y: auto;
     overflow-x: no-content;
-    width: 83%;
+    width: 85%;
     height: auto;
     padding: 10px;
 }
