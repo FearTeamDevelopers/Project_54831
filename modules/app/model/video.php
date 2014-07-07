@@ -28,6 +28,8 @@ class App_Model_Video extends Model
      * @readwrite
      * @type boolean
      * @index
+     * 
+     * @validate max(3)
      */
     protected $_active;
 

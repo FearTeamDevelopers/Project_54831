@@ -1,9 +1,10 @@
 <?php
 
 use App\Etc\Controller;
+use THCFrame\Request\RequestMethods;
 
 /**
- * Description of IndexController
+ * Description of App_Controller_News
  *
  * @author Tomy
  */
@@ -57,11 +58,13 @@ class App_Controller_News extends Controller
             }
 
             if ($type == 'read') {
-                $tag = "<a href=\"#\" class=\"ajaxLink newsReadMore\" id=\"show_news-detail_{$news->getUrlKey()}\">[Celý článek]</a>";
+                $tag = "<a href=\"#\" class=\"ajaxLink news-read-more\" id=\"show_news-detail_{$news->getUrlKey()}\">[Celý článek]</a>";
                 $body = str_replace("(!read_more!)", $tag, $body);
                 $news->$parsedField = $body;
             }
         }
+        
+        $news->fbLikeUrl = urlencode('http://'.RequestMethods::server('HTTP_HOST').'/news/detail/'.$news->getUrlKey());
 
         return $news;
     }
@@ -108,7 +111,7 @@ class App_Controller_News extends Controller
                         array(
                     'urlKey = ?' => $title,
                     'active = ?' => true
-                        ), array('id', 'author', 'title', 'body', 'created'));
+                        ), array('id', 'author', 'title', 'body', 'created', 'urlKey'));
 
         $newsParsed = $this->_parseNewsBody($news, 'body');
 

@@ -74,7 +74,7 @@ class Admin_Controller_News extends Controller
         
         if (RequestMethods::post('submitAddNews')) {
             $this->checkToken();
-            $urlKey = StringMethods::removeDiacriticalMarks(RequestMethods::post('urlkey'));
+            $urlKey = str_replace(' ', '-', StringMethods::removeDiacriticalMarks(RequestMethods::post('urlkey')));
 
             $news = new App_Model_News(array(
                 'title' => RequestMethods::post('title'),
@@ -123,7 +123,7 @@ class Admin_Controller_News extends Controller
 
         if (RequestMethods::post('submitEditNews')) {
             $this->checkToken();
-            $urlKey = StringMethods::removeDiacriticalMarks(RequestMethods::post('urlkey'));
+            $urlKey = str_replace(' ', '-', StringMethods::removeDiacriticalMarks(RequestMethods::post('urlkey')));
 
             $news->title = RequestMethods::post('title');
             $news->urlKey = $urlKey;
@@ -201,7 +201,7 @@ class Admin_Controller_News extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('delete success', 'IDs: ' . join(',', $ids)));
-                        $view->successMessage('Videos have been deleted');
+                        $view->successMessage('News have been deleted');
                     } else {
                         Event::fire('admin.log', array('delete fail', 'Error count:' . count($errors)));
                         $message = join(PHP_EOL, $errors);
@@ -230,7 +230,7 @@ class Admin_Controller_News extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('activate success', 'IDs: ' . join(',', $ids)));
-                        $view->successMessage('Videos have been activated');
+                        $view->successMessage('News have been activated');
                     } else {
                         Event::fire('admin.log', array('activate fail', 'Error count:' . count($errors)));
                         $message = join(PHP_EOL, $errors);
@@ -259,7 +259,7 @@ class Admin_Controller_News extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('deactivate success', 'IDs: ' . join(',', $ids)));
-                        $view->successMessage('Videos have been deactivated');
+                        $view->successMessage('News have been deactivated');
                     } else {
                         Event::fire('admin.log', array('deactivate fail', 'Error count:' . count($errors)));
                         $message = join(PHP_EOL, $errors);

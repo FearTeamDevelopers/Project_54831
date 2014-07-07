@@ -1,7 +1,7 @@
 <div class="section-content-collection">
     {if ($collecarr && !empty($collecarr))}
         {foreach $collection in $collecarr}
-            <p class="collectionTitle">
+            <p class="collection-title">
                 {echo $collection->title." ".$collection->date} / fotograf {echo $collection->photographer}
             </p>
             <div class="section-content-photos">
@@ -15,7 +15,7 @@
                     {/foreach}
                 {/if}
                 {else}
-                    <p class="messageEmpty">K dispozici nejsou žádné fotografie</p>
+                    <p class="message-empty">K dispozici nejsou žádné fotografie</p>
                 {/else}
             </div>
              <br/><hr/><br/>
@@ -33,6 +33,6 @@
         {/foreach}
     {/if}
     {else}
-        <p class="messageEmpty">Žádné kolekce</p>
+        <p class="message-empty">Žádné kolekce</p>
     {/else}
 </div>

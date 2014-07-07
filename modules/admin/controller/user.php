@@ -6,7 +6,7 @@ use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
 
 /**
- * Description of UserController
+ * Description of Admin_Controller_User
  *
  * @author Tomy
  */

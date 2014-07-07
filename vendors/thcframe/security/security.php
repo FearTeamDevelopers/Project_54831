@@ -75,7 +75,7 @@ class Security extends Base
     {
         return new Exception\Implementation(sprintf('%s method not implemented', $method));
     }
-    
+
     /**
      * Method creates token as a protection from cross-site request forgery.
      * This token has to be placed in hidden field in every form. Value from
@@ -93,7 +93,7 @@ class Security extends Base
             $this->_csrfToken = $token;
         }
     }
-    
+
     /**
      * Method initialize security context. Check session for user token and creates
      * role structure or acl object.
@@ -117,7 +117,7 @@ class Security extends Base
 
         $session = Registry::get('session');
         $user = $session->get('authUser');
-        
+
         $this->createCsrfToken();
 
         if ($this->_accessControl == 'role_based') {
@@ -188,15 +188,41 @@ class Security extends Base
         $this->_user = NULL;
         @session_regenerate_id();
     }
-    
+
     /**
-     * Method generates 20chars lenght salt for salting passwords
+     * Method generates 40-chars lenght salt for salting passwords
      * 
      * @return string
      */
     public function createSalt()
     {
-        return substr(rtrim(base64_encode(md5(microtime())), "="), 8, 20);
+        $newSalt = substr(rtrim(base64_encode(md5(microtime())), "="), 3, 40);
+
+        $user = \App_Model_User::first(array(
+                    "salt = ?" => $newSalt
+        ));
+
+        if ($user === null) {
+            return $newSalt;
+        } else {
+            for ($i = 0; $i < 100; $i++) {
+                $newSalt = substr(rtrim(base64_encode(md5(microtime())), "="), 3, 40);
+
+                $user = \App_Model_User::first(array(
+                            "salt = ?" => $newSalt
+                ));
+
+                if($i == 99){
+                    throw new Exception('Salt could not be created');
+                }
+                
+                if ($user === null) {
+                    return $newSalt;
+                } else {
+                    continue;
+                }
+            }
+        }
     }
 
     /**

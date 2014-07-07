@@ -7,7 +7,7 @@ use THCFrame\Registry\Registry;
 use THCFrame\Controller\Controller as BaseController;
 
 /**
- * Description of Controller
+ * Module specific controller class extending framework controller class
  *
  * @author Tomy
  */

@@ -4,7 +4,7 @@
 {if ($collectionlist && !empty($collectionlist))}
     <div class="section-content-collectionList">
         {foreach $item in $collectionlist}
-            <a href="#" class="collectionLink ajaxLink" id="show_design_{echo $item->urlKey}"> 
+            <a href="#" class="collection-link ajaxLink" id="show_design_{echo $item->urlKey}"> 
                 {if $item->customName == ""}{echo ucfirst($item->title)}{/if}
                 {else}{echo ucfirst($item->customName)}{/else}</a>
             <br/>

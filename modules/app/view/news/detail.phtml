@@ -1,9 +1,12 @@
 {if (!empty($news))}
-<div class="newsDetail">
-    <p class="newsDetailTitle">{echo $news->title}</p>
-    <p class="newsDetailAdded">{echo $news->created} {echo $news->author}</p>
+<div class="news-detail-wrapper">
+    <p class="news-title">{echo $news->title}</p>
+    <p class="news-created">{echo $news->created} {echo $news->author}</p>
     {echo html_entity_decode($news->body)}
-    <br>
-
+    <br />
+</div>
+<div class="news-fblikebtn">
+    <iframe src="//www.facebook.com/plugins/like.php?href={echo $news->fbLikeUrl}&amp;width&amp;layout=button_count&amp;action=like&amp;show_faces=false&amp;share=false&amp;height=21" 
+        scrolling="no" frameborder="0" style="border:none; overflow:hidden; height:21px;" allowTransparency="true"></iframe>
 </div>
 {/if}

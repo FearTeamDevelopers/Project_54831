@@ -388,6 +388,7 @@ class Integration_Controller_Migration extends Controller
         $this->fileManager = new FileManager();
 
         if (RequestMethods::post('migrateCollections')) {
+            
             $db = $this->connectToLiveDb();
             $this->db = $db->connect();
 

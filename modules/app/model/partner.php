@@ -28,6 +28,8 @@ class App_Model_Partner extends Model
      * @readwrite
      * @type boolean
      * @index
+     * 
+     * @validate max(3)
      */
     protected $_active;
 

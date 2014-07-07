@@ -23,6 +23,8 @@ class App_Model_News extends Model
      * @readwrite
      * @type boolean
      * @index
+     * 
+     * @validate max(3)
      */
     protected $_active;
 
@@ -76,7 +78,7 @@ class App_Model_News extends Model
      * @type text
      * @length 256
      * 
-     * @validate required, alphanumeric, max(2048)
+     * @validate alphanumeric, max(2048)
      * @label Rss feed text
      */
     protected $_rssFeedBody;
@@ -117,6 +119,11 @@ class App_Model_News extends Model
      */
     protected $_modified;
 
+    /**
+     * @readwrite
+     */
+    protected $_fbLikeUrl;
+    
     /**
      * 
      */

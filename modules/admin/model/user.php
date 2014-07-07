@@ -47,10 +47,9 @@ class Admin_Model_User extends Model implements UserInterface {
      * @column
      * @readwrite
      * @type text
-     * @length 100
-     * @index
+     * @length 30
      *
-     * @validate min(15), max(100)
+     * @validate min(15), max(30)
      */
     protected $_salt;
     

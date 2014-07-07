@@ -39,6 +39,8 @@ class App_Model_Collection extends Model
      * @readwrite
      * @type boolean
      * @index
+     * 
+     * @validate max(3)
      */
     protected $_active;
 

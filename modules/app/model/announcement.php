@@ -22,6 +22,8 @@ class App_Model_Announcement extends Model {
      * @readwrite
      * @type boolean
      * @index
+     * 
+     * @validate max(3)
      */
     protected $_active;
 

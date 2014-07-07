@@ -157,7 +157,7 @@ class Model extends Base
         if ($value == '') {
             return true;
         } else {
-            return StringMethods::match($value, '#^([0-9-]*)$#');
+            return StringMethods::match($value, '#^([0-9-+\.,]*)$#');
         }
     }
 

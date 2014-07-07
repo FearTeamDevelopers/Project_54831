@@ -22,9 +22,9 @@ class Admin_Model_AdminLog extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 50
+     * @length 80
      * 
-     * @validate alphanumeric, max(50)
+     * @validate alphanumeric, max(80)
      */
     protected $_userId;
 

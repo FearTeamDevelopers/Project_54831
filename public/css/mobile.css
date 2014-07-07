@@ -150,27 +150,30 @@ iframe{width: 380px; height: 214px;}
 /* ---------- News --------- */
 #news img {margin-left: 1%;}
 
-.oneNews{
+.news-wrapper{
     display: block;
     border-bottom: 1px solid white;
-    margin: 10px;
+    margin: 8px;
     padding: 5px;
     padding-bottom: 10px;
 }
-.newsTitle, .newsDetailTitle{
-    font-size: 19px;
+.news-detail-wrapper{display: block; padding: 8px;}
+
+.news-title{
+    font-size: 18px;
     font-weight: bold;
     text-decoration: none;
     color: white;
 }
-.newsReadMore{text-decoration: none;}
-.newsAdded, .newsDetailAdded{
-    margin-bottom: 5px;
+.news-read-more{text-decoration: none;}
+.news-created{
+    margin-bottom: 8px;
     font-style: italic;
-    font-size: 10px;
+    font-size: 11px;
 }
 
-.newsDetail{display: block; margin: 10px; padding: 15px;}
+.news-fblikebtn{display: block; padding: 8px; width: 150px; float: right; overflow-x: hidden;}
+.news-fblikebtn:after{clear: both;}
 
 /* ---------- Section content ----------*/
 .section-title{font-size: 22px; font-weight: bold; padding: 8px;}
@@ -184,8 +187,8 @@ iframe{width: 380px; height: 214px;}
 .section-content-videos{position: relative; margin: 20px;}
 .section-content-videos iframe{margin: 5px;}
 
-.collectionTitle{font-size: 23px; font-weight: bold; padding: 8px;}
-.collectionLink, .messageEmpty{font-size: 20px; margin: 6px; color: #fff;}
+.collection-title{font-size: 23px; font-weight: bold; padding: 8px;}
+.collection-link, .message-empty{font-size: 20px; margin: 6px; color: #fff;}
 
 .center{text-align: center;}
 .float-right{float: right;}

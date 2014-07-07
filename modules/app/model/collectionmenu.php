@@ -38,6 +38,8 @@ class App_Model_CollectionMenu extends Model
      * @readwrite
      * @type boolean
      * @index
+     * 
+     * @validate max(3)
      */
     protected $_active;
 

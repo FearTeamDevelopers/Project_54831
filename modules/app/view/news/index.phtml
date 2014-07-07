@@ -1,10 +1,10 @@
 {if !empty($newsbatch)}
 {foreach $news in $newsbatch}
-<div class="oneNews">
+<div class="news-wrapper">
     <p>
-        <a href="#" class="ajaxLink newsTitle" id="show_news-detail_{echo $news->urlKey}">{echo $news->title}</a>
+        <a href="#" class="ajaxLink news-title" id="show_news-detail_{echo $news->urlKey}">{echo $news->title}</a>
     </p>
-    <p class="newsAdded">{echo $news->created}</p>
+    <p class="news-created">{echo $news->created}</p>
     {echo html_entity_decode($news->shortBody)}
     <br>
 </div>

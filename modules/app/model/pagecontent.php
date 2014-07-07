@@ -33,6 +33,8 @@ class App_Model_PageContent extends Model
      * @readwrite
      * @type boolean
      * @index
+     * 
+     * @validate max(3)
      */
     protected $_active;
 

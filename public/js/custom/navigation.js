@@ -9,7 +9,7 @@ jQuery(document).ready(function() {
         jQuery('#bio,#design,#styling,#contact,#partners,#news-detail,#provas').draggable();
         jQuery('#news').draggable({
             scroll: true,
-            handle: 'div.oneNews'
+            handle: 'div.news-wrapper'
         });
         jQuery('#portfolio, #collection').draggable({
             scroll: true,
