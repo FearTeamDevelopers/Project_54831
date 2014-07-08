@@ -48,7 +48,7 @@ class Admin_Controller_Content extends Controller
             if ($content->validate()) {
                 $id = $content->save();
 
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'Content id: ' . $id));
                 $view->successMessage('Content has been successfully saved');
                 self::redirect('/admin/content/');
             } else {
@@ -69,9 +69,7 @@ class Admin_Controller_Content extends Controller
                         ), array('id', 'title')
         );
 
-        $content = App_Model_PageContent::first(array(
-                    'id = ?' => $id
-        ));
+        $content = App_Model_PageContent::first(array('id = ?' => (int)$id));
 
         if (NULL === $content) {
             $view->errorMessage('Content not found');
@@ -93,11 +91,11 @@ class Admin_Controller_Content extends Controller
             if ($content->validate()) {
                 $content->save();
 
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'Content id: ' . $id));
                 $view->successMessage('All changes were successfully saved');
                 self::redirect('/admin/content/');
             } else {
-                Event::fire('admin.log', array('fail', 'ID: ' . $id));
+                Event::fire('admin.log', array('fail', 'Content id: ' . $id));
                 $view->set('errors', $content->getErrors());
             }
         }
@@ -110,9 +108,9 @@ class Admin_Controller_Content extends Controller
     {
         $view = $this->getActionView();
 
-        $content = App_Model_PageContent::first(array(
-                    'id = ?' => $id
-                        ), array('id', 'pageName', 'body')
+        $content = App_Model_PageContent::first(
+                        array('id = ?' => (int)$id), 
+                        array('id', 'pageName', 'body')
         );
 
         if (NULL === $content) {
@@ -126,11 +124,11 @@ class Admin_Controller_Content extends Controller
             $this->checkToken();
 
             if ($content->delete()) {
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'Content id: ' . $id));
                 $view->successMessage('Content has been deleted');
                 self::redirect('/admin/content/');
             } else {
-                Event::fire('admin.log', array('fail', 'ID: ' . $id));
+                Event::fire('admin.log', array('fail', 'Content id: ' . $id));
                 $view->errorMessage('Unknown error eccured');
                 self::redirect('/admin/content/');
             }

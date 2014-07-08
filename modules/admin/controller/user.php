@@ -127,12 +127,11 @@ class Admin_Controller_User extends Controller
             if (empty($errors) && $user->validate()) {
                 $id = $user->save();
 
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'User id: ' . $id));
                 $view->successMessage('Account has been successfully created');
                 self::redirect('/admin/user/');
             } else {
                 Event::fire('admin.log', array('fail'));
-                var_dump($user->getErrors());
                 $view->set('errors', $errors + $user->getErrors())
                         ->set('user', $user);
             }
@@ -158,6 +157,7 @@ class Admin_Controller_User extends Controller
         if (RequestMethods::post('submitUpdateProfile')) {
             $security = Registry::get('security');
             $this->checkToken();
+            $errors = array();
             
             if (RequestMethods::post('password') !== RequestMethods::post('password2')) {
                 $errors['password2'] = array('Paswords doesnt match');
@@ -195,11 +195,11 @@ class Admin_Controller_User extends Controller
             if (empty($errors) && $user->validate()) {
                 $user->save();
 
-                Event::fire('admin.log', array('success', 'ID: ' . $user->getId()));
+                Event::fire('admin.log', array('success', 'User id: ' . $user->getId()));
                 $view->successMessage('All changes were successfully saved');
                 self::redirect('/admin/');
             } else {
-                Event::fire('admin.log', array('fail', 'ID: ' . $user->getId()));
+                Event::fire('admin.log', array('fail', 'User id: ' . $user->getId()));
                 $view->set('errors', $errors + $user->getErrors());
             }
         }
@@ -216,7 +216,7 @@ class Admin_Controller_User extends Controller
 
         $errors = array();
         $superAdmin = $security->isGranted('role_superadmin');
-        $user = App_Model_User::first(array('id = ?' => $id));
+        $user = App_Model_User::first(array('id = ?' => (int)$id));
 
         if (NULL === $user) {
             $view->errorMessage('User not found');
@@ -268,11 +268,11 @@ class Admin_Controller_User extends Controller
             if (empty($errors) && $user->validate()) {
                 $user->save();
 
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'User id: ' . $id));
                 $view->successMessage('All changes were successfully saved');
                 self::redirect('/admin/user/');
             } else {
-                Event::fire('admin.log', array('fail', 'ID: ' . $id));
+                Event::fire('admin.log', array('fail', 'User id: ' . $id));
                 $view->set('errors', $errors + $user->getErrors());
             }
         }
@@ -287,20 +287,24 @@ class Admin_Controller_User extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
-        $this->checkToken();
 
-        $user = App_Model_User::first(array('id = ?' => $id));
+        if ($this->checkTokenAjax()) {
 
-        if (NULL === $user) {
-            echo 'User not found';
-        } else {
-            if ($user->delete()) {
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
-                echo 'ok';
+            $user = App_Model_User::first(array('id = ?' => (int) $id));
+
+            if (NULL === $user) {
+                echo 'User not found';
             } else {
-                Event::fire('admin.log', array('fail', 'ID: ' . $id));
-                echo 'Unknown error eccured';
+                if ($user->delete()) {
+                    Event::fire('admin.log', array('success', 'User id: ' . $id));
+                    echo 'ok';
+                } else {
+                    Event::fire('admin.log', array('fail', 'User id: ' . $id));
+                    echo 'Unknown error eccured';
+                }
             }
+        } else {
+            echo 'Security token is not valid';
         }
     }
 

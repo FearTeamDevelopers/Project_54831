@@ -19,6 +19,7 @@ class Mysqldump extends Base
 
     private $_fileHandler = null;
     private $_filename;
+    private $_backupname;
     private $_settings = array();
     private $_tables = array();
     private $_database;
@@ -48,6 +49,7 @@ class Mysqldump extends Base
 
         $this->_settings = $this->_extend($this->_defaultSettings, $settings);
         $this->_filename = APP_PATH . '/temp/db/' . $this->_database->getSchema() . '_' . date('Y-m-d') . '.sql';
+        $this->_backupname = $this->_database->getSchema() . '_' . date('Y-m-d') . '.sql';
     }
 
     public function __destruct()
@@ -85,7 +87,7 @@ class Mysqldump extends Base
         while ($row = $sqlResult->fetch_array(MYSQLI_ASSOC)) {
             if (isset($row['Create Table'])) {
                 $this->_write(
-                        '-------------------------------------------------------' . PHP_EOL .
+                        '-- -----------------------------------------------------' . PHP_EOL .
                         "-- Table structure for table `$tablename` --" . PHP_EOL);
 
                 if ($this->_settings['add-drop-table']) {
@@ -275,6 +277,15 @@ class Mysqldump extends Base
         $this->_close();
 
         return $this;
+    }
+    
+    /**
+     * 
+     * @return type
+     */
+    public function getBackupName()
+    {
+        return $this->_backupname;
     }
 
     /**

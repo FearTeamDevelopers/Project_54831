@@ -107,12 +107,13 @@ class Image extends Base
     public function getDataForDb()
     {
         return array(
-            'filename' => $this->filename,
-            'name' => pathinfo($this->filename, PATHINFO_FILENAME),
+            'path' => $this->filename,
+            'filename' => pathinfo($this->filename, PATHINFO_FILENAME),
             'size' => filesize($this->filename),
             'width' => $this->getWidth(),
             'height' => $this->getHeight(),
-            'mime' =>$this->_originalInfo['mime']
+            'ext' => strtolower(pathinfo($this->filename, PATHINFO_EXTENSION)),
+            'mime' => $this->_originalInfo['mime']
         );
     }
 
@@ -798,7 +799,6 @@ class Image extends Base
      * @param int		$y_offset	Vertical offset in pixels
      *
      * @return Image
-     *
      */
     public function overlay($overlay, $position = 'center', $opacity = 1, $x_offset = 0, $y_offset = 0)
     {
@@ -968,9 +968,7 @@ class Image extends Base
      * Returns the file extension of the specified file
      *
      * @param string	$filename
-     *
      * @return string
-     *
      */
     protected function fileExt($filename)
     {
@@ -983,7 +981,6 @@ class Image extends Base
      * @param string|null	$imagestring	If omitted treat as a normal image
      * @return Image
      * @throws Exception
-     * 
      */
     protected function getMetaData()
     {
@@ -1041,7 +1038,6 @@ class Image extends Base
      * @param $src_w
      * @param $src_h
      * @param $pct
-     *
      */
     protected function imagecopymergealpha($dst_im, $src_im, $dst_x, $dst_y, $src_x, $src_y, $src_w, $src_h, $pct)
     {
@@ -1101,7 +1097,6 @@ class Image extends Base
      * @param int|float		$min
      * @param int|float		$max
      * @return int|float
-     *
      */
     protected function inRange($value, $min, $max)
     {

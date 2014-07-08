@@ -307,10 +307,14 @@ class Security extends Base
         $user = \App_Model_User::first(array(
                     "{$this->_loginCredentials->login} = ?" => $loginCredential
         ));
-
+                    
+        if($user === null){
+            throw new Exception('Email address and/or password are incorrect');
+        }
+        
         $hash = $this->getSaltedHash($password, $user->getSalt());
 
-        if ($user !== null && $user->getPassword() === $hash) {
+        if ($user->getPassword() === $hash) {
             unset($user->_password);
             unset($user->_salt);
 
@@ -328,7 +332,7 @@ class Security extends Base
                     Events::fire('framework.security.authenticate.failure', array($user, $message));
                     throw new Exception\UserPassExpired($message);
                 } else {
-                    $user->setLastLogin();
+                    $user->setLastLogin(date('Y-m-d H:i:s'));
                     $user->save();
 
                     $this->setUser($user);

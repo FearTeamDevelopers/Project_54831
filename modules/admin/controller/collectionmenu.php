@@ -57,13 +57,13 @@ class Admin_Controller_CollectionMenu extends Controller
             if ($clm->validate()) {
                 $id = $clm->save();
 
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'Collection menu id: ' . $id));
                 $view->successMessage('Item has been successfully saved');
                 self::redirect('/admin/collectionmenu/');
             } else {
+                Event::fire('admin.log', array('fail'));
                 $view->set('errors', $clm->getErrors())
                         ->set('clmenu', $clm);
-                Event::fire('admin.log', array('fail'));
             }
         }
     }
@@ -107,12 +107,12 @@ class Admin_Controller_CollectionMenu extends Controller
             if ($clm->validate()) {
                 $clm->save();
 
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'Collection menu id: ' . $id));
                 $view->successMessage('All changes were successfully saved');
                 self::redirect('/admin/collectionmenu/');
             } else {
+                Event::fire('admin.log', array('fail', 'Collection menu id: ' . $id));
                 $view->set('errors', $clm->getErrors());
-                Event::fire('admin.log', array('fail', 'ID: ' . $id));
             }
         }
     }
@@ -135,10 +135,10 @@ class Admin_Controller_CollectionMenu extends Controller
             echo 'Item not found';
         } else {
             if ($clm->delete()) {
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'Collection menu id: ' . $id));
                 echo 'ok';
             } else {
-                Event::fire('admin.log', array('fail', 'ID: ' . $id));
+                Event::fire('admin.log', array('fail', 'Collection menu id: ' . $id));
                 echo 'Unknown error eccured';
             }
         }
@@ -172,7 +172,7 @@ class Admin_Controller_CollectionMenu extends Controller
                     }
 
                     if (empty($errors)) {
-                        Event::fire('admin.log', array('delete success', 'IDs: ' . join(',', $ids)));
+                        Event::fire('admin.log', array('delete success', 'Collection menu ids: ' . join(',', $ids)));
                         $view->successMessage('Items have been deleted');
                     } else {
                         Event::fire('admin.log', array('delete fail', 'Error count:' . count($errors)));
@@ -202,7 +202,7 @@ class Admin_Controller_CollectionMenu extends Controller
                     }
 
                     if (empty($errors)) {
-                        Event::fire('admin.log', array('activate success', 'IDs: ' . join(',', $ids)));
+                        Event::fire('admin.log', array('activate success', 'Collection menu ids: ' . join(',', $ids)));
                         $view->successMessage('Items have been activated');
                     } else {
                         Event::fire('admin.log', array('activate fail', 'Error count:' . count($errors)));
@@ -231,7 +231,7 @@ class Admin_Controller_CollectionMenu extends Controller
                     }
 
                     if (empty($errors)) {
-                        Event::fire('admin.log', array('deactivate success', 'IDs: ' . join(',', $ids)));
+                        Event::fire('admin.log', array('deactivate success', 'Collection menu ids: ' . join(',', $ids)));
                         $view->successMessage('Items have been deactivated');
                     } else {
                         Event::fire('admin.log', array('deactivate fail', 'Error count:' . count($errors)));

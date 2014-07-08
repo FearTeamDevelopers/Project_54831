@@ -57,6 +57,16 @@ class Admin_Model_AdminLog extends Model
      * @validate alpha, max(50)
      */
     protected $_action;
+    
+    /**
+     * @column
+     * @readwrite
+     * @type text
+     * @length 15
+     * 
+     * @validate alpha, max(15)
+     */
+    protected $_result;
 
     /**
      * @column

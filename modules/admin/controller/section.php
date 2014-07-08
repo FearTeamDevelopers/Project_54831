@@ -69,9 +69,7 @@ class Admin_Controller_Section extends Controller
                     array('id', 'parentId', 'title')
         );
 
-        $section = App_Model_Section::first(array(
-                    'id = ?' => $id
-        ));
+        $section = App_Model_Section::first(array('id = ?' => (int)$id));
 
         if (NULL === $section) {
             $view->errorMessage('Section not found');

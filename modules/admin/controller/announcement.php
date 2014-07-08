@@ -47,12 +47,11 @@ class Admin_Controller_Announcement extends Controller
             if ($announc->validate()) {
                 $id = $announc->save();
 
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'Announcement id: ' . $id));
                 $view->successMessage('Announcement has been successfully created');
                 self::redirect('/admin/announcement/');
             } else {
                 Event::fire('admin.log', array('fail'));
-                var_dump($announc->getErrors());
                 $view->set('errors', $announc->getErrors())
                         ->set('announc', $announc);
             }
@@ -70,7 +69,7 @@ class Admin_Controller_Announcement extends Controller
         $view = $this->getActionView();
 
         $announc = App_Model_Announcement::first(array(
-                    'id = ?' => $id
+                    'id = ?' => (int)$id
         ));
 
         if (NULL === $announc) {
@@ -93,11 +92,11 @@ class Admin_Controller_Announcement extends Controller
             if ($announc->validate()) {
                 $announc->save();
 
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'Announcement id: ' . $id));
                 $view->successMessage('All changes were successfully saved');
                 self::redirect('/admin/announcement/');
             } else {
-                Event::fire('admin.log', array('fail', 'ID: ' . $id));
+                Event::fire('admin.log', array('fail', 'Announcement id: ' . $id));
                 $view->set('errors', $announc->getErrors());
             }
         }
@@ -117,17 +116,18 @@ class Admin_Controller_Announcement extends Controller
         $this->checkToken();
 
         $announc = App_Model_Announcement::first(
-                        array('id = ?' => $id), array('id')
+                        array('id = ?' => (int) $id),
+                        array('id')
         );
 
         if (NULL === $announc) {
             echo 'Announcement not found';
         } else {
             if ($announc->delete()) {
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'Announcement id: ' . $id));
                 echo 'ok';
             } else {
-                Event::fire('admin.log', array('fail', 'ID: ' . $id));
+                Event::fire('admin.log', array('fail', 'Announcement id: ' . $id));
                 echo 'Unknown error eccured';
             }
         }

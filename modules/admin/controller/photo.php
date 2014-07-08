@@ -85,9 +85,9 @@ class Admin_Controller_Photo extends Controller
                 'description' => RequestMethods::post('description', ''),
                 'category' => RequestMethods::post('category', ''),
                 'priority' => RequestMethods::post('priority', 0),
-                'photoName' => $uploaded->photo->name,
-                'thumbPath' => trim($uploaded->thumb->filename, '.'),
-                'path' => trim($uploaded->photo->filename, '.'),
+                'photoName' => $uploaded->photo->filename,
+                'thumbPath' => trim($uploaded->thumb->path, '.'),
+                'path' => trim($uploaded->photo->path, '.'),
                 'mime' => $uploaded->photo->mime,
                 'size' => $uploaded->photo->size,
                 'width' => $uploaded->photo->width,
@@ -113,7 +113,7 @@ class Admin_Controller_Photo extends Controller
                     $photoSection->save();
                 }
 
-                Event::fire('admin.log', array('success', 'ID: ' . $photoId));
+                Event::fire('admin.log', array('success', 'Photo id: ' . $photoId));
                 $view->successMessage('Photo has been successfully uploaded');
                 self::redirect('/admin/photo/');
             } else {
@@ -152,9 +152,9 @@ class Admin_Controller_Photo extends Controller
                         'description' => RequestMethods::post('description', ''),
                         'category' => RequestMethods::post('category', ''),
                         'priority' => RequestMethods::post('priority', 0),
-                        'photoName' => $object->photo->name,
-                        'thumbPath' => trim($object->thumb->filename, '.'),
-                        'path' => trim($object->photo->filename, '.'),
+                        'photoName' => $object->photo->filename,
+                        'thumbPath' => trim($object->thumb->path, '.'),
+                        'path' => trim($object->photo->path, '.'),
                         'mime' => $object->photo->mime,
                         'size' => $object->photo->size,
                         'width' => $object->photo->width,
@@ -181,7 +181,7 @@ class Admin_Controller_Photo extends Controller
                             $photoSection->save();
                         }
 
-                        Event::fire('admin.log', array('success', 'ID: ' . $photoId));
+                        Event::fire('admin.log', array('success', 'Photo id: ' . $photoId));
                     } else {
                         Event::fire('admin.log', array('fail'));
                         $errors = $errors + $photo->getErrors();
@@ -216,7 +216,7 @@ class Admin_Controller_Photo extends Controller
                         ), array('id', 'urlKey', 'title')
         );
 
-        $photo = App_Model_Photo::first(array('id = ?' => $id));
+        $photo = App_Model_Photo::first(array('id = ?' => (int)$id));
 
         if (NULL === $photo) {
             $view->errorMessage('Photo not found');
@@ -267,11 +267,11 @@ class Admin_Controller_Photo extends Controller
                     }
                 }
 
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'Photo id: ' . $id));
                 $view->successMessage('All changes were successfully saved');
                 self::redirect('/admin/photo/');
             } else {
-                Event::fire('admin.log', array('fail', 'ID: ' . $id));
+                Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
                 $view->set('errors', $errors + $photo->getErrors());
             }
         }
@@ -288,7 +288,8 @@ class Admin_Controller_Photo extends Controller
 
         if ($this->checkTokenAjax()) {
             $photo = App_Model_Photo::first(
-                            array('id = ?' => $id), array('id', 'thumbPath', 'path')
+                            array('id = ?' => (int)$id),
+                            array('id', 'thumbPath', 'path')
             );
 
             if (NULL === $photo) {
@@ -297,10 +298,10 @@ class Admin_Controller_Photo extends Controller
                 if ($photo->delete()) {
                     unlink($photo->getUnlinkPath());
                     unlink($photo->getUnlinkThumbPath());
-                    Event::fire('admin.log', array('success', 'ID: ' . $id));
+                    Event::fire('admin.log', array('success', 'Photo id: ' . $id));
                     echo 'ok';
                 } else {
-                    Event::fire('admin.log', array('fail', 'ID: ' . $id));
+                    Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
                     echo 'Unknown error eccured';
                 }
             }
@@ -342,7 +343,7 @@ class Admin_Controller_Photo extends Controller
                     }
 
                     if (empty($errors)) {
-                        Event::fire('admin.log', array('delete success', 'IDs: ' . join(',', $ids)));
+                        Event::fire('admin.log', array('delete success', 'Photo ids: ' . join(',', $ids)));
                         $view->successMessage('Photos have been deleted');
                     } else {
                         Event::fire('admin.log', array('delete fail', 'Error count:' . count($errors)));
@@ -373,7 +374,7 @@ class Admin_Controller_Photo extends Controller
                     }
 
                     if (empty($errors)) {
-                        Event::fire('admin.log', array('activate success', 'IDs: ' . join(',', $ids)));
+                        Event::fire('admin.log', array('activate success', 'Photo ids: ' . join(',', $ids)));
                         $view->successMessage('Photos have been activated');
                     } else {
                         Event::fire('admin.log', array('activate fail', 'Error count:' . count($errors)));
@@ -404,7 +405,7 @@ class Admin_Controller_Photo extends Controller
                     }
 
                     if (empty($errors)) {
-                        Event::fire('admin.log', array('deactivate success', 'IDs: ' . join(',', $ids)));
+                        Event::fire('admin.log', array('deactivate success', 'Photo ids: ' . join(',', $ids)));
                         $view->successMessage('Photos have been deactivated');
                     } else {
                         Event::fire('admin.log', array('deactivate fail', 'Error count:' . count($errors)));

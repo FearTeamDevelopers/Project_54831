@@ -89,13 +89,13 @@ class Admin_Controller_News extends Controller
             if ($news->validate()) {
                 $id = $news->save();
 
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'News id: ' . $id));
                 $view->successMessage('News has been successfully saved');
                 self::redirect('/admin/news/');
             } else {
+                Event::fire('admin.log', array('fail'));
                 $view->set('errors', $news->getErrors())
                         ->set('news', $news);
-                Event::fire('admin.log', array('fail', 'ID:'));
             }
         }
     }
@@ -110,7 +110,7 @@ class Admin_Controller_News extends Controller
         $photos = $this->_getPhotos();
         $videos = $this->_getVideos();
 
-        $news = App_Model_News::first(array('id = ?' => $id));
+        $news = App_Model_News::first(array('id = ?' => (int)$id));
 
         if ($news === null) {
             $view->errorMessage('News not found');
@@ -137,12 +137,12 @@ class Admin_Controller_News extends Controller
             if ($news->validate()) {
                 $news->save();
 
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'News id: ' . $id));
                 $view->successMessage('All changes were successfully saved');
                 self::redirect('/admin/news/');
             } else {
+                Event::fire('admin.log', array('fail', 'News id: ' . $id));
                 $view->set('errors', $news->getErrors());
-                Event::fire('admin.log', array('fail', 'ID: ' . $id));
             }
         }
     }
@@ -157,17 +157,18 @@ class Admin_Controller_News extends Controller
         $this->checkToken();
         
         $news = App_Model_News::first(
-                        array('id = ?' => $id), array('id')
+                        array('id = ?' => (int)$id), 
+                        array('id')
         );
 
         if (NULL === $news) {
             echo 'News not found';
         } else {
             if ($news->delete()) {
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'News id: ' . $id));
                 echo 'ok';
             } else {
-                Event::fire('admin.log', array('fail', 'ID: ' . $id));
+                Event::fire('admin.log', array('fail', 'News id: ' . $id));
                 echo 'Unknown error eccured';
             }
         }
@@ -200,7 +201,7 @@ class Admin_Controller_News extends Controller
                     }
 
                     if (empty($errors)) {
-                        Event::fire('admin.log', array('delete success', 'IDs: ' . join(',', $ids)));
+                        Event::fire('admin.log', array('delete success', 'News ids: ' . join(',', $ids)));
                         $view->successMessage('News have been deleted');
                     } else {
                         Event::fire('admin.log', array('delete fail', 'Error count:' . count($errors)));
@@ -229,7 +230,7 @@ class Admin_Controller_News extends Controller
                     }
 
                     if (empty($errors)) {
-                        Event::fire('admin.log', array('activate success', 'IDs: ' . join(',', $ids)));
+                        Event::fire('admin.log', array('activate success', 'News ids: ' . join(',', $ids)));
                         $view->successMessage('News have been activated');
                     } else {
                         Event::fire('admin.log', array('activate fail', 'Error count:' . count($errors)));
@@ -258,7 +259,7 @@ class Admin_Controller_News extends Controller
                     }
 
                     if (empty($errors)) {
-                        Event::fire('admin.log', array('deactivate success', 'IDs: ' . join(',', $ids)));
+                        Event::fire('admin.log', array('deactivate success', 'News ids: ' . join(',', $ids)));
                         $view->successMessage('News have been deactivated');
                     } else {
                         Event::fire('admin.log', array('deactivate fail', 'Error count:' . count($errors)));

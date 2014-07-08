@@ -25,8 +25,10 @@ class Admin_Etc_Observer
         $action = $route->getAction();
 
         if (!empty($params)) {
+            $result = array_shift($params);
             $paramStr = join(', ', $params);
         } else {
+            $result = 'fail';
             $paramStr = '';
         }
 
@@ -35,6 +37,7 @@ class Admin_Etc_Observer
             'module' => $module,
             'controller' => $controller,
             'action' => $action,
+            'result' => $result,
             'params' => $paramStr
         ));
 

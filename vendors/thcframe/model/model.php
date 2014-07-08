@@ -102,7 +102,7 @@ class Model extends Base
         ),
         'path' => array(
             'handler' => '_validatePath',
-            'message' => 'The {0} field can contain filesystem path'
+            'message' => 'The {0} field must contain filesystem path'
         )
     );
 
@@ -185,17 +185,22 @@ class Model extends Base
         if ($value == '') {
             return true;
         } else {
-            return StringMethods::match($value, '#((<|&lt;)(strong|em|s|p|div|a|img|table|tr|td|thead|tbody|ol|li|ul|caption|span)(.*)(>|&gt;)'
+            return StringMethods::match($value, '#((<|&lt;)(strong|em|s|p|div|a|img|table|tr|td|thead|tbody|ol|li|ul|caption|span)(>|&gt;)'
                             . '([a-zA-Zá-žÁ-Ž0-9_-\s\?\.,!:()+=\"&@\*]*)</\2>)*([a-zA-Zá-žÁ-Ž0-9_-\s\?\.,!:()+=\"&@\*]*)#');
         }
     }
 
+    /**
+     * 
+     * @param type $value
+     * @return boolean
+     */
     protected function _validatePath($value)
     {
         if ($value == '') {
             return true;
         } else {
-            return StringMethods::match($value, '#^([a-zA-Z0-9_-\\\/:]*)\.([a-z]{2,4})$#');
+            return StringMethods::match($value, '#^([a-zA-Z0-9_\\-\/:]*\.[a-z]{2,4})$#');
         }
     }
 
@@ -242,7 +247,11 @@ class Model extends Base
      */
     protected function _validateUrl($value)
     {
-        return filter_var($value, FILTER_VALIDATE_URL);
+        if ($value == '') {
+            return true;
+        } else {
+            return filter_var($value, FILTER_VALIDATE_URL);
+        }
     }
 
     /**
@@ -252,6 +261,10 @@ class Model extends Base
      */
     protected function _validateDatetime($value)
     {
+        if($value == ''){
+            return true;
+        }
+        
         list($date, $time) = explode(' ', $value);
 
         $validDate = $this->_validateDate($date);

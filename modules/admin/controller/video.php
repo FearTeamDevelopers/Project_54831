@@ -86,13 +86,14 @@ class Admin_Controller_Video extends Controller
                     $videoSection->save();
                 }
 
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'Video id: ' . $id));
                 $view->successMessage('Video has been successfully saved');
                 self::redirect('/admin/video/');
             } else {
+                Event::fire('admin.log', array('fail'));
                 $view->set('errors', $video->getErrors())
                         ->set('video', $video);
-                Event::fire('admin.log', array('fail'));
+                
             }
         }
     }
@@ -112,7 +113,7 @@ class Admin_Controller_Video extends Controller
                         ), array('id', 'urlKey', 'title')
         );
 
-        $video = App_Model_Video::first(array('id = ?' => $id));
+        $video = App_Model_Video::first(array('id = ?' => (int)$id));
 
         if (NULL === $video) {
             $view->errorMessage('Video not found');
@@ -165,12 +166,13 @@ class Admin_Controller_Video extends Controller
                     }
                 }
 
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
+                Event::fire('admin.log', array('success', 'Video id: ' . $id));
                 $view->successMessage('All changes were successfully saved');
                 self::redirect('/admin/video/');
             } else {
+                Event::fire('admin.log', array('fail', 'Video id: ' . $id));
                 $view->set('errors', $video->getErrors());
-                Event::fire('admin.log', array('fail', 'ID: ' . $id));
+                
             }
         }
     }
@@ -182,22 +184,25 @@ class Admin_Controller_Video extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
-        $this->checkToken();
 
-        $video = App_Model_Video::first(
-                        array('id = ?' => $id), array('id')
-        );
+        if ($this->checkTokenAjax()) {
+            $video = App_Model_Video::first(
+                            array('id = ?' => (int) $id), array('id')
+            );
 
-        if (NULL === $video) {
-            echo 'Video not found';
-        } else {
-            if ($video->delete()) {
-                Event::fire('admin.log', array('success', 'ID: ' . $id));
-                echo 'ok';
+            if (NULL === $video) {
+                echo 'Video not found';
             } else {
-                Event::fire('admin.log', array('fail', 'ID: ' . $id));
-                echo 'Unknown error eccured';
+                if ($video->delete()) {
+                    Event::fire('admin.log', array('success', 'Video id: ' . $id));
+                    echo 'ok';
+                } else {
+                    Event::fire('admin.log', array('fail', 'Video id: ' . $id));
+                    echo 'Unknown error eccured';
+                }
             }
+        } else {
+            echo 'Security token is not valid';
         }
     }
 
@@ -260,7 +265,7 @@ class Admin_Controller_Video extends Controller
                     }
 
                     if (empty($errors)) {
-                        Event::fire('admin.log', array('activate success', 'IDs: ' . join(',', $ids)));
+                        Event::fire('admin.log', array('activate success', 'Video ids: ' . join(',', $ids)));
                         $view->successMessage('Videos have been activated');
                     } else {
                         Event::fire('admin.log', array('activate fail', 'Error count:' . count($errors)));
@@ -290,7 +295,7 @@ class Admin_Controller_Video extends Controller
                     }
 
                     if (empty($errors)) {
-                        Event::fire('admin.log', array('deactivate success', 'IDs: ' . join(',', $ids)));
+                        Event::fire('admin.log', array('deactivate success', 'Video ids: ' . join(',', $ids)));
                         $view->successMessage('Videos have been deactivated');
                     } else {
                         Event::fire('admin.log', array('deactivate fail', 'Error count:' . count($errors)));

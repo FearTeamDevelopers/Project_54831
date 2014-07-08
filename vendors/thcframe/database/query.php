@@ -364,6 +364,7 @@ class Query extends Base
 
         if ($result === false) {
             if (ENV == 'dev') {
+                \THCFrame\Core\Core::log($sql);
                 throw new Exception\Sql(sprintf('SQL: %s', $this->connector->getLastError()));
             } else {
                 throw new Exception\Sql('There was an error with your SQL query');

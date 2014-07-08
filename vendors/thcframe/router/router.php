@@ -142,12 +142,16 @@ class Router extends Base
                 $new_route->setAction($route['action']);
             }
 
-            if (isset($route['args']) && preg_match('/^:/', $route['args'])) {
-                $new_route->addDynamicElement($route['args'], $route['args']);
-            }
-
-            if (isset($route['args2']) && preg_match('/^:/', $route['args2'])) {
-                $new_route->addDynamicElement($route['args2'], $route['args2']);
+            if (isset($route['args']) && is_array($route['args'])) {
+                foreach ($route['args'] as $arg) {
+                    if (preg_match('/^:/', $arg)) {
+                        $new_route->addDynamicElement($arg, $arg);
+                    }
+                }
+            } elseif (isset($route['args']) && !is_array($route['args'])) {
+                if (preg_match('/^:/', $route['args'])) {
+                    $new_route->addDynamicElement($route['args'], $route['args']);
+                }
             }
 
             $this->addRoute($new_route);
