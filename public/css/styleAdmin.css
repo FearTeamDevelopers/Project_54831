@@ -43,6 +43,7 @@ h1,h2,h3 { font-family: 'BebasNeueRegular', Arial, Helvetica, sans-serif; letter
 .radius50 { -moz-border-radius: 50px; -webkit-border-radius: 50px; border-radius: 50px; }
 .bebas { font-family: 'BebasNeueRegular', Arial, Helvetica, sans-serif; }
 .width1 { width: 1px; }
+.clear-all {clear: both;}
 
 button,input,select,textarea { font-size: 13px; font-family: Arial, Helvetica, sans-serif; margin: 0; }
 

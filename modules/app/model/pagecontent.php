@@ -42,9 +42,9 @@ class App_Model_PageContent extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 100
+     * @length 150
      * 
-     * @validate required, alpha, max(100)
+     * @validate required, alpha, max(150)
      * @label page
      */
     protected $_pageName;
@@ -55,7 +55,7 @@ class App_Model_PageContent extends Model
      * @type text
      * @length 256
      * 
-     * @validate required, html, max(8192)
+     * @validate required, html, max(30000)
      * @label text
      */
     protected $_body;

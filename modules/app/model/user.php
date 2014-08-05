@@ -50,7 +50,7 @@ class App_Model_User extends Model implements UserInterface {
      * @length 40
      * @unique
      *
-     * @validate min(30), max(40)
+     * @validate max(40)
      */
     protected $_salt;
     

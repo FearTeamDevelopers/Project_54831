@@ -12,6 +12,36 @@ class Admin_Controller_CollectionMenu extends Controller
 {
 
     /**
+     * 
+     * @param type $string
+     * @return type
+     */
+    private function createUrlKey($string)
+    {
+        $string = StringMethods::removeDiacriticalMarks($string);
+        $string = str_replace(array('.', ',', '_', '(', ')', ' '), '-', $string);
+        $string = trim($string);
+        $string = trim($string, '-');
+        return strtolower($string);
+    }
+    
+    /**
+     * 
+     * @param type $key
+     * @return boolean
+     */
+    private function checkUrlKey($key)
+    {
+        $status = App_Model_Product::first(array('urlKey = ?' => $key));
+
+        if ($status === null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
      * @before _secured, _publisher
      */
     public function index()
@@ -44,8 +74,13 @@ class Admin_Controller_CollectionMenu extends Controller
 
         if (RequestMethods::post('submitAddClmenu')) {
             $this->checkToken();
-            $urlKey = StringMethods::removeDiacriticalMarks(RequestMethods::post('urlkey'));
+            $errors = array();
+            $urlKey = $this->createUrlKey(RequestMethods::post('urlkey'));
 
+            if(!$this->checkUrlKey($urlKey)){
+                $errors['title'] = array('This title is already used');
+            }
+            
             $clm = new App_Model_CollectionMenu(array(
                 'sectionId' => RequestMethods::post('section'),
                 'title' => RequestMethods::post('title'),
@@ -54,7 +89,7 @@ class Admin_Controller_CollectionMenu extends Controller
                 'rank' => RequestMethods::post('rank', 1)
             ));
 
-            if ($clm->validate()) {
+            if (empty($errors) && $clm->validate()) {
                 $id = $clm->save();
 
                 Event::fire('admin.log', array('success', 'Collection menu id: ' . $id));
@@ -62,7 +97,7 @@ class Admin_Controller_CollectionMenu extends Controller
                 self::redirect('/admin/collectionmenu/');
             } else {
                 Event::fire('admin.log', array('fail'));
-                $view->set('errors', $clm->getErrors())
+                $view->set('errors', $errors + $clm->getErrors())
                         ->set('clmenu', $clm);
             }
         }
@@ -95,7 +130,12 @@ class Admin_Controller_CollectionMenu extends Controller
 
         if (RequestMethods::post('submitEditClmenu')) {
             $this->checkToken();
-            $urlKey = StringMethods::removeDiacriticalMarks(RequestMethods::post('urlkey'));
+            $errors = array();
+            $urlKey = $this->createUrlKey(RequestMethods::post('urlkey'));
+            
+            if($clm->urlKey != $urlKey && !$this->checkUrlKey($urlKey)){
+                $errors['title'] = array('This title is already used');
+            }
 
             $clm->sectionId = RequestMethods::post('section');
             $clm->title = RequestMethods::post('title');
@@ -104,7 +144,7 @@ class Admin_Controller_CollectionMenu extends Controller
             $clm->rank = RequestMethods::post('rank', 1);
             $clm->active = RequestMethods::post('active');
 
-            if ($clm->validate()) {
+            if (empty($errors) && $clm->validate()) {
                 $clm->save();
 
                 Event::fire('admin.log', array('success', 'Collection menu id: ' . $id));
@@ -112,7 +152,7 @@ class Admin_Controller_CollectionMenu extends Controller
                 self::redirect('/admin/collectionmenu/');
             } else {
                 Event::fire('admin.log', array('fail', 'Collection menu id: ' . $id));
-                $view->set('errors', $clm->getErrors());
+                $view->set('errors', $errors + $clm->getErrors());
             }
         }
     }

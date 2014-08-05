@@ -47,9 +47,9 @@ class App_Model_CollectionMenu extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 50
+     * @length 150
      * 
-     * @validate required, alphanumeric, max(50)
+     * @validate required, alphanumeric, max(150)
      * @label title
      */
     protected $_title;
@@ -58,11 +58,11 @@ class App_Model_CollectionMenu extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 100
+     * @length 200
      * @unique
      * @index
      * 
-     * @validate required, alphanumeric, max(100)
+     * @validate required, alphanumeric, max(200)
      * @label url key
      */
     protected $_urlKey;
@@ -71,9 +71,9 @@ class App_Model_CollectionMenu extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 50
+     * @length 150
      * 
-     * @validate required, alphanumeric, max(50)
+     * @validate required, alphanumeric, max(150)
      * @label custom name
      */
     protected $_customName;

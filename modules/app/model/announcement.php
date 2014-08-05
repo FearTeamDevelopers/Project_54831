@@ -31,9 +31,9 @@ class App_Model_Announcement extends Model {
      * @column
      * @readwrite
      * @type text
-     * @length 100
+     * @length 150
      * 
-     * @validate required, alphanumeric, max(100)
+     * @validate required, alphanumeric, max(150)
      * @label title
      */
     protected $_title;
@@ -44,7 +44,7 @@ class App_Model_Announcement extends Model {
      * @type text
      * @length 256
      * 
-     * @validate required, html, max(2048)
+     * @validate required, html, max(5000)
      * @label text
      */
     protected $_body;
@@ -53,9 +53,9 @@ class App_Model_Announcement extends Model {
      * @column
      * @readwrite
      * @type text
-     * @length 80
+     * @length 100
      * 
-     * @validate required, max(80)
+     * @validate required, max(100)
      * @label signature
      */
     protected $_signature;
@@ -64,9 +64,9 @@ class App_Model_Announcement extends Model {
      * @column
      * @readwrite
      * @type text
-     * @length 22
+     * @length 15
      * 
-     * @validate date, max(22)
+     * @validate date, max(15)
      * @label start date
      */
     protected $_dateStart;
@@ -75,9 +75,9 @@ class App_Model_Announcement extends Model {
      * @column
      * @readwrite
      * @type text
-     * @length 22
+     * @length 15
      * 
-     * @validate date, max(22)
+     * @validate date, max(15)
      * @label end date
      */
     protected $_dateEnd;

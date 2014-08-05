@@ -37,9 +37,9 @@ class App_Model_Video extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 100
+     * @length 150
      * 
-     * @validate required, alphanumeric, max(100)
+     * @validate required, alphanumeric, max(150)
      * @label title
      */
     protected $_title;
@@ -48,9 +48,9 @@ class App_Model_Video extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 150
+     * @length 250
      * 
-     * @validate required, url, max(150)
+     * @validate required, url, max(250)
      * @label url
      */
     protected $_path;

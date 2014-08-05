@@ -46,9 +46,9 @@ class App_Model_Partner extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 100
+     * @length 150
      * 
-     * @validate required, alphanumeric, max(60)
+     * @validate required, alphanumeric, max(150)
      * @label title
      */
     protected $_title;
@@ -69,9 +69,9 @@ class App_Model_Partner extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 100
+     * @length 150
      * 
-     * @validate required, url, max(100)
+     * @validate required, url, max(150)
      * @label web
      */
     protected $_web;
@@ -82,7 +82,7 @@ class App_Model_Partner extends Model
      * @type text
      * @length 200
      * 
-     * @validate max(200)
+     * @validate path, max(200)
      * @label logo
      */
     protected $_logo;

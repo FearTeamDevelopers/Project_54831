@@ -3,7 +3,7 @@
 use Admin\Etc\Controller;
 use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
-use THCFrame\Filesystem\ImageManager;
+use THCFrame\Filesystem\FileManager;
 use THCFrame\Core\ArrayMethods;
 
 /**
@@ -60,22 +60,21 @@ class Admin_Controller_Photo extends Controller
         );
 
         $view->set('sections', $sections);
+        
+        $fileManager = new FileManager(array(
+            'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
+            'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
+            'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
+            'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
+            'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
+        ));
 
         if (RequestMethods::post('submitAddPhoto')) {
             $this->checkToken();
             $errors = array();
             
             try {
-                $uploadTo = 'section_photos';
-                $im = new ImageManager(array(
-                    'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
-                    'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
-                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
-                    'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
-                    'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
-                ));
-                
-                $photoArr = $im->upload('photo', $uploadTo);
+                $photoArr = $fileManager->upload('photo', 'section_photos');
                 $uploaded = ArrayMethods::toObject($photoArr);
             } catch (Exception $ex) {
                 $errors['photo'] = $ex->getMessage();
@@ -85,13 +84,13 @@ class Admin_Controller_Photo extends Controller
                 'description' => RequestMethods::post('description', ''),
                 'category' => RequestMethods::post('category', ''),
                 'priority' => RequestMethods::post('priority', 0),
-                'photoName' => $uploaded->photo->filename,
+                'photoName' => $uploaded->file->filename,
                 'thumbPath' => trim($uploaded->thumb->path, '.'),
-                'path' => trim($uploaded->photo->path, '.'),
-                'mime' => $uploaded->photo->mime,
-                'size' => $uploaded->photo->size,
-                'width' => $uploaded->photo->width,
-                'height' => $uploaded->photo->height,
+                'path' => trim($uploaded->file->path, '.'),
+                'mime' => $uploaded->file->ext,
+                'size' => $uploaded->file->size,
+                'width' => $uploaded->file->width,
+                'height' => $uploaded->file->height,
                 'thumbSize' => $uploaded->thumb->size,
                 'thumbWidth' => $uploaded->thumb->width,
                 'thumbHeight' => $uploaded->thumb->height
@@ -126,16 +125,7 @@ class Admin_Controller_Photo extends Controller
             $errors = $errors['photos'] = array();
             
             try {
-                $uploadTo = 'section_photos';
-                $im = new ImageManager(array(
-                    'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
-                    'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
-                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
-                    'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
-                    'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
-                ));
-                
-                $result = $im->upload('photos', $uploadTo);
+                $result = $fileManager->upload('photos', 'section_photos');
             } catch (Exception $ex) {
                 $errors['photos'] = $ex->getMessage();
             }
@@ -145,20 +135,20 @@ class Admin_Controller_Photo extends Controller
             }
 
             if (is_array($result) && !empty($result['photos'])) {
-                foreach ($result['photos'] as $image) {
+                foreach ($result['files'] as $image) {
                     $object = ArrayMethods::toObject($image);
 
                     $photo = new App_Model_Photo(array(
                         'description' => RequestMethods::post('description', ''),
                         'category' => RequestMethods::post('category', ''),
                         'priority' => RequestMethods::post('priority', 0),
-                        'photoName' => $object->photo->filename,
+                        'photoName' => $object->file->filename,
                         'thumbPath' => trim($object->thumb->path, '.'),
-                        'path' => trim($object->photo->path, '.'),
-                        'mime' => $object->photo->mime,
-                        'size' => $object->photo->size,
-                        'width' => $object->photo->width,
-                        'height' => $object->photo->height,
+                        'path' => trim($object->file->path, '.'),
+                        'mime' => $object->file->ext,
+                        'size' => $object->file->size,
+                        'width' => $object->file->width,
+                        'height' => $object->file->height,
                         'thumbSize' => $object->thumb->size,
                         'thumbWidth' => $object->thumb->width,
                         'thumbHeight' => $object->thumb->height

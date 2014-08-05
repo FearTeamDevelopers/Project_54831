@@ -48,9 +48,9 @@ class App_Model_Collection extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 100
+     * @length 150
      * 
-     * @validate required, alphanumeric, max(100)
+     * @validate required, alphanumeric, max(150)
      * @label title
      */
     protected $_title;
@@ -59,9 +59,9 @@ class App_Model_Collection extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 20
+     * @length 15
      * 
-     * @validate required, date, max(20)
+     * @validate required, date, max(15)
      * @label date
      */
     protected $_date;
@@ -94,7 +94,7 @@ class App_Model_Collection extends Model
      * @type text
      * @length 256
      * 
-     * @validate required, html, max(1024)
+     * @validate required, html, max(5000)
      * @label description
      */
     protected $_description;

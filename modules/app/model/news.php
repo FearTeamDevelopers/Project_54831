@@ -32,9 +32,9 @@ class App_Model_News extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 100
+     * @length 200
      * 
-     * @validate required, alphanumeric, max(100)
+     * @validate required, alphanumeric, max(200)
      * @label url key
      */
     protected $_urlKey;
@@ -54,9 +54,9 @@ class App_Model_News extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 100
+     * @length 150
      * 
-     * @validate required, alphanumeric, max(100)
+     * @validate required, alphanumeric, max(150)
      * @label title
      */
     protected $_title;
@@ -67,7 +67,7 @@ class App_Model_News extends Model
      * @type text
      * @length 256
      * 
-     * @validate required, html, max(1024)
+     * @validate required, html, max(5000)
      * @label short text
      */
     protected $_shortBody;
@@ -78,7 +78,7 @@ class App_Model_News extends Model
      * @type text
      * @length 256
      * 
-     * @validate alphanumeric, max(2048)
+     * @validate alphanumeric, max(5000)
      * @label Rss feed text
      */
     protected $_rssFeedBody;
@@ -89,7 +89,7 @@ class App_Model_News extends Model
      * @type text
      * @length 256
      * 
-     * @validate required, html, max(5000)
+     * @validate required, html, max(15000)
      * @label text
      */
     protected $_body;

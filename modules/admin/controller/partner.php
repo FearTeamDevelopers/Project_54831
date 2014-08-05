@@ -3,7 +3,7 @@
 use Admin\Etc\Controller;
 use THCFrame\Request\RequestMethods;
 use THCFrame\Core\ArrayMethods;
-use THCFrame\Filesystem\ImageManager;
+use THCFrame\Filesystem\FileManager;
 use THCFrame\Events\Events as Event;
 
 /**
@@ -22,8 +22,7 @@ class Admin_Controller_Partner extends Controller
         $view = $this->getActionView();
 
         $query = App_Model_Partner::getQuery(array('pa.*'))
-                ->join('tb_section', 'pa.sectionId = s.id', 's', 
-                        array('s.title' => 'sectionTitle'));
+                ->join('tb_section', 'pa.sectionId = s.id', 's', array('s.title' => 'sectionTitle'));
 
         $partners = App_Model_Partner::initialize($query);
 
@@ -48,16 +47,16 @@ class Admin_Controller_Partner extends Controller
             $this->checkToken();
             $errors = array();
 
-            try {
-                $im = new ImageManager(array(
-                    'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
-                    'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
-                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
-                    'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
-                    'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
-                ));
+            $fileManager = new FileManager(array(
+                'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
+                'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
+                'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
+                'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
+                'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
+            ));
 
-                $photoArr = $im->uploadWithoutThumb('logo', 'partners');
+            try {
+                $photoArr = $fileManager->uploadWithoutThumb('logo', 'partners');
                 $uploaded = ArrayMethods::toObject($photoArr);
             } catch (Exception $ex) {
                 $errors['logo'] = $ex->getMessage();
@@ -69,7 +68,7 @@ class Admin_Controller_Partner extends Controller
                 'address' => RequestMethods::post('address', ''),
                 'email' => RequestMethods::post('email', ''),
                 'web' => RequestMethods::post('web'),
-                'logo' => trim($uploaded->photo->path, '.'),
+                'logo' => trim($uploaded->file->path, '.'),
                 'mobile' => RequestMethods::post('mobile', '')
             ));
 
@@ -102,7 +101,7 @@ class Admin_Controller_Partner extends Controller
                         ), array('id', 'parentId', 'title')
         );
 
-        $partner = App_Model_Partner::first(array('id = ?' => (int)$id));
+        $partner = App_Model_Partner::first(array('id = ?' => (int) $id));
 
         if (NULL === $partner) {
             $view->errorMessage('Partner not found');
@@ -116,18 +115,18 @@ class Admin_Controller_Partner extends Controller
             $this->checkToken();
 
             if ($partner->logo == '') {
+                $fileManager = new FileManager(array(
+                'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
+                'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
+                'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
+                'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
+                'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
+            ));
+                
                 try {
-                    $im = new ImageManager(array(
-                        'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
-                        'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
-                        'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
-                        'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
-                        'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
-                    ));
-
-                    $photoArr = $im->uploadWithoutThumb('logo', 'partners');
+                    $photoArr = $fileManager->uploadWithoutThumb('logo', 'partners');
                     $uploaded = ArrayMethods::toObject($photoArr);
-                    $logo = trim($uploaded->photo->path, '.');
+                    $logo = trim($uploaded->file->path, '.');
                 } catch (Exception $ex) {
                     $errors['logo'] = $ex->getMessage();
                 }
@@ -169,8 +168,7 @@ class Admin_Controller_Partner extends Controller
         $this->checkToken();
 
         $partner = App_Model_Partner::first(
-                        array('id = ?' => (int) $id), 
-                        array('id', 'logo')
+                        array('id = ?' => (int) $id), array('id', 'logo')
         );
 
         if (NULL === $partner) {
@@ -197,7 +195,7 @@ class Admin_Controller_Partner extends Controller
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
 
-        $partner = App_Model_Partner::first(array('id = ?' => (int)$id));
+        $partner = App_Model_Partner::first(array('id = ?' => (int) $id));
 
         if (NULL !== $partner) {
             $path = $partner->getUnlinkLogoPath();
@@ -346,7 +344,7 @@ class Admin_Controller_Partner extends Controller
     {
         $view = $this->getActionView();
 
-        $section = App_Model_Section::first(array('id = ?' => (int)$id));
+        $section = App_Model_Section::first(array('id = ?' => (int) $id));
 
         if (NULL === $section) {
             $view->errorMessage('Section not found');

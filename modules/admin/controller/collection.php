@@ -210,15 +210,6 @@ class Admin_Controller_Collection extends Controller
             if ($collection->delete()) {
                 if (RequestMethods::post('action') == 1) {
                     $fm = new FileManager();
-                    $configuration = Registry::get('config');
-
-                    if (!empty($configuration->files)) {
-                        $pathToImages = trim($configuration->files->pathToImages, '/');
-                        $pathToThumbs = trim($configuration->files->pathToThumbs, '/');
-                    } else {
-                        $pathToImages = 'public/uploads/images';
-                        $pathToThumbs = 'public/uploads/images';
-                    }
                     
                     $ids = array();
                     foreach ($colPhotos as $colPhoto) {
@@ -229,15 +220,8 @@ class Admin_Controller_Collection extends Controller
                         App_Model_Photo::deleteAll(array('id IN ?' => $ids));
                     }
                     
-                    $path = APP_PATH . '/' . $pathToImages . '/collections/' . $collection->getId();
-                    $pathThumbs = APP_PATH . '/' . $pathToThumbs . '/collections/' . $collection->getId();
-
-                    if ($path == $pathThumbs) {
-                        $fm->remove($path);
-                    } else {
-                        $fm->remove($path);
-                        $fm->remove($pathThumbs);
-                    }
+                    $path = APP_PATH . '/public/uploads/images/collections/' . $collection->getId();
+                    $fm->remove($path);
                 }
 
                 Event::fire('admin.log', array('success', 'Collection id: ' . $id));
@@ -263,45 +247,46 @@ class Admin_Controller_Collection extends Controller
         $view = $this->getActionView();
 
         $collection = App_Model_Collection::first(
-                        array(
-                    'id = ?' => (int) $id,
-                    'active = ?' => true
-                        ), array('id', 'title')
+                        array('id = ?' => (int) $id, 'active = ?' => true), array('id', 'title')
         );
 
+        if ($collection === null) {
+            $view->warningMessage('Collection not found');
+            self::redirect('/admin/collection/');
+        }
+
         $view->set('collection', $collection);
+
+        $fileManager = new FileManager(array(
+            'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
+            'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
+            'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
+            'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
+            'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
+        ));
 
         if (RequestMethods::post('submitAddPhoto')) {
             $this->checkToken();
             $errors = array();
-            
-            try {
-                $uploadTo = 'collections/' . $id;
-                $im = new ImageManager(array(
-                    'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
-                    'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
-                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
-                    'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
-                    'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
-                ));
 
-                $photoArr = $im->upload('photo', $uploadTo);
-                $uploaded = ArrayMethods::toObject($photoArr);
+            try {
+                $data = $fileManager->upload('photo', 'collections/' . $id);
+                $uploaded = ArrayMethods::toObject($data);
             } catch (Exception $ex) {
-                $errors['photo'] = $ex->getMessage();
+                $errors['photo'] = array($ex->getMessage());
             }
 
             $photo = new App_Model_Photo(array(
                 'description' => RequestMethods::post('description', ''),
                 'category' => RequestMethods::post('category', ''),
                 'priority' => RequestMethods::post('priority', 0),
-                'photoName' => $uploaded->photo->filename,
+                'photoName' => $uploaded->file->filename,
                 'thumbPath' => trim($uploaded->thumb->path, '.'),
-                'path' => trim($uploaded->photo->path, '.'),
-                'mime' => $uploaded->photo->mime,
-                'size' => $uploaded->photo->size,
-                'width' => $uploaded->photo->width,
-                'height' => $uploaded->photo->height,
+                'path' => trim($uploaded->file->path, '.'),
+                'mime' => $uploaded->file->ext,
+                'size' => $uploaded->file->size,
+                'width' => $uploaded->file->width,
+                'height' => $uploaded->file->height,
                 'thumbSize' => $uploaded->thumb->size,
                 'thumbWidth' => $uploaded->thumb->width,
                 'thumbHeight' => $uploaded->thumb->height
@@ -317,51 +302,42 @@ class Admin_Controller_Collection extends Controller
 
                 $collectionPhoto->save();
 
-                Event::fire('admin.log', array('success', 'Photo id: ' . $photoId . ' in collection '.$collection->getId()));
+                Event::fire('admin.log', array('success', 'Photo id: ' . $photoId . ' in collection ' . $collection->getId()));
                 $view->successMessage('Photo has been successfully uploaded');
                 self::redirect('/admin/collection/detail/' . $id);
             } else {
-                Event::fire('admin.log', array('fail'));
+                Event::fire('admin.log', array('fail', 'Collection id: ' . $collection->getId()));
                 $view->set('errors', $errors + $photo->getErrors());
             }
         } elseif (RequestMethods::post('submitAddMultiPhoto')) {
             $this->checkToken();
             $errors = array();
-            
+
             try {
-                $uploadTo = 'collections/' . $id;
-                $im = new ImageManager(array(
-                    'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
-                    'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
-                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
-                    'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
-                    'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
-                ));
-
-                $result = $im->upload('photos', $uploadTo);
+                $data = $fileManager->upload('photos', 'collections/' . $id);
             } catch (Exception $ex) {
-                $errors['photo'] = $ex->getMessage();
+                $errors['photos'] = array($ex->getMessage());
             }
 
-            if (is_array($result) && !empty($result['errors'])) {
-                $errors['photo'] = $result['errors'];
+            if (is_array($data) && !empty($data['errors'])) {
+                $errors['photos'] = $data['errors'];
             }
 
-            if (is_array($result) && !empty($result)) {
-                foreach ($result['photos'] as $image) {
+            if (is_array($data) && !empty($data)) {
+                foreach ($data['files'] as $image) {
                     $object = ArrayMethods::toObject($image);
 
                     $photo = new App_Model_Photo(array(
                         'description' => RequestMethods::post('description', ''),
                         'category' => RequestMethods::post('category', ''),
                         'priority' => RequestMethods::post('priority', 0),
-                        'photoName' => $object->photo->filename,
+                        'photoName' => $object->file->filename,
                         'thumbPath' => trim($object->thumb->path, '.'),
-                        'path' => trim($object->photo->path, '.'),
-                        'mime' => $object->photo->mime,
-                        'size' => $object->photo->size,
-                        'width' => $object->photo->width,
-                        'height' => $object->photo->height,
+                        'path' => trim($object->file->path, '.'),
+                        'mime' => $object->file->ext,
+                        'size' => $object->file->size,
+                        'width' => $object->file->width,
+                        'height' => $object->file->height,
                         'thumbSize' => $object->thumb->size,
                         'thumbWidth' => $object->thumb->width,
                         'thumbHeight' => $object->thumb->height
@@ -377,9 +353,9 @@ class Admin_Controller_Collection extends Controller
 
                         $collectionPhoto->save();
 
-                        Event::fire('admin.log', array('success', 'Photo id: ' . $photoId . ' in collection '.$collection->getId()));
+                        Event::fire('admin.log', array('success', 'Photo id: ' . $photoId . ' in collection ' . $collection->getId()));
                     } else {
-                        Event::fire('admin.log', array('fail'));
+                        Event::fire('admin.log', array('fail', 'Collection id: ' . $collection->getId()));
                         $errors += $photo->getErrors();
                     }
                 }

@@ -10,6 +10,36 @@ class Admin_Controller_Section extends Controller
 {
 
     /**
+     * 
+     * @param type $string
+     * @return type
+     */
+    private function createUrlKey($string)
+    {
+        $string = StringMethods::removeDiacriticalMarks($string);
+        $string = str_replace(array('.', ',', '_', '(', ')', ' '), '-', $string);
+        $string = trim($string);
+        $string = trim($string, '-');
+        return strtolower($string);
+    }
+    
+    /**
+     * 
+     * @param type $key
+     * @return boolean
+     */
+    private function checkUrlKey($key)
+    {
+        $status = App_Model_Product::first(array('urlKey = ?' => $key));
+
+        if ($status === null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
      * @before _secured, _superadmin
      */
     public function index()
@@ -36,23 +66,30 @@ class Admin_Controller_Section extends Controller
 
         if (RequestMethods::post('submitAddSection')) {
             $this->checkToken();
+            $errors = array();
+            $urlKey = $this->createUrlKey(RequestMethods::post('title'));
 
+            if(!$this->checkUrlKey($urlKey)){
+                $errors['title'] = array('This title is already used');
+            }
+            
             $section = new App_Model_Section(array(
                 'parentId' => RequestMethods::post('parent', 1),
                 'title' => RequestMethods::post('title'),
+                'urlKey' => $urlKey,
                 'rank' => RequestMethods::post('rank', 1),
                 'supportVideo' => RequestMethods::post('supportVideo', 0),
                 'supportPhoto' => RequestMethods::post('supportPhoto', 0),
                 'supportCollection' => RequestMethods::post('supportCollection', 0)
             ));
 
-            if ($section->validate()) {
+            if (empty($errors) && $section->validate()) {
                 $section->save();
 
                 $view->flashMessage('Section has been successfully saved');
                 self::redirect('/admin/section/');
             } else {
-                $view->set('errors', $section->getErrors());
+                $view->set('errors', $errors + $section->getErrors());
             }
         }
     }
@@ -81,22 +118,29 @@ class Admin_Controller_Section extends Controller
 
         if (RequestMethods::post('submitEditSection')) {
             $this->checkToken();
+            $errors = array();
+            $urlKey = $this->createUrlKey(RequestMethods::post('title'));
+            
+            if($section->urlKey != $urlKey && !$this->checkUrlKey($urlKey)){
+                $errors['title'] = array('This title is already used');
+            }
 
             $section->parentId = RequestMethods::post('partner', 1);
             $section->title = RequestMethods::post('title');
+            $section->urlKey = $urlKey;
             $section->rank = RequestMethods::post('rank', 1);
             $section->supportVideo = RequestMethods::post('supportVideo', 0);
             $section->supportPhoto = RequestMethods::post('supportPhoto', 0);
             $section->supportCollection = RequestMethods::post('supportCollection', 0);
             $section->active = RequestMethods::post('active');
 
-            if ($section->validate()) {
+            if (empty($errors) && $section->validate()) {
                 $section->save();
 
                 $view->successMessage('All changes were successfully saved');
                 self::redirect('/admin/section/');
             } else {
-                $view->set('errors', $section->getErrors());
+                $view->set('errors', $errors + $section->getErrors());
             }
         }
     }

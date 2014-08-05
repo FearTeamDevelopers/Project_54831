@@ -9,6 +9,36 @@ class Admin_Controller_News extends Controller
 {
     
     /**
+     * 
+     * @param type $string
+     * @return type
+     */
+    private function createUrlKey($string)
+    {
+        $string = StringMethods::removeDiacriticalMarks($string);
+        $string = str_replace(array('.', ',', '_', '(', ')', ' '), '-', $string);
+        $string = trim($string);
+        $string = trim($string, '-');
+        return strtolower($string);
+    }
+    
+    /**
+     * 
+     * @param type $key
+     * @return boolean
+     */
+    private function checkUrlKey($key)
+    {
+        $status = App_Model_Product::first(array('urlKey = ?' => $key));
+
+        if ($status === null) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    /**
      * @before _secured, _publisher
      */
     private function _getPhotos()
@@ -74,7 +104,12 @@ class Admin_Controller_News extends Controller
         
         if (RequestMethods::post('submitAddNews')) {
             $this->checkToken();
-            $urlKey = str_replace(' ', '-', StringMethods::removeDiacriticalMarks(RequestMethods::post('urlkey')));
+            $errors = array();
+            $urlKey = $this->createUrlKey(RequestMethods::post('urlkey'));
+            
+            if(!$this->checkUrlKey($urlKey)){
+                $errors['title'] = array('This title is already used');
+            }
 
             $news = new App_Model_News(array(
                 'title' => RequestMethods::post('title'),
@@ -86,7 +121,7 @@ class Admin_Controller_News extends Controller
                 'expirationDate' => RequestMethods::post('expiration')
             ));
 
-            if ($news->validate()) {
+            if (empty($errors) && $news->validate()) {
                 $id = $news->save();
 
                 Event::fire('admin.log', array('success', 'News id: ' . $id));
@@ -94,7 +129,7 @@ class Admin_Controller_News extends Controller
                 self::redirect('/admin/news/');
             } else {
                 Event::fire('admin.log', array('fail'));
-                $view->set('errors', $news->getErrors())
+                $view->set('errors', $errors + $news->getErrors())
                         ->set('news', $news);
             }
         }
@@ -123,8 +158,13 @@ class Admin_Controller_News extends Controller
 
         if (RequestMethods::post('submitEditNews')) {
             $this->checkToken();
-            $urlKey = str_replace(' ', '-', StringMethods::removeDiacriticalMarks(RequestMethods::post('urlkey')));
+            $errors = array();
+            $urlKey = $this->createUrlKey(RequestMethods::post('urlkey'));
 
+            if($news->urlKey != $urlKey && !$this->checkUrlKey($urlKey)){
+                $errors['title'] = array('This title is already used');
+            }
+            
             $news->title = RequestMethods::post('title');
             $news->urlKey = $urlKey;
             $news->author = RequestMethods::post('author', $this->getUser()->getWholeName());
@@ -134,7 +174,7 @@ class Admin_Controller_News extends Controller
             $news->rssFeedBody = RequestMethods::post('feedtext', '');
             $news->active = RequestMethods::post('active');
 
-            if ($news->validate()) {
+            if (empty($errors) && $news->validate()) {
                 $news->save();
 
                 Event::fire('admin.log', array('success', 'News id: ' . $id));
@@ -142,7 +182,7 @@ class Admin_Controller_News extends Controller
                 self::redirect('/admin/news/');
             } else {
                 Event::fire('admin.log', array('fail', 'News id: ' . $id));
-                $view->set('errors', $news->getErrors());
+                $view->set('errors', $errors + $news->getErrors());
             }
         }
     }
