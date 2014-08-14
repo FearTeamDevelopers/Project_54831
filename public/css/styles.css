@@ -21,6 +21,12 @@ html{
     font-style: normal;
 }
 
+strong{font-weight: bold;}
+em{font-style: italic;}
+h1{font-size: 28px;}
+h2{font-size: 24px;}
+h3{font-size: 20px;}
+
 /* ---------- Main style config ---------- */
 body {
     margin:0;
@@ -66,8 +72,8 @@ a:hover{color: #ccc;}
 #news-detail{left: 15%; width: 700px;}
 #provas{left: 15%; width: 800px;}
 #bio{left: 45%; width: 700px;}
-#design{left: 20%; width: 850px;}
-#styling{left: 25%; width: 900px;}
+#design{left: 20%; width: 950px;}
+#styling{left: 25%; width: 950px;}
 #contact{left: 55%; width: 400px;}
 #portfolio{left: 20%; text-align: center; width: 900px;}
 #partners{left: 40%; width: 700px;}
@@ -200,7 +206,7 @@ a:hover{color: #ccc;}
 .section-content-photos .socialIcon{text-decoration: none; margin-top: 15px;}
 .section-content-collection{}
 .section-content-collectionList{position: relative; margin: 20px; line-height: 30px;}
-.section-content-videos{position: relative; margin: 20px;}
+.section-content-videos{position: relative; margin: 20px; width: 57%;}
 .section-content-videos iframe{margin: 5px;}
 
 .collection-title{font-size: 23px; font-weight: bold; padding: 8px;}
@@ -238,7 +244,7 @@ a.close {position: inherit; top:5px; left: 90%;}
 
 .stencilla {font-family: 'stencilla', sans-serif; font-size: 14px;}
 .ancSignature{margin-left: 75%;}
-
+.styling-photos{width: 35%;}
 
 @media screen and (max-width: 1200px) {
     #temptopdiv{margin-top: 55%;}

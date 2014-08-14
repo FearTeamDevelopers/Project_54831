@@ -111,7 +111,7 @@ class Integration_Controller_Migration extends Controller
                     $this->fileManager->mkdir($path, 0755);
                 }
 
-                $sql2 = 'SELECT * FROM tb_collection_photos WHERE collection_id =' . $colId . ' ORDER BY added ASC';
+                $sql2 = "SELECT * FROM tb_collection_photos WHERE collection_id ='{$colId}' ORDER BY added ASC";
                 $result2 = $this->db->execute($sql2);
 
                 while ($photoR = $result2->fetch_assoc()) {
@@ -130,12 +130,19 @@ class Integration_Controller_Migration extends Controller
 
                     $rawThumbPath = $path . '/' . $rawPhotoName . '_small.' . $photoR['ext'];
                     $rawPath = $path . '/' . $rawPhotoName . '_large.' . $photoR['ext'];
+                    
+                    $oldThumbPath = html_entity_decode($photoR['path_small'], ENT_QUOTES, 'UTF-8');
+                    $oldPath = html_entity_decode($photoR['path_large'], ENT_QUOTES, 'UTF-8');
+                    
+                    if(!file_exists('.'.$oldPath)){
+                        continue;
+                    }
 
                     $photo = new App_Model_Photo(array(
                         'active' => (boolean) $photoR['photo_active'],
                         'photoName' => html_entity_decode($photoR['photo_name'], ENT_QUOTES, 'UTF-8'),
-                        'thumbPath' => $rawThumbPath,
-                        'path' => $rawPath,
+                        'thumbPath' => trim($rawThumbPath, '.'),
+                        'path' => trim($rawPath, '.'),
                         'description' => html_entity_decode($photoR['title'], ENT_QUOTES, 'UTF-8'),
                         'category' => html_entity_decode($photoR['sub_type'], ENT_QUOTES, 'UTF-8'),
                         'priority' => 0,
@@ -160,10 +167,8 @@ class Integration_Controller_Migration extends Controller
                         $colPhoto->save();
 
                         try {
-                            $oldThumbPath = html_entity_decode($photoR['path_small'], ENT_QUOTES, 'UTF-8');
-                            $oldPath = html_entity_decode($photoR['path_large'], ENT_QUOTES, 'UTF-8');
-                            $this->fileManager->copy('.' . $oldThumbPath, '.' . $rawThumbPath);
-                            $this->fileManager->copy('.' . $oldPath, '.' . $rawPath);
+                            $this->fileManager->copy('.' . $oldThumbPath, $rawThumbPath);
+                            $this->fileManager->copy('.' . $oldPath, $rawPath);
                         } catch (Exception $ex) {
                             $errors['collection_' . $newCollectionId . '_photo_copy'] = $ex->getMessage();
                         }
@@ -218,31 +223,38 @@ class Integration_Controller_Migration extends Controller
 
             if ($row['section'] == 'portfolio') {
                 $colId = 1;
-                $rawThumbPath = $this->getPathToImages() . 'collections/1/' . $rawPhotoName . '_small.' . $row['ext'];
-                $rawPath = $this->getPathToImages() . 'collections/1/' . $rawPhotoName . '_large.' . $row['ext'];
+                $rawThumbPath = $this->getPathToImages() . '/collections/1/' . $rawPhotoName . '_small.' . $row['ext'];
+                $rawPath = $this->getPathToImages() . '/collections/1/' . $rawPhotoName . '_large.' . $row['ext'];
             } elseif ($row['section'] == 'flattus') {
                 $colId = 2;
-                $rawThumbPath = $this->getPathToImages() . 'collections/2/' . $rawPhotoName . '_small.' . $row['ext'];
-                $rawPath = $this->getPathToImages() . 'collections/2/' . $rawPhotoName . '_large.' . $row['ext'];
+                $rawThumbPath = $this->getPathToImages() . '/collections/2/' . $rawPhotoName . '_small.' . $row['ext'];
+                $rawPath = $this->getPathToImages() . '/collections/2/' . $rawPhotoName . '_large.' . $row['ext'];
             } elseif ($row['section'] == 'magazin') {
                 $colId = 3;
-                $rawThumbPath = $this->getPathToImages() . 'collections/3/' . $rawPhotoName . '_small.' . $row['ext'];
-                $rawPath = $this->getPathToImages() . 'collections/3/' . $rawPhotoName . '_large.' . $row['ext'];
+                $rawThumbPath = $this->getPathToImages() . '/collections/3/' . $rawPhotoName . '_small.' . $row['ext'];
+                $rawPath = $this->getPathToImages() . '/collections/3/' . $rawPhotoName . '_large.' . $row['ext'];
             } else {
                 $colId = 0;
-                $rawThumbPath = $this->getPathToImages() . 'section_photos/' . $rawPhotoName . '_small.' . $row['ext'];
-                $rawPath = $this->getPathToImages() . 'section_photos/' . $rawPhotoName . '_large.' . $row['ext'];
+                $rawThumbPath = $this->getPathToImages() . '/section_photos/' . $rawPhotoName . '_small.' . $row['ext'];
+                $rawPath = $this->getPathToImages() . '/section_photos/' . $rawPhotoName . '_large.' . $row['ext'];
             }
 
             if (!is_dir($this->getPathToImages() . '/section_photos')) {
-                $this->fileManager->mkdir($this->getPathToImages() . '/section_photos', 0666, true);
+                $this->fileManager->mkdir($this->getPathToImages() . '/section_photos', 0755);
+            }
+            
+            $oldThumbPath = html_entity_decode($row['path_small'], ENT_QUOTES, 'UTF-8');
+            $oldPath = html_entity_decode($row['path_large'], ENT_QUOTES, 'UTF-8');
+            
+            if(!file_exists('.'.$oldPath)){
+                continue;
             }
 
             $photo = new App_Model_Photo(array(
                 'active' => (boolean) $row['photo_active'],
                 'photoName' => $rawPhotoName,
-                'thumbPath' => $rawThumbPath,
-                'path' => $rawPath,
+                'thumbPath' => trim($rawThumbPath, '.'),
+                'path' => trim($rawPath, '.'),
                 'description' => html_entity_decode($row['title'], ENT_QUOTES, 'UTF-8'),
                 'category' => html_entity_decode($row['sub_type'], ENT_QUOTES, 'UTF-8'),
                 'priority' => (int) $row['priority'],
@@ -280,10 +292,8 @@ class Integration_Controller_Migration extends Controller
                 }
 
                 try {
-                    $oldThumbPath = html_entity_decode($row['path_small'], ENT_QUOTES, 'UTF-8');
-                    $oldPath = html_entity_decode($row['path_large'], ENT_QUOTES, 'UTF-8');
-                    $this->fileManager->copy('.' . $oldThumbPath, '.' . $rawThumbPath);
-                    $this->fileManager->copy('.' . $oldPath, '.' . $rawPath);
+                    $this->fileManager->copy('.'.$oldThumbPath, $rawThumbPath);
+                    $this->fileManager->copy('.'.$oldPath, $rawPath);
                 } catch (Exception $ex) {
                     $errors[] = $ex->getMessage();
                 }
@@ -355,19 +365,23 @@ class Integration_Controller_Migration extends Controller
     private function prepareDirs()
     {
         if (!is_dir($this->getPathToImages() . '/section_photos')) {
-            $this->fileManager->mkdir($this->getPathToImages() . '/section_photos', 0666, true);
+            $this->fileManager->mkdir($this->getPathToImages() . '/section_photos', 0755);
         }
 
         if (!is_dir($this->getPathToImages() . '/collections/1')) {
-            $this->fileManager->mkdir($this->getPathToImages() . '/collections/1', 0666, true);
+            $this->fileManager->mkdir($this->getPathToImages() . '/collections/1', 0755);
         }
 
         if (!is_dir($this->getPathToImages() . '/collections/2')) {
-            $this->fileManager->mkdir($this->getPathToImages() . '/collections/2', 0666, true);
+            $this->fileManager->mkdir($this->getPathToImages() . '/collections/2', 0755);
         }
 
         if (!is_dir($this->getPathToImages() . '/collections/3')) {
-            $this->fileManager->mkdir($this->getPathToImages() . '/collections/3', 0666, true);
+            $this->fileManager->mkdir($this->getPathToImages() . '/collections/3', 0755);
+        }
+        
+        if (!is_dir($this->getPathToImages() . '/collections/4')) {
+            $this->fileManager->mkdir($this->getPathToImages() . '/collections/4', 0755);
         }
     }
 

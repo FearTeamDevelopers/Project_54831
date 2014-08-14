@@ -40,7 +40,8 @@ CKEDITOR.editorConfig = function(config) {
     config.allowedContent = true;
     config.enterMode = CKEDITOR.ENTER_BR;
 
-    config.extraPlugins = 'wordcount';
+    config.extraPlugins = 'wordcount,justify';
+
     config.wordcount = {
         showWordCount: false,
         showCharCount: true,

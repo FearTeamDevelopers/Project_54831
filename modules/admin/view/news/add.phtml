@@ -13,7 +13,7 @@
             <form class="stdform stdform2" method="post" action="#" >
                 <input type="hidden" name="tk" id="tk" value="{echo $token}" />
                 <p>
-                    <label>Title</label>
+                    <label>Title*</label>
                     <span class="field">
                         <input type="text" name="title" value="{echo isset($news)? $news->title: ""}" />
                         {if isset($errors["title"])}
@@ -47,7 +47,7 @@
                     </span>
                 </p>
                 <p>
-                    <label>Text*<small>Max. 5000 characters</small></label>
+                    <label>Text*<small>Max. 20 000 characters</small></label>
                     <span class="field">
                         <textarea rows="20" name="text" id="ckeditor">{echo isset($news)? $news->body: ""}</textarea>
                         {if isset($errors["body"])}
@@ -59,7 +59,7 @@
                     </span>
                 </p>
                 <p>
-                    <label>Teaser*<small>Max. 1000 characters</small></label>
+                    <label>Teaser*<small>Max. 5000 characters</small></label>
                     <span class="field">
                         <textarea rows="20" name="shorttext" id="ckeditor2">{echo isset($news)? $news->shortBody: ""}</textarea>
                         {if isset($errors["shortBody"])}
@@ -71,7 +71,7 @@
                     </span>
                 </p>
                 <p>
-                    <label>Rss feed text<small>Max. 2048 characters<br/>Text only</small></label>
+                    <label>Rss feed text<small>Max. 5000 characters<br/>Text only</small></label>
                     <span class="field">
                         <textarea rows="10" name="feedtext" class="longinput" >{echo isset($news)? $news->rssFeedBody: ""}</textarea>
                         {if isset($errors["rssFeedBody"])}
@@ -105,7 +105,7 @@
                     {/foreach}
                 {/if}
             </div>
-            <br clear="all"/>
+            <br class="clear-all"/>
             <div class="contenttitle radiusbottom0">
                 <h2 class="table"><span>Videos</span></h2>
             </div><!--contenttitle-->
@@ -122,7 +122,7 @@
             </div>
         </div>
     </div>
-    <br clear="all"/>
+    <br class="clear-all"/>
 </div>
-<br clear="all"/>
+<br class="clear-all"/>
 <script type="text/javascript" src="/public/js/custom/news.js"></script>

@@ -3,8 +3,8 @@
 use Integration\Etc\Controller;
 use THCFrame\Database\Mysqldump;
 use THCFrame\Filesystem\FileManager;
-use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
+use THCFrame\Registry\Registry;
 
 /**
  * Description of Integration_Controller_Cron
@@ -19,7 +19,14 @@ class Integration_Controller_Cron extends Controller
      */
     public function archivateNews()
     {
+        $this->_willRenderActionView = false;
+        $this->_willRenderLayoutView = false;
+        $database = Registry::get('database');
         
+        $sql = "INSERT INTO `tb_newsarchive` SELECT * FROM `tb_news` WHERE expirationDate < now()";
+        
+        Event::fire('cron.log');
+        $database->execute($sql);
     }
 
     /**
@@ -27,16 +34,18 @@ class Integration_Controller_Cron extends Controller
      */
     public function backupDb()
     {
-        $dump = new Mysqldump(array('exclude-tables' => array('tb_user')));
+        $this->_willRenderActionView = false;
+        $this->_willRenderLayoutView = false;
+        
+        $dump = new Mysqldump(array('exclude-tables-regex' => array('wp_.*', 'piwik_.*')));
         $fm = new FileManager();
 
-        if (!is_dir(APP_PATH.'/temp/db/')) {
-            $fm->mkdir(APP_PATH.'/temp/db/');
+        if (!is_dir(APP_PATH . '/temp/db/')) {
+            $fm->mkdir(APP_PATH . '/temp/db/');
         }
 
-        if (RequestMethods::post('createBackup')) {
-            Event::fire('cron.log');
-            $dump->create();
-        }
+        Event::fire('cron.log');
+        $dump->create();
     }
+
 }

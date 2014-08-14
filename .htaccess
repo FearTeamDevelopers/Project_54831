@@ -4,7 +4,7 @@ RewriteBase /
 RewriteCond %{REQUEST_FILENAME} -s
 RewriteRule /public/(.*)/(.*)\.(css|jpe?g|gif|png|js|ico)$ - [NC,L]
 
-RewriteCond %{REQUEST_URI} (^/tests/(.*)$) 
+RewriteCond %{REQUEST_URI} (^/(tests|piwik|blog)/(.*)$) 
 RewriteRule ^(.*)$ - [NC,L]
 
 RewriteCond %{REQUEST_URI} (^/application/(.*)$) 

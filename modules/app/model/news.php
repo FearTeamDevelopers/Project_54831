@@ -89,7 +89,7 @@ class App_Model_News extends Model
      * @type text
      * @length 256
      * 
-     * @validate required, html, max(15000)
+     * @validate required, html, max(20000)
      * @label text
      */
     protected $_body;

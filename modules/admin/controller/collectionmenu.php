@@ -32,7 +32,7 @@ class Admin_Controller_CollectionMenu extends Controller
      */
     private function checkUrlKey($key)
     {
-        $status = App_Model_Product::first(array('urlKey = ?' => $key));
+        $status = App_Model_CollectionMenu::first(array('urlKey = ?' => $key));
 
         if ($status === null) {
             return true;

@@ -55,7 +55,7 @@ class App_Model_PageContent extends Model
      * @type text
      * @length 256
      * 
-     * @validate required, html, max(30000)
+     * @validate required, html, max(50000)
      * @label text
      */
     protected $_body;

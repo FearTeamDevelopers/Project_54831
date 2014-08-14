@@ -13,12 +13,11 @@ class Profiler
 {
 
     private static $_instance = null;
-    private static $_profilerTableCreated = null;
-    private $_enabled = true;
+    private $_enabled = false;
     private $_data = array();
-    private $_database;
+    private $_dbData = array();
+    private $_dbLastIdentifier;
     private $_logging;
-    private $_winos;
 
     /**
      * 
@@ -50,57 +49,15 @@ class Profiler
     /**
      * 
      */
-    private function _createProfilerTable()
-    {
-        if (self::$_profilerTableCreated === null) {
-            $sql = "CREATE TABLE IF NOT EXISTS `tb_profilerlog` ("
-                    . "`id` INT UNSIGNED NOT NULL AUTO_INCREMENT,"
-                    . "`identifier` varchar(50) NOT NULL DEFAULT '',"
-                    . "`executionTime` varchar(50) NOT NULL DEFAULT '',"
-                    . "`smpu` varchar(50) NOT NULL DEFAULT '',"             //start memory peak usage
-                    . "`empu` varchar(50) NOT NULL DEFAULT '',"             //end memory peak usage
-                    . "`smu` varchar(50) NOT NULL DEFAULT '',"              //start memory usage
-                    . "`emu` varchar(50) NOT NULL DEFAULT '',"              //end memory usage
-                    . "`sswapsnum` varchar(50) NOT NULL DEFAULT '',"        //start number of swaps
-                    . "`eswapsnum` varchar(50) NOT NULL DEFAULT '',"        //end number of swaps
-                    . "`spfnum` varchar(50) NOT NULL DEFAULT '',"           //start number of page faults
-                    . "`epfnum` varchar(50) NOT NULL DEFAULT '',"           //end number of page faults
-                    . "`sutu` varchar(50) NOT NULL DEFAULT '',"             //start user time used (seconds)
-                    . "`eutu` varchar(50) NOT NULL DEFAULT '',"             //end user time used (seconds)
-                    . "`created` datetime DEFAULT NULL,"
-                    . "PRIMARY KEY (`id`),"
-                    . "KEY `ix_profilerlog_identifier` (`identifier`)"
-                    . ") ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;";
-
-            $this->_database->execute($sql);
-            self::$_profilerTableCreated = true;
-        }
-    }
-
-    /**
-     * 
-     */
     private function __construct()
     {
         Event::fire('framework.profiler.construct');
-
-        $this->_database = Registry::get('database')->connect();
 
         $configuration = Registry::get('config');
         $this->_enabled = (bool) $configuration->profiler->active;
         $this->_logging = $configuration->profiler->logging;
 
-        if ($this->_enabled) {
-            if (strtolower($this->_logging) === 'database') {
-                $this->_createProfilerTable();
-            }
-
-            if (strtolower(substr(php_uname('s'), 0, 7)) == 'windows') {
-                $this->_winos = true;
-            } else {
-                $this->_winos = false;
-            }
-        } else {
+        if (!$this->_enabled) {
             return;
         }
     }
@@ -128,28 +85,9 @@ class Profiler
             $this->_data[$identifier]['startMemoryPeakUsage'] = memory_get_peak_usage();
             $this->_data[$identifier]['startMomoryUsage'] = memory_get_usage();
 
-            if (!$this->_winos) {
-                $this->_data[$identifier]['startRusage'] = getrusage();
-            }
         } else {
             return;
         }
-    }
-
-    /**
-     * 
-     */
-    public function pause()
-    {
-        
-    }
-
-    /**
-     * 
-     */
-    public function unpause()
-    {
-        
     }
 
     /**
@@ -160,48 +98,104 @@ class Profiler
     {
         if ($this->_enabled) {
             $startTime = $this->_data[$identifier]['startTime'];
-            $startMemoryPeakUsage = $this->convert($this->_data[$identifier]['startMemoryPeakUsage']);
-            $startMomoryUsage = $this->convert($this->_data[$identifier]['startMomoryUsage']);
-
             $endMemoryPeakUsage = $this->convert(memory_get_peak_usage());
             $endMemoryUsage = $this->convert(memory_get_usage());
             $time = round(microtime(true) - $startTime, 8);
 
-            if (!$this->_winos) {
-                $startRusage = $this->_data[$identifier]['startRusage'];
-                $endRusage = getrusage();
-                $usageStr = 'Number of swaps - start: ' . $startRusage['ru_nswap'] . PHP_EOL;
-                $usageStr = 'Number of swaps - end: ' . $endRusage['ru_nswap'] . PHP_EOL;
-                $usageStr .= 'Number of page faults - start: ' . $startRusage['ru_majflt'] . PHP_EOL;
-                $usageStr .= 'Number of page faults - end: ' . $endRusage['ru_majflt'] . PHP_EOL;
-                $usageStr .= 'User time used (seconds) - start: ' . $startRusage['ru_utime.tv_sec'] . PHP_EOL;
-                $usageStr .= 'User time used (seconds) - end: ' . $endRusage['ru_utime.tv_sec'] . PHP_EOL;
 
-                $sql = 'INSERT INTO tb_profiler (identifier, executionTime, smpu, empu, smu, emu, sswapsnum, eswapsnum, spfnum, epfnum, sutu, eutu, created) '
-                        . 'VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, now())';
-            } else {
-                $usageStr = '';
-                $sql = 'INSERT INTO tb_profiler (identifier, executionTime, smpu, empu, smu, emu, created) '
-                        . 'VALUES (?, ?, ?, ?, ?, ?, now())';
+            $str = '<link href="/public/css/profiler.min.css" media="screen" rel="stylesheet" type="text/css" /><div id="profiler">';
+            $str .= "<div id='profiler-basic'><span title='Request URI'>{$_SERVER['REQUEST_URI']}</span><span title='Execution time [s]'>{$time}</span>"
+                    . "<span title='Memory peak usage'>{$endMemoryPeakUsage}</span><span title='Memory usage'>{$endMemoryUsage}</span>"
+                    . '<span title="SQL Query"><a href="#" class="profiler-show-query">SQL Query:</a> '.  count($this->_dbData).'</span>'
+                            . '<span><a href="#" class="profiler-show-globalvar">Global variables</a></span></div>';
+            $str .= '<div id="profiler-query"><table><tr style="font-weight:bold; border-top:1px solid black;">'
+                    . '<td colspan=5>Query</td><td>Execution time [s]</td><td>Returned rows</td><td colspan=6>Backtrace</td></tr>';
+            
+            foreach ($this->_dbData as $key => $value) {
+                $str .= '<tr>';
+                $str .= "<td colspan=5 width='40%'>{$value['query']}</td>";
+                $str .= "<td>{$value['execTime']}</td>";
+                $str .= "<td>{$value['totalRows']}</td>";
+                $str .= "<td colspan=6 class=\"backtrace\"><div>";
+                foreach ($value['backTrace'] as $key => $trace){
+                    isset($trace['file'])? $file = $trace['file']: $file = '';
+                    isset($trace['line'])? $line = $trace['line']: $line = '';
+                    isset($trace['class'])? $class = $trace['class']: $class = '';
+                    $str .= $key.' '.$file.':'.$line.':'.$class.':'.$trace['function']."<br/>";
+                }
+                $str .= "</div></td></tr>";
             }
-
-            if ($this->_logging == 'database') {
-                $this->_database->execute($sql, $identifier, $time, $startMemoryPeakUsage, $endMemoryPeakUsage, $startMomoryUsage, $endMemoryUsage);
-            } else {
-                $str = PHP_EOL . 'Identifier: ' . $identifier . PHP_EOL;
-                $str .= 'Execution time: ' . $time . ' seconds' . PHP_EOL;
-                $str .= 'Memory peak usage - start: ' . $startMemoryPeakUsage . PHP_EOL;
-                $str .= 'Memory peak usage - end: ' . $endMemoryPeakUsage . PHP_EOL;
-                $str .= 'Memory usage - start: ' . $startMomoryUsage . PHP_EOL;
-                $str .= 'Memory usage - end: ' . $endMemoryUsage . PHP_EOL;
-                $str .= $usageStr;
-                $str .= '----------------------------------------------------------';
-
-                \THCFrame\Core\Core::log($str, 'profiler.log', true);
+            $str .= '</table></div>';
+            
+            $str .= '<div id="profiler-globalvar"><table>';
+            $str .= '<tr><td colspan=2>POST</td></tr>';
+            foreach ($_POST as $key => $value) {
+                $str .= '<tr><td>'.$key.'</td><td>'.$value.'</td></tr>';
             }
-            unset($this->_data[$identifier]);
+            $str .= '</table><table>';
+            $str .= '<tr><td colspan=2>GET</td></tr>';
+            foreach ($_GET as $key => $value) {
+                $str .= '<tr><td>'.$key.'</td><td>'.$value.'</td></tr>';
+            }
+            $str .= '</table></div>';
+            $str .= '</div><script type="text/javascript" src="/public/js/custom/profiler.min.js"></script>';
+            \THCFrame\Core\Core::log($str, 'profiler.log', true, false);
+
         } else {
             return;
+        }
+    }
+
+    /**
+     * 
+     */
+    public function dbQueryStart($query)
+    {
+        if ($this->_enabled) {
+            $this->_dbLastIdentifier = substr(rtrim(base64_encode(md5(microtime())), "="), 2, 40);
+
+            for ($i = 0; $i < 100; $i++) {
+                $this->_dbLastIdentifier = substr(rtrim(base64_encode(md5(microtime())), "="), 2, 40);
+
+                if (array_key_exists($this->_dbLastIdentifier, $this->_dbData)) {
+                    continue;
+                } else {
+                    break;
+                }
+            }
+
+            $this->_dbData[$this->_dbLastIdentifier]['startTime'] = microtime(true);
+            $this->_dbData[$this->_dbLastIdentifier]['query'] = $query;
+        } else {
+            return;
+        }
+    }
+
+    /**
+     * 
+     */
+    public function dbQueryEnd($totalRows)
+    {
+        if ($this->_enabled) {
+            $startTime = $this->_dbData[$this->_dbLastIdentifier]['startTime'];
+            $this->_dbData[$this->_dbLastIdentifier]['execTime'] = round(microtime(true) - $startTime, 8);
+            $this->_dbData[$this->_dbLastIdentifier]['totalRows'] = $totalRows;
+            $this->_dbData[$this->_dbLastIdentifier]['backTrace'] = debug_backtrace();
+        } else {
+            return;
+        }
+    }
+    
+    /**
+     * 
+     */
+    public function printProfilerRecord()
+    {
+        if ($this->_enabled) {
+            $fileContent = file_get_contents('./application/logs/profiler.log');
+            return $fileContent;
+        }else{
+            return '';
         }
     }
 
@@ -211,7 +205,6 @@ class Profiler
     public function __destruct()
     {
         Event::fire('framework.profiler.destruct');
-        $this->_database->disconnect();
     }
 
 }

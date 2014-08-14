@@ -6,6 +6,7 @@ use THCFrame\Request\RequestMethods;
 use THCFrame\Database\Mysqldump;
 use THCFrame\Events\Events as Event;
 use THCFrame\Configuration\Model\Config;
+use THCFrame\Profiler\Profiler;
 
 /**
  * 
@@ -54,7 +55,7 @@ class Admin_Controller_System extends Controller
     public function createDatabaseBackup()
     {
         $view = $this->getActionView();
-        $dump = new Mysqldump(array('exclude-tables' => array('tb_user')));
+        $dump = new Mysqldump(array('exclude-tables-reqex' => array('wp_.*', 'piwik_.*')));
         $fm = new THCFrame\Filesystem\FileManager();
 
         if (!is_dir(APP_PATH.'/temp/db/')) {
@@ -88,6 +89,18 @@ class Admin_Controller_System extends Controller
         $view = $this->getActionView();
         $log = Admin_Model_AdminLog::all(array(), array('*'), array('created' => 'DESC'));
         $view->set('adminlog', $log);
+    }
+    
+    /**
+     * @before _secured
+     */
+    public function showProfiler()
+    {
+        $this->_willRenderActionView = false;
+        $this->_willRenderLayoutView = false;
+
+        $profiler = Profiler::getProfiler();
+        echo $profiler->printProfilerRecord();
     }
 
     /**
