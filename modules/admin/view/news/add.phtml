@@ -98,7 +98,7 @@
                 {if ($photos && !empty($photos))}
                     {foreach $photo in $photos}
                         <span class="news-photo">
-                            <img src="{echo $photo->getThumbPath()}" alt="{echo $photo->getPhotoName()}" width="200px"/>
+                            <img src="{echo $photo->getThumbPath()}" alt="{echo $photo->getPhotoName()}" width="150px"/>
                             <button class="stdbtn img-to-text" value="{echo $photo->getId()}">To Text</button>
                             <button class="stdbtn img-to-teaser" value="{echo $photo->getId()}">To Teaser</button>
                         </span>
@@ -113,7 +113,7 @@
                 {if ($videos && !empty($videos))}
                     {foreach $video in $videos}
                         <span class="news-video">
-                            <iframe width="200px" src="{echo $video->getPath()}" frameborder="0" allowfullscreen></iframe>
+                            <iframe width="150px" src="{echo $video->getPath()}" frameborder="0" allowfullscreen></iframe>
                             <button class="stdbtn video-to-text" value="{echo $video->getId()}">To Text</button>
                             <button class="stdbtn video-to-teaser" value="{echo $video->getId()}">To Teaser</button>
                         </span>

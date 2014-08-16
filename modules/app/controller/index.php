@@ -112,10 +112,7 @@ class App_Controller_Index extends Controller
         }
 
         $view->set('lastannouncement', $lastAnnouncement);
-        $layoutView->set('newspagecount', $newsPageCount)
-                ->set('metadescription', $this->loadConfigFromDb('meta_description'))
-                ->set('metarobots', $this->loadConfigFromDb('meta_robots'))
-                ->set('metakeywords', $this->loadConfigFromDb('meta_keywords'));
+        $layoutView->set('newspagecount', $newsPageCount);
     }
 
     /**

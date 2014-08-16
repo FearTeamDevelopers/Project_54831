@@ -2,15 +2,17 @@
     {if ($collecarr && !empty($collecarr))}
         {foreach $collection in $collecarr}
             <p class="collection-title">
-                {echo $collection->title." ".$collection->date} / fotograf {echo $collection->photographer}
+                {echo $collection->title}
+                {if $collection->date != ""}{echo " ".$collection->date}{/if}
+                {if $collection->photographer != ""}{echo " / ".$collection->photographer}{/if}
             </p>
             <div class="section-content-photos">
                 {script $colphotos=$collection->photos}
                 {if !empty($colphotos)}
                     {foreach $photo in $colphotos}
                         <a href="{echo $photo->path}" class="highslide" 
-                                title="{echo $photo->photoName}" onclick="return hs.expand(this, configcollection)">
-                            <img src="{echo $photo->thumbPath}" height="140px" alt="Marko.in" title="{echo $photo->photoName}"/>
+                                title="{echo $photo->description}" onclick="return hs.expand(this, configcollection)">
+                            <img src="{echo $photo->thumbPath}" height="140px" alt="Marko.in" title="{echo $photo->description}"/>
                         </a>
                     {/foreach}
                 {/if}

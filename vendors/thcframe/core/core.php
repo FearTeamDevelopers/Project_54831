@@ -312,7 +312,9 @@ class Core
 
             // database
             $database = new \THCFrame\Database\Database();
-            Registry::set('database', $database->initialize());
+            $initializedDb = $database->initialize();
+            Registry::set('database', $initializedDb);
+            $initializedDb->connect();
 
             // cache
             $cache = new \THCFrame\Cache\Cache();

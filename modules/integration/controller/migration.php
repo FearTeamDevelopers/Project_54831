@@ -40,9 +40,9 @@ class Integration_Controller_Migration extends Controller
         $database = new Database();
         $database->type = 'mysql';
         $database->options = array(
-            'host' => 'localhost',
-            'username' => 'root',
-            'password' => '',
+            'host' => 'mysql-g1.gransy.com',
+            'username' => 'markoin_marko',
+            'password' => 'M12Ar28Ko*',
             'schema' => 'markoin_db'
         );
 
@@ -75,7 +75,7 @@ class Integration_Controller_Migration extends Controller
         $colPhotoMigrated = 0;
 
         $sql = 'SELECT * FROM tb_collections ORDER BY added ASC';
-        $result = $this->db->execute($sql);
+        $result = $this->_db->execute($sql);
 
         while ($row = $result->fetch_assoc()) {
             $colId = $row['collection_id'];
@@ -112,7 +112,7 @@ class Integration_Controller_Migration extends Controller
                 }
 
                 $sql2 = "SELECT * FROM tb_collection_photos WHERE collection_id ='{$colId}' ORDER BY added ASC";
-                $result2 = $this->db->execute($sql2);
+                $result2 = $this->_db->execute($sql2);
 
                 while ($photoR = $result2->fetch_assoc()) {
                     if ($photoR['ext'] == 'png') {
@@ -124,7 +124,7 @@ class Integration_Controller_Migration extends Controller
                     }
 
                     $rawPhotoName = StringMethods::removeDiacriticalMarks(
-                                    str_replace(' ', '_', html_entity_decode($row['photo_name'], ENT_QUOTES, 'UTF-8')
+                                    str_replace(' ', '_', html_entity_decode($photoR['photo_name'], ENT_QUOTES, 'UTF-8')
                                     )
                     );
 
@@ -200,7 +200,7 @@ class Integration_Controller_Migration extends Controller
         $photosMigrated = array();
 
         $sql = 'SELECT * FROM tb_page_photos ORDER BY section ASC';
-        $result = $this->db->execute($sql);
+        $result = $this->_db->execute($sql);
 
         while ($row = $result->fetch_assoc()) {
             if ($row['ext'] === null) {
@@ -249,6 +249,7 @@ class Integration_Controller_Migration extends Controller
             if(!file_exists('.'.$oldPath)){
                 continue;
             }
+            
 
             $photo = new App_Model_Photo(array(
                 'active' => (boolean) $row['photo_active'],
@@ -320,7 +321,7 @@ class Integration_Controller_Migration extends Controller
         $videosMigrated = array();
 
         $sql = 'SELECT * FROM tb_videos ORDER BY section ASC';
-        $result = $this->db->execute($sql);
+        $result = $this->_db->execute($sql);
 
         while ($row = $result->fetch_assoc()) {
             $video = new App_Model_Video(array(
@@ -337,9 +338,14 @@ class Integration_Controller_Migration extends Controller
                 $videosMigrated[] = $video->getPath();
 
                 $section = App_Model_Section::first(
-                                array('urlKey = ?' => $row['section']), array('id')
+                                array('urlKey = ?' => $row['section']), 
+                                array('id')
                 );
 
+                if($section === null){
+                    continue;
+                }
+                
                 $videoSection = new App_Model_VideoSection(array(
                     'videoId' => $newVideoId,
                     'sectionId' => $section->getId()
@@ -349,7 +355,7 @@ class Integration_Controller_Migration extends Controller
                 $errors[] = $video->getErrors();
             }
         }
-
+        
         $this->_statusInfo['videoMigrated'] = $videosMigrated;
 
         if (empty($errors)) {
@@ -403,14 +409,16 @@ class Integration_Controller_Migration extends Controller
 
         if (RequestMethods::post('migrateCollections')) {
             
-            $db = $this->connectToLiveDb();
-            $this->db = $db->connect();
+            $this->_db = Registry::get('database'); 
 
             $this->prepareDirs();
             $resultVid = $this->getVideos();
+            
             $resultPho = $this->getPhotos();
             $resultCol = $this->getCollections();
 
+            
+            
             if (is_array($resultCol) || is_array($resultPho) || is_array($resultVid)) {
                 $result = array_merge($resultCol, $resultPho, $resultVid);
                 Event::fire('admin.log', array('fail'));

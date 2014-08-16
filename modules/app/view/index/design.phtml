@@ -17,7 +17,7 @@
     <div class="section-content-photos">
         {foreach $photo in $photos}
             <a href="{echo $photo->path}" class="highslide" 
-               title="{echo $photo->photoName}" onclick="return hs.expand(this, configdesign)">
+               title="{echo $photo->description}" onclick="return hs.expand(this, configdesign)">
                 <img src="{echo $photo->thumbPath}" alt="Marko.in"/>
             </a>
         {/foreach}

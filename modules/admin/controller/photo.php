@@ -19,7 +19,7 @@ class Admin_Controller_Photo extends Controller
     {
         $view = $this->getActionView();
 
-        $photos = App_Model_Photo::all();
+        $photos = App_Model_Photo::all(array(), array('*'), array('created' => 'desc'));
 
         foreach ($photos as $photo) {
             $sectionString = '';
@@ -134,7 +134,7 @@ class Admin_Controller_Photo extends Controller
                 $errors['photos'] = $result['errors'];
             }
 
-            if (is_array($result) && !empty($result['photos'])) {
+            if (is_array($result) && !empty($result['files'])) {
                 foreach ($result['files'] as $image) {
                     $object = ArrayMethods::toObject($image);
 

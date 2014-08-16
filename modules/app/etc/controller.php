@@ -22,14 +22,33 @@ class Controller extends BaseController
     {
         parent::__construct($options);
 
-        $database = Registry::get('database');
-        $database->connect();
+        $cache = Registry::get('cache');
 
         // schedule disconnect from database 
         Events::add('framework.controller.destruct.after', function($name) {
             $database = Registry::get('database');
             $database->disconnect();
         });
+        
+        $metaData = $cache->get('global_meta_data');
+
+        if (NULL !== $metaData) {
+            $metaData = $metaData;
+        } else {
+            $metaData = array(
+                'metakeywords' => $this->loadConfigFromDb('meta_keywords'),
+                'metadescription' => $this->loadConfigFromDb('meta_description'),
+                'metarobots' => $this->loadConfigFromDb('meta_robots'),
+            );
+
+            $cache->set('global_meta_data', $metaData);
+        }
+        
+        $this->getLayoutView()
+                ->set('metatitle', 'Marko.in')
+                ->set('metakeywords', $metaData['metakeywords'])
+                ->set('metarobots', $metaData['metarobots'])
+                ->set('metadescription', $metaData['metadescription']);
     }
 
     /**

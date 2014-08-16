@@ -61,7 +61,7 @@ class App_Model_Collection extends Model
      * @type text
      * @length 15
      * 
-     * @validate required, date, max(15)
+     * @validate date, max(15)
      * @label date
      */
     protected $_date;
@@ -115,7 +115,7 @@ class App_Model_Collection extends Model
      * @type text
      * @length 100
      * 
-     * @validate required, alphanumeric, max(100)
+     * @validate alphanumeric, max(100)
      * @label photographer
      */
     protected $_photographer;

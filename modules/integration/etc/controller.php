@@ -75,9 +75,6 @@ class Controller extends BaseController
     {
         parent::__construct($options);
 
-        $database = Registry::get('database');
-        $database->connect();
-
         // schedule disconnect from database 
         Events::add('framework.controller.destruct.after', function($name) {
             $database = Registry::get('database');

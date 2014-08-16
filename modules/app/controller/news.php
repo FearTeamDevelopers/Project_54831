@@ -30,10 +30,10 @@ class App_Controller_News extends Controller
                                 array(
                             'id = ?' => $id,
                             'active = ?' => true
-                                ), array('photoName', 'thumbPath', 'path')
+                                ), array('photoName', 'thumbPath', 'path', 'description')
                 );
 
-                $tag = "<a href=\"{$photo->path}\" class=\"highslide\" title=\"{$photo->photoName}\""
+                $tag = "<a href=\"{$photo->path}\" class=\"highslide\" title=\"{$photo->description}\""
                         . " onclick=\"return hs.expand(this, confignews)\">"
                         . "<img src=\"{$photo->thumbPath}\" alt=\"Marko.in\"/></a>";
 

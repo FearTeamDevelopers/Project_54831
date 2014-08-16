@@ -1,4 +1,4 @@
-<div class="section-content-text center fs25">
+<div class="section-content-text center">
     {echo html_entity_decode($text->body)}
 </div>
 
@@ -13,7 +13,7 @@
     {if ($photos && !empty($photos))}
         {foreach $photo in $photos}
             <a href="{echo $photo->path}" class="highslide" 
-                    title="{echo $photo->photoName}" onclick="return hs.expand(this, configstyling)">
+                    title="{echo $photo->description}" onclick="return hs.expand(this, configstyling)">
                 <img src="{echo $photo->thumbPath}" alt="Marko.in"/>
             </a>
         {/foreach}

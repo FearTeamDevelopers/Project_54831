@@ -58,7 +58,7 @@ class Admin_Controller_Collection extends Controller
                 'title' => RequestMethods::post('title'),
                 'year' => RequestMethods::post('year', date('Y', time())),
                 'season' => RequestMethods::post('season', ''),
-                'date' => RequestMethods::post('date', date('Y-m-d', time())),
+                'date' => RequestMethods::post('date', ''),
                 'photographer' => RequestMethods::post('photographer', ''),
                 'description' => RequestMethods::post('description', ''),
                 'rank' => RequestMethods::post('rank', 1)
@@ -159,7 +159,7 @@ class Admin_Controller_Collection extends Controller
             $collection->active = RequestMethods::post('active');
             $collection->year = RequestMethods::post('year', date('Y', time()));
             $collection->season = RequestMethods::post('season', '');
-            $collection->date = RequestMethods::post('date', date('Y-m-d', time()));
+            $collection->date = RequestMethods::post('date', '');
             $collection->photographer = RequestMethods::post('photographer', '');
             $collection->description = RequestMethods::post('description', '');
             $collection->rank = RequestMethods::post('rank', 1);

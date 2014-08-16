@@ -871,7 +871,7 @@ a.btn_table { background-position: -82px -480px; }
 }
 
 .news-photos, .news-videos{height: 600px; overflow-y: auto; overflow-x: no-content;}
-.news-photo, .news-video{width: 200px; margin: 10px; border: 1px solid #ccc; display: block; float: left;}
+.news-photo, .news-video{width: 160px; margin: 5px; border: 1px solid #ccc; display: block; float: left;}
 
 
 @media screen and (max-width: 1024px) {
