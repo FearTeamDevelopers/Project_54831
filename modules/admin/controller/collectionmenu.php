@@ -4,33 +4,20 @@ use Admin\Etc\Controller;
 use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
 use THCFrame\Core\StringMethods;
+use THCFrame\Registry\Registry;
 
 /**
  * 
  */
 class Admin_Controller_CollectionMenu extends Controller
 {
-
-    /**
-     * 
-     * @param type $string
-     * @return type
-     */
-    private function createUrlKey($string)
-    {
-        $string = StringMethods::removeDiacriticalMarks($string);
-        $string = str_replace(array('.', ',', '_', '(', ')', ' '), '-', $string);
-        $string = trim($string);
-        $string = trim($string, '-');
-        return strtolower($string);
-    }
     
     /**
      * 
      * @param type $key
      * @return boolean
      */
-    private function checkUrlKey($key)
+    private function _checkUrlKey($key)
     {
         $status = App_Model_CollectionMenu::first(array('urlKey = ?' => $key));
 
@@ -75,9 +62,9 @@ class Admin_Controller_CollectionMenu extends Controller
         if (RequestMethods::post('submitAddClmenu')) {
             $this->checkToken();
             $errors = array();
-            $urlKey = $this->createUrlKey(RequestMethods::post('urlkey'));
+            $urlKey = $this->_createUrlKey(RequestMethods::post('urlkey'));
 
-            if(!$this->checkUrlKey($urlKey)){
+            if(!$this->_checkUrlKey($urlKey)){
                 $errors['title'] = array('This title is already used');
             }
             
@@ -131,9 +118,9 @@ class Admin_Controller_CollectionMenu extends Controller
         if (RequestMethods::post('submitEditClmenu')) {
             $this->checkToken();
             $errors = array();
-            $urlKey = $this->createUrlKey(RequestMethods::post('urlkey'));
+            $urlKey = $this->_createUrlKey(RequestMethods::post('urlkey'));
             
-            if($clm->urlKey != $urlKey && !$this->checkUrlKey($urlKey)){
+            if($clm->urlKey != $urlKey && !$this->_checkUrlKey($urlKey)){
                 $errors['title'] = array('This title is already used');
             }
 

@@ -37,6 +37,15 @@
                     </span>
                 </p>
                 <p>
+                    <label>Rank<small>Max. 99</small></label>
+                    <span class="field">
+                        <input type="text" name="rank" class="longinput" value="{echo isset($news)? $news->rank: ""}"/>
+                        {if isset($errors["rank"])}
+                            <label class="error">{echo join("<br/>", $errors["rank"])}</label>
+                        {/if}
+                    </span>
+                </p>
+                <p>
                     <label>Expiration Date</label>
                     <span class="field">
                         <input type="text" name="expiration" class="longinput datepicker" 

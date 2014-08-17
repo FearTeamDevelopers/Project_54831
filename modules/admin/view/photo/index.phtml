@@ -7,70 +7,74 @@
     <div class="contenttitle radiusbottom0">
         <h2 class="image"><span>Photo List</span></h2>
     </div><!--contenttitle-->
-    
-    <form method="post" class="massActionForm" action="/admin/photo/massAction/">
-        <input type="hidden" name="tk" id="tk" value="{echo $token}" />
-        <table cellpadding="0" cellspacing="0" border="0" class="stdtable mediatable">
-            <colgroup>
-                <col class="con0" /> <col class="con1" />
-                <col class="con0" /> <col class="con1" />
-                <col class="con0" /> <col class="con1" />
-                <col class="con0" /> <col class="con1" />
-            </colgroup>
-            <thead>
-                <tr>
-                    <th class="head0 width50"><input type="checkbox" class="checkall" /></th>
-                    <td class="head1 width100">Thumb</td>
-                    <td class="head0">Name</td>
-                    <td class="head1">In Sections</td>
-                    <td class="head0">Size</td>
-                    <td class="head1">Resolution</td>
-                    <td class="head0">Created</td>
-                    <td class="head1">&nbsp;</td>
-                </tr>
-            </thead>
-            <tbody>
-                {if !empty($photos)}
-                    {foreach $photo in $photos}
-                        {if ($photo->active)}
-                            <tr class="rowActive">
-                        {/if} 
-                        {else}
-                            <tr>
-                        {/else}
-                            <td class="center">
-                                <input type="checkbox" name="photoids[]" value="{echo $photo->getId()}" />
-                            </td>
-                            <td class="center">
-                                <a href="{echo $photo->getPath()}" class="view">
-                                    <img src="{echo $photo->getThumbPath()}" alt="{echo $photo->getPhotoName()}" height="50px" />
-                                </a>
-                            </td>
-                            <td>{echo $photo->getPhotoName()}</td>
-                            <td>{echo $photo->getInSections()}</td>
-                            <td>{echo $photo->getFormatedSize()}</td>
-                            <td>{echo $photo->getWidth()} x {echo $photo->getHeight()}</td>
-                            <td>{echo $photo->getCreated()}</td>
-                            <td>
-                                <a href="/admin/photo/edit/{echo $photo->id}" class="btn btn3 btn_pencil" title="Edit"></a>
-                                {if $isAdmin}<a href="/admin/photo/delete/{echo $photo->id}" class="btn btn3 btn_trash" title="Delete"></a>{/if}
-                            </td>
-                        </tr>
-                    {/foreach}
-                {/if}
-            </tbody>
-        </table>
-        {if $isAdmin}
-        <div class="tableoptions">
-            Selected:
-            <select class="radius3" name="action">
-                <option value="activate">Activate</option>
-                <option value="deactivate">Deactivate</option>
-                <option value="delete">Delete</option>
-            </select> &nbsp;
-            <input class="radius3" type="submit" name="performPhotoAction" value="Execute"/>
-        </div><!--tableoptions-->
-        {/if}
-    </form>
+
+    <input type="hidden" name="tk" id="tk" value="{echo $token}" />
+
+    {if $isAdmin}
+    <div class="tableoptions">
+        <select class="radius3" name="selection">
+            <option value="1">Selected</option>
+            <option value="2">Current page</option>
+        </select>
+        <select class="radius3" name="action">
+            <option value="activate">Activate</option>
+            <option value="deactivate">Deactivate</option>
+            <option value="delete">Delete</option>
+        </select> &nbsp;
+        <a class="btn btn_document ajax-massaction" href="/admin/photo/massaction/"><span>Execute</span></a>
+    </div><!--tableoptions-->
+    {/if}
+
+    <table cellpadding="0" cellspacing="0" border="0" class="stdtable2">
+        <colgroup>
+            <col class="con0" /> <col class="con1" />
+            <col class="con0" /> <col class="con1" />
+            <col class="con0" /> <col class="con1" />
+            <col class="con0" /> <col class="con1" />
+            <col class="con0" /> <col class="con1" />
+        </colgroup>
+        <thead>
+            <tr>
+                <th class="head0 width50">ID</th>
+                <td class="head1 width100">Thumb</td>
+                <td class="head0">Name</td>
+                <td class="head1">In Sections</td>
+                <td class="head0">Size</td>
+                <td class="head1">Resolution</td>
+                <td class="head0">State</td>
+                <td class="head1 width50">Priority</td>
+                <td class="head0">Created</td>
+                <td class="head1">&nbsp;</td>
+            </tr>
+        </thead>
+        <tfoot>
+            <tr>
+                <th class="head0 width50">ID</th>
+                <td class="head1 width100">Thumb</td>
+                <td class="head0">Name</td>
+                <td class="head1">In Sections</td>
+                <td class="head0">Size</td>
+                <td class="head1">Resolution</td>
+                <td class="head0">State</td>
+                <td class="head1 width50">Priority</td>
+                <td class="head0">Created</td>
+                <td class="head1">&nbsp;</td>
+            </tr>
+        </tfoot>
+    </table>
+
+    {if $isAdmin}
+    <div class="tableoptions">
+        <select class="radius3" name="selection">
+            <option value="1">Selected</option>
+            <option value="2">Current page</option>
+        </select>
+        <select class="radius3" name="action">
+            <option value="activate">Activate</option>
+            <option value="deactivate">Deactivate</option>
+            <option value="delete">Delete</option>
+        </select> &nbsp;
+        <a class="btn btn_document ajax-massaction" href="/admin/photo/massaction/"><span>Execute</span></a>
+    </div><!--tableoptions-->
+    {/if}
 </div>
-<br class="clear-all"/><br />

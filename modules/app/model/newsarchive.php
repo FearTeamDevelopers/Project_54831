@@ -108,6 +108,16 @@ class App_Model_Newsarchive extends Model
     /**
      * @column
      * @readwrite
+     * @type tinyint
+     * 
+     * @validate numeric, max(2)
+     * @label rank
+     */
+    protected $_rank;
+    
+    /**
+     * @column
+     * @readwrite
      * @type datetime
      */
     protected $_created;

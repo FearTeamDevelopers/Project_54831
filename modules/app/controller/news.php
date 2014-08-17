@@ -83,8 +83,8 @@ class App_Controller_News extends Controller
         
         $news = App_Model_News::all(
                     array('active = ?' => true, 'expirationDate >= ?' => date('Y-m-d H:i:s')), 
-                    array('id', 'urlKey', 'author', 'title', 'shortBody', 'created'), 
-                    array('created' => 'DESC'), $npp, (int) $page);
+                    array('id', 'urlKey', 'author', 'title', 'shortBody', 'created', 'rank'), 
+                    array('rank' => 'asc','created' => 'DESC'), $npp, (int) $page);
 
         if ($news !== null) {
             foreach ($news as $_news) {

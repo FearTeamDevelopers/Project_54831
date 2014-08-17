@@ -291,6 +291,7 @@ button,input,select,textarea { font-size: 13px; font-family: Arial, Helvetica, s
 .widgetlist li a.upload { background-image: url(../images/icons/default/image.png); }
 
 /***** STANDARD TABLE *****/
+/***** STANDARD TABLE *****/
 .stdtable { width: 100%; color: #000; }
 .stdtable .con0 { background: #fcfcfc; }
 .stdtable .con1 { background: #f9f9f9; }
@@ -318,6 +319,34 @@ button,input,select,textarea { font-size: 13px; font-family: Arial, Helvetica, s
 .stdtable tbody tr.togglerow:hover td { background: #fff; }
 .stdtable tbody tr.hiderow { display: none; }
 .stdtable tbody tr td input[type=checkbox]{width: 20px;}
+
+.stdtable2 { width: 100%; color: #000; }
+.stdtable2 .con0 { background: #fcfcfc; }
+.stdtable2 .con1 { background: #f9f9f9; }
+.stdtable2 th, .stdtable2 td { line-height: 16px; vertical-align: middle; }
+.stdtable2 thead th, .stdtable2 thead td { padding: 5px 10px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; }
+.stdtable2 tfoot th, .stdtable2 tfoot td { padding: 5px 10px; border-right: 1px solid #ccc; border-bottom: 1px solid #ccc; }
+.stdtable2 thead th:first-child, .stdtable2 tfoot th:first-child,
+.stdtable2 thead td:first-child, .stdtable2 tfoot td:first-child { border-left: 1px solid #ddd; }
+.stdtable2 thead th.head0, .stdtable2 tfoot th.head0, .stdtable2 thead td.head0, .stdtable2 tfoot td.head0 { background-color: #ccc; }
+.stdtable2 thead th.head1, .stdtable2 tfoot th.head1, .stdtable2 thead td.head1, .stdtable2 tfoot td.head1 { background-color: #bbb; }
+.stdtable2 thead th.sorting, .stdtable2 thead td.sorting { 
+    background-image: url(../images/admin/sort_both.png); background-repeat: no-repeat; background-position: right 3px; }
+.stdtable2 thead th.sorting_asc, .stdtable2 thead td.sorting_asc { 
+    background-image: url(../images/admin/sort_asc.png); background-repeat: no-repeat; background-position: right 4px; }
+.stdtable2 thead th.sorting_desc, .stdtable2 thead td.sorting_desc  { 
+    background-image: url(../images/admin/sort_desc.png); background-repeat: no-repeat; background-position: right 4px; }
+.stdtable2 thead td { font-weight: bold; }
+.stdtable2 thead td.center { text-align: center; }
+.stdtable2 tbody tr td { padding: 8px 10px; border-right: 1px solid #eee; border-bottom: 1px solid #eee; }
+.stdtable2 tbody tr:last-child td { border-bottom: 1px solid #ccc; }
+.stdtable2 tbody tr td:first-child { border-left: 1px solid #ddd; }
+.stdtable2 tbody tr td:last-child { border-right: 1px solid #ddd; }
+.stdtable2 tbody tr:hover td, .stdtable2 tbody tr.selected td { background: #ddd; color: #333; }
+.stdtable2 tbody tr.togglerow td { background: #999; }
+.stdtable2 tbody tr.togglerow:hover td { background: #bbb; }
+.stdtable2 tbody tr.hiderow { display: none; }
+.stdtable2 tbody tr td input[type=checkbox]{width: 20px;}
 
 .tableoptions { background: #eee url(../images/admin/titlebg.png) repeat-x top left; border: 1px solid #ccc; border-top: 0; padding: 8px; }
 .tableoptions input[type=submit] { 
@@ -873,6 +902,31 @@ a.btn_table { background-position: -82px -480px; }
 .news-photos, .news-videos{height: 600px; overflow-y: auto; overflow-x: no-content;}
 .news-photo, .news-video{width: 160px; margin: 5px; border: 1px solid #ccc; display: block; float: left;}
 
+/****PRODUCTLIST LABEL********/
+.labelProduct{
+    color:white;
+    font-size:11px;
+    height:16px;
+    -webkit-box-shadow: inset 3px 4px 16px 0px rgba(255, 255, 255, 0.6);
+    -moz-box-shadow:    inset 3px 4px 16px 0px rgba(255, 255, 255, 0.6);
+    box-shadow:         inset 3px 4px 16px 0px rgba(255, 255, 255, 0.6);
+    padding:3px;
+    padding-left:5px;
+    padding-right:5px;
+    border-radius:3px;
+}
+.labelProductGreen{
+    background-color:green;
+}
+.labelProductBlue{
+    background-color:blue;
+}
+.labelProductGray{
+    background-color:gray;
+}
+.labelProductRed{
+    background-color:red;
+}
 
 @media screen and (max-width: 1024px) {
     .maincontent { margin-right: 260px; margin-left: 230px; }

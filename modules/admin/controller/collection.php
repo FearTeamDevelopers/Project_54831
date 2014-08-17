@@ -1,7 +1,6 @@
 <?php
 
 use Admin\Etc\Controller;
-use THCFrame\Filesystem\ImageManager;
 use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
 use THCFrame\Core\ArrayMethods;
@@ -52,6 +51,7 @@ class Admin_Controller_Collection extends Controller
 
         if (RequestMethods::post('submitAddCollection')) {
             $this->checkToken();
+            $cache = Registry::get('cache');
 
             $collection = new App_Model_Collection(array(
                 'menuId' => RequestMethods::post('show'),
@@ -69,6 +69,7 @@ class Admin_Controller_Collection extends Controller
 
                 Event::fire('admin.log', array('success', 'Collection id: ' . $id));
                 $view->successMessage('Collection has been successfully saved');
+                $cache->invalidate();
                 self::redirect('/admin/collection/');
             } else {
                 Event::fire('admin.log', array('fail'));
@@ -153,6 +154,7 @@ class Admin_Controller_Collection extends Controller
         
         if (RequestMethods::post('submitEditCollection')) {
             $this->checkToken();
+            $cache = Registry::get('cache');
 
             $collection->title = RequestMethods::post('title');
             $collection->menuId = RequestMethods::post('show');
@@ -169,6 +171,7 @@ class Admin_Controller_Collection extends Controller
 
                 Event::fire('admin.log', array('success', 'Collection id: ' . $id));
                 $view->successMessage('All changes were successfully saved');
+                $cache->invalidate();
                 self::redirect('/admin/collection/');
             } else {
                 Event::fire('admin.log', array('fail', 'Collection id: ' . $id));
@@ -206,6 +209,7 @@ class Admin_Controller_Collection extends Controller
 
         if (RequestMethods::post('submitDeleteCollection')) {
             $this->checkToken();
+            $cache = Registry::get('cache');
 
             if ($collection->delete()) {
                 if (RequestMethods::post('action') == 1) {
@@ -226,6 +230,7 @@ class Admin_Controller_Collection extends Controller
 
                 Event::fire('admin.log', array('success', 'Collection id: ' . $id));
                 $view->successMessage('Collection has been deleted');
+                $cache->invalidate();
                 self::redirect('/admin/collection/');
             } else {
                 Event::fire('admin.log', array('fail', 'Collection id: ' . $id));
@@ -245,6 +250,7 @@ class Admin_Controller_Collection extends Controller
     public function addPhoto($id)
     {
         $view = $this->getActionView();
+        $cache = Registry::get('cache');
 
         $collection = App_Model_Collection::first(
                         array('id = ?' => (int) $id, 'active = ?' => true), array('id', 'title')
@@ -304,6 +310,7 @@ class Admin_Controller_Collection extends Controller
 
                 Event::fire('admin.log', array('success', 'Photo id: ' . $photoId . ' in collection ' . $collection->getId()));
                 $view->successMessage('Photo has been successfully uploaded');
+                $cache->invalidate();
                 self::redirect('/admin/collection/detail/' . $id);
             } else {
                 Event::fire('admin.log', array('fail', 'Collection id: ' . $collection->getId()));
@@ -362,6 +369,7 @@ class Admin_Controller_Collection extends Controller
 
                 if (empty($errors)) {
                     $view->successMessage('Photos have been successfully uploaded');
+                    $cache->invalidate();
                     self::redirect('/admin/collection/detail/' . $id);
                 } else {
                     $view->set('errors', $errors);
@@ -380,24 +388,26 @@ class Admin_Controller_Collection extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
-        
-        $photo = App_Model_Photo::first(
-                        array('id = ?' => (int)$id), 
-                        array('id', 'path', 'thumbPath')
-        );
 
-        if (null === $photo) {
-            echo 'Photo not found';
-        } else {
-            if ($photo->delete()) {
-                @unlink($photo->getUnlinkPath());
-                @unlink($photo->getUnlinkThumbPath());
-                Event::fire('admin.log', array('success', 'Photo id: ' . $id));
-                echo 'ok';
+        if (!$this->checkTokenAjax()) {
+            $photo = App_Model_Photo::first(
+                            array('id = ?' => (int) $id), 
+                            array('id', 'path', 'thumbPath')
+            );
+
+            if (null === $photo) {
+                echo 'Photo not found';
             } else {
-                Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
-                echo 'Unknown error eccured';
+                if (@unlink($photo->getUnlinkPath()) && @unlink($photo->getUnlinkThumbPath()) && $photo->delete()) {
+                    Event::fire('admin.log', array('success', 'Photo id: ' . $id));
+                    echo 'ok';
+                } else {
+                    Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
+                    echo 'Unknown error eccured';
+                }
             }
+        } else {
+            echo 'Security token is not valid';
         }
     }
 

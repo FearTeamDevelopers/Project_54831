@@ -4,30 +4,20 @@ use Admin\Etc\Controller;
 use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
 use THCFrame\Core\StringMethods;
+use THCFrame\Registry\Registry;
 
+/**
+ * 
+ */
 class Admin_Controller_News extends Controller
 {
-    
-    /**
-     * 
-     * @param type $string
-     * @return type
-     */
-    private function createUrlKey($string)
-    {
-        $string = StringMethods::removeDiacriticalMarks($string);
-        $string = str_replace(array('.', ',', '_', '(', ')', ' '), '-', $string);
-        $string = trim($string);
-        $string = trim($string, '-');
-        return strtolower($string);
-    }
     
     /**
      * 
      * @param type $key
      * @return boolean
      */
-    private function checkUrlKey($key)
+    private function _checkUrlKey($key)
     {
         $status = App_Model_News::first(array('urlKey = ?' => $key));
 
@@ -105,9 +95,9 @@ class Admin_Controller_News extends Controller
         if (RequestMethods::post('submitAddNews')) {
             $this->checkToken();
             $errors = array();
-            $urlKey = $this->createUrlKey(RequestMethods::post('urlkey'));
+            $urlKey = $this->_createUrlKey(RequestMethods::post('urlkey'));
             
-            if(!$this->checkUrlKey($urlKey)){
+            if(!$this->_checkUrlKey($urlKey)){
                 $errors['title'] = array('This title is already used');
             }
 
@@ -118,7 +108,8 @@ class Admin_Controller_News extends Controller
                 'shortBody' => RequestMethods::post('shorttext'),
                 'rssFeedBody' => RequestMethods::post('feedtext', ''),
                 'body' => RequestMethods::post('text'),
-                'expirationDate' => RequestMethods::post('expiration')
+                'expirationDate' => RequestMethods::post('expiration'),
+                'rank' => RequestMethods::post('rank', 1)
             ));
 
             if (empty($errors) && $news->validate()) {
@@ -159,9 +150,9 @@ class Admin_Controller_News extends Controller
         if (RequestMethods::post('submitEditNews')) {
             $this->checkToken();
             $errors = array();
-            $urlKey = $this->createUrlKey(RequestMethods::post('urlkey'));
+            $urlKey = $this->_createUrlKey(RequestMethods::post('urlkey'));
 
-            if($news->urlKey != $urlKey && !$this->checkUrlKey($urlKey)){
+            if($news->urlKey != $urlKey && !$this->_checkUrlKey($urlKey)){
                 $errors['title'] = array('This title is already used');
             }
             
@@ -172,6 +163,7 @@ class Admin_Controller_News extends Controller
             $news->body = RequestMethods::post('text');
             $news->shortBody = RequestMethods::post('shorttext');
             $news->rssFeedBody = RequestMethods::post('feedtext', '');
+            $news->rank = RequestMethods::post('rank', 1);
             $news->active = RequestMethods::post('active');
 
             if (empty($errors) && $news->validate()) {

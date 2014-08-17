@@ -11,6 +11,11 @@ class App_Model_Section extends Model
 {
 
     /**
+     * @readwrite
+     */
+    protected $_alias = 'se';
+    
+    /**
      * @column
      * @readwrite
      * @primary

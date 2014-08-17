@@ -25,7 +25,7 @@
                 <p>
                     <label>Author</label>
                     <span class="field">
-                        <input type="text" name="author" class="longinput" value="{echo $authUser->getWholeName()}"/>
+                        <input type="text" name="author" class="longinput" value="{echo $news->author}"/>
                     </span>
                 </p>
                 <p>
@@ -34,6 +34,15 @@
                         <input type="text" name="urlkey" class="longinput" value="{echo $news->urlKey}" />
                         {if isset($errors["urlKey"])}
                             <label class="error">{echo join("<br/>", $errors["urlKey"])}</label>
+                        {/if}
+                    </span>
+                </p>
+                <p>
+                    <label>Rank<small>Max. 99</small></label>
+                    <span class="field">
+                        <input type="text" name="rank" class="longinput" value="{echo $news->rank}"/>
+                        {if isset($errors["rank"])}
+                            <label class="error">{echo join("<br/>", $errors["rank"])}</label>
                         {/if}
                     </span>
                 </p>

@@ -2,33 +2,20 @@
 
 use Admin\Etc\Controller;
 use THCFrame\Request\RequestMethods;
+use THCFrame\Registry\Registry;
 
 /**
  * 
  */
 class Admin_Controller_Section extends Controller
 {
-
-    /**
-     * 
-     * @param type $string
-     * @return type
-     */
-    private function createUrlKey($string)
-    {
-        $string = StringMethods::removeDiacriticalMarks($string);
-        $string = str_replace(array('.', ',', '_', '(', ')', ' '), '-', $string);
-        $string = trim($string);
-        $string = trim($string, '-');
-        return strtolower($string);
-    }
     
     /**
      * 
      * @param type $key
      * @return boolean
      */
-    private function checkUrlKey($key)
+    private function _checkUrlKey($key)
     {
         $status = App_Model_Section::first(array('urlKey = ?' => $key));
 
@@ -67,9 +54,9 @@ class Admin_Controller_Section extends Controller
         if (RequestMethods::post('submitAddSection')) {
             $this->checkToken();
             $errors = array();
-            $urlKey = $this->createUrlKey(RequestMethods::post('title'));
+            $urlKey = $this->_createUrlKey(RequestMethods::post('title'));
 
-            if(!$this->checkUrlKey($urlKey)){
+            if(!$this->_checkUrlKey($urlKey)){
                 $errors['title'] = array('This title is already used');
             }
             
@@ -119,9 +106,9 @@ class Admin_Controller_Section extends Controller
         if (RequestMethods::post('submitEditSection')) {
             $this->checkToken();
             $errors = array();
-            $urlKey = $this->createUrlKey(RequestMethods::post('title'));
+            $urlKey = $this->_createUrlKey(RequestMethods::post('title'));
             
-            if($section->urlKey != $urlKey && !$this->checkUrlKey($urlKey)){
+            if($section->urlKey != $urlKey && !$this->_checkUrlKey($urlKey)){
                 $errors['title'] = array('This title is already used');
             }
 

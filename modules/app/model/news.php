@@ -104,6 +104,16 @@ class App_Model_News extends Model
      * @label expiration date
      */
     protected $_expirationDate;
+    
+    /**
+     * @column
+     * @readwrite
+     * @type tinyint
+     * 
+     * @validate numeric, max(2)
+     * @label rank
+     */
+    protected $_rank;
 
     /**
      * @column

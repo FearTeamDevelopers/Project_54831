@@ -3,6 +3,7 @@
 use Admin\Etc\Controller;
 use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
+use THCFrame\Registry\Registry;
 
 /**
  * 
@@ -35,6 +36,7 @@ class Admin_Controller_Announcement extends Controller
 
         if (RequestMethods::post('submitAddAnc')) {
             $this->checkToken();
+            $cache = Registry::get('cache');
             
             $announc = new App_Model_Announcement(array(
                 'title' => RequestMethods::post('title'),
@@ -49,6 +51,7 @@ class Admin_Controller_Announcement extends Controller
 
                 Event::fire('admin.log', array('success', 'Announcement id: ' . $id));
                 $view->successMessage('Announcement has been successfully created');
+                $cache->invalidate();
                 self::redirect('/admin/announcement/');
             } else {
                 Event::fire('admin.log', array('fail'));
@@ -81,6 +84,7 @@ class Admin_Controller_Announcement extends Controller
 
         if (RequestMethods::post('submitEditAnc')) {
             $this->checkToken();
+            $cache = Registry::get('cache');
             
             $announc->title = RequestMethods::post('title');
             $announc->body = RequestMethods::post('text');
@@ -94,6 +98,7 @@ class Admin_Controller_Announcement extends Controller
 
                 Event::fire('admin.log', array('success', 'Announcement id: ' . $id));
                 $view->successMessage('All changes were successfully saved');
+                $cache->invalidate();
                 self::redirect('/admin/announcement/');
             } else {
                 Event::fire('admin.log', array('fail', 'Announcement id: ' . $id));
@@ -113,23 +118,27 @@ class Admin_Controller_Announcement extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
-        $this->checkToken();
 
-        $announc = App_Model_Announcement::first(
-                        array('id = ?' => (int) $id),
-                        array('id')
-        );
+        if (!$this->checkTokenAjax()) {
+            $cache = Registry::get('cache');
+            $announc = App_Model_Announcement::first(
+                            array('id = ?' => (int) $id), array('id')
+            );
 
-        if (NULL === $announc) {
-            echo 'Announcement not found';
-        } else {
-            if ($announc->delete()) {
-                Event::fire('admin.log', array('success', 'Announcement id: ' . $id));
-                echo 'ok';
+            if (NULL === $announc) {
+                echo 'Announcement not found';
             } else {
-                Event::fire('admin.log', array('fail', 'Announcement id: ' . $id));
-                echo 'Unknown error eccured';
+                if ($announc->delete()) {
+                    Event::fire('admin.log', array('success', 'Announcement id: ' . $id));
+                    $cache->invalidate();
+                    echo 'ok';
+                } else {
+                    Event::fire('admin.log', array('fail', 'Announcement id: ' . $id));
+                    echo 'Unknown error eccured';
+                }
             }
+        } else {
+            echo 'Security token is not valid';
         }
     }
 

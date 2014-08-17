@@ -4,7 +4,7 @@ jQuery(document).ready(function() {
 
     jQuery(window).load(function() {
         jQuery('#loader, .loader').hide();
-        
+
         jQuery.post('/admin/system/showprofiler/', function(msg) {
             jQuery('body').append(msg);
         });
@@ -18,12 +18,6 @@ jQuery(document).ready(function() {
         changeYear: true,
         dateFormat: 'yy-mm-dd',
         firstDay: 1
-    });
-
-    jQuery('.stdtable').dataTable({
-        'aaSorting': [],
-        'iDisplayLength': 25,
-        'sPaginationType': 'full_numbers'
     });
 
     jQuery('button.dialog, a.dialog').click(function() {
@@ -43,6 +37,127 @@ jQuery(document).ready(function() {
                 }
             }
         });
+        return false;
+    });
+
+// DATA TABLES
+    jQuery.fn.dataTableExt.oApi.fnPagingInfo = function(oSettings)
+    {
+        return {
+            "iStart": oSettings._iDisplayStart,
+            "iEnd": oSettings.fnDisplayEnd(),
+            "iLength": oSettings._iDisplayLength,
+            "iTotal": oSettings.fnRecordsTotal(),
+            "iFilteredTotal": oSettings.fnRecordsDisplay(),
+            "iPage": Math.ceil(oSettings._iDisplayStart / oSettings._iDisplayLength),
+            "iTotalPages": Math.ceil(oSettings.fnRecordsDisplay() / oSettings._iDisplayLength)
+        };
+    };
+
+
+    jQuery('.stdtable').DataTable({
+        'aaSorting': [],
+        'iDisplayLength': 25,
+        'sPaginationType': 'full_numbers'
+    });
+
+    var selected = [];
+
+    var table = jQuery('.stdtable2').DataTable({
+        'aaSorting': [],
+        'iDisplayLength': 50,
+        'sPaginationType': 'full_numbers',
+        "serverSide": true,
+        "bProcessing": true,
+        "sServerMethod": "POST",
+        "sAjaxDataProp": "data",
+        "sAjaxSource": "/admin/photo/load/",
+        "fnServerParams": function(aoData) {
+            aoData.push({"name": "page", "value": this.fnPagingInfo().iPage});
+        },
+        "rowCallback": function(row, data, displayIndex) {
+            if (jQuery.inArray(data[0], selected) !== -1) {
+                jQuery(row).addClass('togglerow');
+            }
+        },
+        "aoColumns": [
+            null,
+            {"bSortable": false},
+            null,
+            null,
+            null,
+            null,
+            {"bSortable": false},
+            null,
+            null,
+            {"bSortable": false}
+        ]
+    });
+
+    jQuery('.stdtable2 tbody').on('click', 'tr', function() {
+        var id = jQuery(this).find('td:first').text();
+        var index = jQuery.inArray(id, selected);
+
+        if (index === -1) {
+            selected.push(id);
+        } else {
+            selected.splice(index, 1);
+        }
+
+        jQuery(this).toggleClass('togglerow');
+    });
+
+    jQuery('.tableoptions select').change(function() {
+        var val = jQuery(this).children('option:selected').val();
+        var name = jQuery(this).attr('name');
+
+        jQuery('.tableoptions select[name=' + name + ']').val(val);
+
+        if (val == 2) {
+            var tr = jQuery('.stdtable2 tbody tr');
+
+            tr.each(function() {
+                var id = jQuery(this).find('td:first').text();
+                var index = jQuery.inArray(id, selected);
+
+                if (index === -1) {
+                    selected.push(id);
+                } 
+                jQuery(this).addClass('togglerow');
+            });
+        } else if (val == 1) {
+            jQuery('.stdtable2 tbody tr.togglerow').removeClass('togglerow');
+            selected = [];
+        }
+    });
+
+    jQuery('a.ajax-massaction').click(function(event) {
+        event.preventDefault();
+
+        var url = jQuery(this).attr('href');
+        var action = jQuery('.tableoptions select[name=action]').children('option:selected').val();
+        var tk = jQuery('#tk').val();
+
+        jQuery.post(url, {tk: tk, action: action, photoids: selected}, function(msg) {
+            jQuery('#dialog p').text(msg);
+
+            jQuery('#dialog').dialog({
+                title: 'Výsledek',
+                width: 600,
+                modal: true,
+                position: {my: 'center', at: 'top', of: window},
+                buttons: {
+                    Close: function() {
+                        jQuery(this).dialog('close');
+                        jQuery('.stdtable2 tbody tr.togglerow').removeClass('togglerow');
+                        jQuery('.tableoptions select[name=selection]').val('1');
+                        selected = [];
+                        table.ajax.reload();
+                    }
+                }
+            });
+        });
+
         return false;
     });
 
@@ -609,12 +724,12 @@ jQuery(document).ready(function() {
 
     //delete individual row
     jQuery('.stdtable a.deleteRow').click(function() {
-        var tk = jQuery('#tk').val();
         var c = confirm('Continue delete?');
         var parentTr = jQuery(this).parents('tr');
 
         if (c) {
             var url = jQuery(this).attr('href');
+            var tk = jQuery('#tk').val();
 
             jQuery.post(url, {tk: tk}, function(msg) {
                 if (msg == 'ok') {
@@ -643,29 +758,6 @@ jQuery(document).ready(function() {
             return false;
         } else {
             return true;
-        }
-    });
-
-    //for checkbox
-    jQuery('input[type=checkbox]').each(function() {
-        var t = jQuery(this);
-        t.wrap('<span class="checkbox"></span>');
-        t.click(function() {
-            if (jQuery(this).is(':checked')) {
-                t.attr('checked', true);
-                t.parent().addClass('checked');
-            } else {
-                t.attr('checked', false);
-                t.parent().removeClass('checked');
-            }
-        });
-
-        if (jQuery(this).is(':checked')) {
-            t.attr('checked', true);
-            t.parent().addClass('checked');
-        } else {
-            t.attr('checked', false);
-            t.parent().removeClass('checked');
         }
     });
 

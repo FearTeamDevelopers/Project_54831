@@ -3,6 +3,7 @@
 use Admin\Etc\Controller;
 use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
+use THCFrame\Registry\Registry;
 
 /**
  * 
@@ -37,6 +38,7 @@ class Admin_Controller_Content extends Controller
 
         if (RequestMethods::post('submitAddContent')) {
             $this->checkToken();
+            $cache = Registry::get('cache');
 
             $content = new App_Model_PageContent(array(
                 'sectionId' => RequestMethods::post('section'),
@@ -50,6 +52,7 @@ class Admin_Controller_Content extends Controller
 
                 Event::fire('admin.log', array('success', 'Content id: ' . $id));
                 $view->successMessage('Content has been successfully saved');
+                $cache->invalidate();
                 self::redirect('/admin/content/');
             } else {
                 Event::fire('admin.log', array('fail'));
@@ -81,6 +84,7 @@ class Admin_Controller_Content extends Controller
 
         if (RequestMethods::post('submitEditContent')) {
             $this->checkToken();
+            $cache = Registry::get('cache');
             
             $content->sectionId = RequestMethods::post('section');
             $content->pageName = RequestMethods::post('page', '');
@@ -93,6 +97,7 @@ class Admin_Controller_Content extends Controller
 
                 Event::fire('admin.log', array('success', 'Content id: ' . $id));
                 $view->successMessage('All changes were successfully saved');
+                $cache->invalidate();
                 self::redirect('/admin/content/');
             } else {
                 Event::fire('admin.log', array('fail', 'Content id: ' . $id));
