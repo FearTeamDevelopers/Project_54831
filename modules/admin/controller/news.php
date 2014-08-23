@@ -90,10 +90,12 @@ class Admin_Controller_News extends Controller
         $videos = $this->_getVideos();
 
         $view->set('photos', $photos)
-                ->set('videos', $videos);
+                ->set('videos', $videos)
+                ->set('submstoken', $this->mutliSubmissionProtectionToken());
         
         if (RequestMethods::post('submitAddNews')) {
             $this->checkToken();
+            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
             $errors = array();
             $urlKey = $this->_createUrlKey(RequestMethods::post('urlkey'));
             
@@ -109,7 +111,10 @@ class Admin_Controller_News extends Controller
                 'rssFeedBody' => RequestMethods::post('feedtext', ''),
                 'body' => RequestMethods::post('text'),
                 'expirationDate' => RequestMethods::post('expiration'),
-                'rank' => RequestMethods::post('rank', 1)
+                'rank' => RequestMethods::post('rank', 1),
+                'metaTitle' => RequestMethods::post('metatitle', RequestMethods::post('title')),
+                'metaDescription' => RequestMethods::post('metadescription', RequestMethods::post('shorttext')),
+                'metaImage' => RequestMethods::post('metaimage', '')
             ));
 
             if (empty($errors) && $news->validate()) {
@@ -165,6 +170,9 @@ class Admin_Controller_News extends Controller
             $news->rssFeedBody = RequestMethods::post('feedtext', '');
             $news->rank = RequestMethods::post('rank', 1);
             $news->active = RequestMethods::post('active');
+            $news->metaTitle = RequestMethods::post('metatitle', RequestMethods::post('title'));
+            $news->metaDescription = RequestMethods::post('metadescription', RequestMethods::post('shorttext'));
+            $news->metaImage = RequestMethods::post('metaimage', '');
 
             if (empty($errors) && $news->validate()) {
                 $news->save();

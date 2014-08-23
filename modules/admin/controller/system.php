@@ -39,7 +39,7 @@ class Admin_Controller_System extends Controller
         $view = $this->getActionView();
 
         if (RequestMethods::post('clearCache')) {
-            Event::fire('admin.log');
+            Event::fire('admin.log', array('success'));
             $cache = Registry::get('cache');
             $cache->clearCache();
             $view->successMessage('Cache has been successfully cleared');
@@ -111,7 +111,6 @@ class Admin_Controller_System extends Controller
         $view = $this->getActionView();
 
         if (RequestMethods::post('archivateNews')) {
-
             $err = false;
             $errCount = 0;
 
@@ -131,11 +130,15 @@ class Admin_Controller_System extends Controller
                     'title' => $exp->getTitle(),
                     'shortBody' => $exp->getShortBody(),
                     'body' => $exp->getBody(),
-                    'expirationDate' => $exp->getExpirationDate()
+                    'rank' => $exp->getRank(),
+                    'expirationDate' => $exp->getExpirationDate(),
+                    'rssFeedBody' => $exp->getRssFeedBody()
                 ));
 
                 if ($archNews->validate()) {
                     $archNews->save();
+                    
+                    $exp->delete();
                 } else {
                     $err = true;
                     $errCount += 1;
@@ -143,7 +146,7 @@ class Admin_Controller_System extends Controller
 
                 unset($archNews);
             }
-
+            
             if ($err) {
                 Event::fire('admin.log', array('fail', 'Error count: ' . $errCount));
                 $view->errorMessage('An error occured while archiving expired news');

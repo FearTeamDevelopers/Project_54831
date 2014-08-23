@@ -806,7 +806,7 @@ a.btn_list2 { background-position: -47px -480px; }
 a.btn_table { background-position: -82px -480px; }
 
 .stdbtn { 
-    font-weight: bold; padding: 7px 10px; border: 1px solid #ccc; background: #eee url(../images/admin/buttons.png) repeat-x top left; color: #333; 
+    font-weight: bold; padding: 5px 8px; border: 1px solid #ccc; background: #eee url(../images/admin/buttons.png) repeat-x top left; color: #333; 
     -moz-border-radius: 2px; -webkit-border-radius: 2px; border-radius: 2px; cursor: pointer;
 }
 .stdbtn:hover { text-decoration: none; }

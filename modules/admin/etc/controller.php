@@ -17,7 +17,7 @@ class Controller extends BaseController
 {
 
     private $_security;
-    
+
     /**
      * 
      * @param type $string
@@ -129,7 +129,7 @@ class Controller extends BaseController
     public function __construct($options = array())
     {
         parent::__construct($options);
-        
+
         $this->_security = Registry::get('security');
 
         // schedule disconnect from database 
@@ -137,6 +137,41 @@ class Controller extends BaseController
             $database = Registry::get('database');
             $database->disconnect();
         });
+    }
+
+    /**
+     * 
+     */
+    public function mutliSubmissionProtectionToken()
+    {
+        $session = Registry::get('session');
+        $token = $session->get('submissionprotection');
+
+        if ($token === null) {
+            $token = md5(microtime());
+            $session->set('submissionprotection', $token);
+        }
+
+        return $token;
+    }
+
+    /**
+     * 
+     * @param type $token
+     */
+    public function checkMutliSubmissionProtectionToken($token)
+    {
+        $session = Registry::get('session');
+        $view = $this->getActionView();
+        $sessionToken = $session->get('submissionprotection');
+
+        if ($token == $sessionToken) {
+            $session->erase('submissionprotection');
+            return;
+        } else {
+            $view->errorMessage('Multiple form submission protection');
+            self::redirect('/admin/');
+        }
     }
 
     /**

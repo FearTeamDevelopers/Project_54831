@@ -431,11 +431,7 @@ class Query extends Base
      */
     public function join($join, $on, $alias = null, $fields = array('*'))
     {
-        if (empty($join)) {
-            throw new Exception\Argument('Invalid argument');
-        }
-
-        if (empty($on)) {
+        if (empty($join) || empty($on)) {
             throw new Exception\Argument('Invalid argument');
         }
 
@@ -450,6 +446,56 @@ class Query extends Base
         return $this;
     }
 
+    /**
+     * 
+     * @param type $join
+     * @param type $on
+     * @param type $fields
+     * @return \THCFrame\Database\Query
+     * @throws Exception\Argument
+     */
+    public function leftjoin($join, $on, $alias = null, $fields = array('*'))
+    {
+        if (empty($join) || empty($on)) {
+            throw new Exception\Argument('Invalid argument');
+        }
+
+        if (NULL !== $alias) {
+            $this->_fields += array($alias => $fields);
+            $this->_join[] = "LEFT JOIN {$join} {$alias} ON {$on}";
+        } else {
+            $this->_fields += array($join => $fields);
+            $this->_join[] = "LEFT JOIN {$join} ON {$on}";
+        }
+
+        return $this;
+    }
+
+    /**
+     * 
+     * @param type $join
+     * @param type $on
+     * @param type $fields
+     * @return \THCFrame\Database\Query
+     * @throws Exception\Argument
+     */
+    public function rightjoin($join, $on, $alias = null, $fields = array('*'))
+    {
+        if (empty($join) || empty($on)) {
+            throw new Exception\Argument('Invalid argument');
+        }
+
+        if (NULL !== $alias) {
+            $this->_fields += array($alias => $fields);
+            $this->_join[] = "RIGHT JOIN {$join} {$alias} ON {$on}";
+        } else {
+            $this->_fields += array($join => $fields);
+            $this->_join[] = "RIGHT JOIN {$join} ON {$on}";
+        }
+
+        return $this;
+    }
+    
     /**
      * 
      * @param type $limit

@@ -56,10 +56,12 @@ class Admin_Controller_Video extends Controller
                         ), array('id', 'urlKey', 'title')
         );
         
-        $view->set('sections', $sections);
+        $view->set('sections', $sections)
+                ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddVideo')) {
             $this->checkToken();
+            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
             $path = str_replace('watch?v=', 'embed/', RequestMethods::post('path'));
             
             $video = new App_Model_Video(array(

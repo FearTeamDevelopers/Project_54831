@@ -58,7 +58,7 @@ a:hover{color: #ccc;}
 #temptopdiv{margin-top: 40%;}
 
 #news,#bio,#design,#styling,#provas,
-#contact,#portfolio,#announcement,
+#contact,#portfolio,
 #collection, #partners,#news-detail{
     position: absolute;
     top: 55px;
@@ -80,8 +80,13 @@ a:hover{color: #ccc;}
 
 #announcement{
     position: fixed;
-    right: 10%; bottom: 6%;
-    width: 700px;
+    right: 7%; bottom: 30%;
+    width: 600px;
+    padding: 10px;
+}
+#announcement .close-announcement{
+    position: relative;
+    left: 90%; top: 1px;
 }
 
 #collection{
@@ -222,9 +227,7 @@ a:hover{color: #ccc;}
 a.close {position: inherit; top:5px; left: 90%;}
 
 /* --------- pagination --------------- */
-.paginationCont{
-    padding: 10px 25px 25px; 
-}
+.paginationCont{padding: 10px 25px 25px;}
 
 .pagination { list-style: none; overflow: hidden;}
 .pagination li { display: inline-block; float: left; margin-right: 5px; }
@@ -250,7 +253,7 @@ a.close {position: inherit; top:5px; left: 90%;}
     #temptopdiv{margin-top: 55%;}
 
     #news,#bio,#design,#styling,#provas,
-    #contact,#portfolio,#announcement,
+    #contact,#portfolio,
     #collection, #partners,#news-detail{
         position: absolute;
         top: 55px; left: 5%;
@@ -261,6 +264,7 @@ a.close {position: inherit; top:5px; left: 90%;}
         padding: 10px;
     }
 
+    #announcement{display: none;}
     iframe{width: 380px; height: 214px;}
 
     #navi{
@@ -299,7 +303,7 @@ a.close {position: inherit; top:5px; left: 90%;}
     iframe{width: 380px; height: 214px;}
 
     #news,#bio,#design,#styling,#provas,
-    #contact,#portfolio,#announcement,
+    #contact,#portfolio,
     #collection, #partners,#news-detail{
         position: absolute;
         top: 55px;
@@ -310,7 +314,7 @@ a.close {position: inherit; top:5px; left: 90%;}
         padding: 5px;
     }
 
-    #announcement{position: fixed;bottom: 4%;}
+    #announcement{display: none;}
     #collection, #portfolio{text-align: center;}
 
     #navi{

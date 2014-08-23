@@ -47,10 +47,12 @@ class Admin_Controller_Collection extends Controller
                         array('id', 'title')
         );
         
-        $view->set('menu', $menu);
+        $view->set('menu', $menu)
+                ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddCollection')) {
             $this->checkToken();
+            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
             $cache = Registry::get('cache');
 
             $collection = new App_Model_Collection(array(
@@ -107,13 +109,17 @@ class Admin_Controller_Collection extends Controller
             $query = App_Model_Photo::getQuery(array('ph.*'))
                     ->join('tb_collectionphoto', 'clp.photoId = ph.id', 'clp', 
                             array('clp.collectionId'))
-                    ->where('clp.collectionId = ?', $id);
+                    ->where('clp.collectionId = ?', $id)
+                    ->order('ph.priority', 'desc')
+                    ->order('ph.created', 'desc');
             $collectionPhotos = App_Model_Photo::initialize($query);
 
             $videoQuery = App_Model_Video::getQuery(array('vi.*'))
                     ->join('tb_collectionvideo', 'clv.videoId = vi.id', 'clv', 
                             array('clv.collectionId'))
-                    ->where('clv.collectionId = ?', $id);
+                    ->where('clv.collectionId = ?', $id)
+                    ->order('vi.priority', 'desc')
+                    ->order('vi.created', 'desc');
             $collectionVideos = App_Model_Video::initialize($videoQuery);
 
             $view->set('collection', $collection)
@@ -261,7 +267,8 @@ class Admin_Controller_Collection extends Controller
             self::redirect('/admin/collection/');
         }
 
-        $view->set('collection', $collection);
+        $view->set('collection', $collection)
+                ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         $fileManager = new FileManager(array(
             'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
@@ -273,6 +280,7 @@ class Admin_Controller_Collection extends Controller
 
         if (RequestMethods::post('submitAddPhoto')) {
             $this->checkToken();
+            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
             $errors = array();
 
             try {

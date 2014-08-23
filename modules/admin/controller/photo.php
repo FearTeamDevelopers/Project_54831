@@ -36,7 +36,8 @@ class Admin_Controller_Photo extends Controller
                         ), array('id', 'urlKey', 'title')
         );
 
-        $view->set('sections', $sections);
+        $view->set('sections', $sections)
+                ->set('submstoken', $this->mutliSubmissionProtectionToken());
         
         $fileManager = new FileManager(array(
             'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
@@ -48,6 +49,7 @@ class Admin_Controller_Photo extends Controller
 
         if (RequestMethods::post('submitAddPhoto')) {
             $this->checkToken();
+            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
             $errors = array();
             
             try {
@@ -175,6 +177,7 @@ class Admin_Controller_Photo extends Controller
     {
         $view = $this->getActionView();
         $errors = array();
+        $collectionPhoto = false;
 
         $sections = App_Model_Section::all(
                         array(
@@ -183,63 +186,81 @@ class Admin_Controller_Photo extends Controller
                         ), array('id', 'urlKey', 'title')
         );
 
-        $photo = App_Model_Photo::first(array('id = ?' => (int)$id));
+        $photo = App_Model_Photo::first(array('id = ?' => (int) $id));
 
         if (NULL === $photo) {
             $view->errorMessage('Photo not found');
             self::redirect('/admin/photo/');
         }
 
-        $photoSectionQuery = App_Model_PhotoSection::getQuery(array('phs.photoId', 'phs.sectionId'))
+        $photoSectionQuery = App_Model_PhotoSection::getQuery(
+                        array('phs.photoId', 'phs.sectionId'))
                 ->join('tb_section', 'phs.sectionId = s.id', 's', 
                         array('s.urlKey' => 'secUrlKey', 's.title' => 'secTitle'))
                 ->where('phs.photoId = ?', $photo->id);
         $photoSections = App_Model_PhotoSection::initialize($photoSectionQuery);
 
-        foreach ($photoSections as $section) {
-            $sectionArr[] = $section->secTitle;
+        if ($photoSections !== null) {
+            foreach ($photoSections as $section) {
+                $sectionArr[] = $section->secTitle;
+            }
+
+            $photo->inSections = $sectionArr;
+        } else {
+            $collectionPhoto = true;
         }
 
-        $photo->inSections = $sectionArr;
-        
         $view->set('photo', $photo)
                 ->set('sections', $sections);
 
         if (RequestMethods::post('submitEditPhoto')) {
             $this->checkToken();
-            
+
             $photo->description = RequestMethods::post('description', '');
             $photo->category = RequestMethods::post('category', '');
             $photo->priority = RequestMethods::post('priority', 0);
             $photo->active = RequestMethods::post('active');
 
-            $sectionsIds = (array) RequestMethods::post('sections');
+            if ($collectionPhoto) {
+                if ($photo->validate()) {
+                    $photo->save();
 
-            if (empty($sectionsIds[0])) {
-                $errors['sections'] = array('At least one section has to be selected');
-            }
+                    Event::fire('admin.log', array('success', 'Photo id: ' . $id));
+                    $view->successMessage('All changes were successfully saved');
+                    self::redirect('/admin/photo/');
+                } else {
+                    Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
+                    $view->set('errors', $errors + $photo->getErrors());
+                }
+            } else {
+                $sectionsIds = (array) RequestMethods::post('sections');
 
-            if (empty($errors) && $photo->validate()) {
-                $photo->save();
-
-                $status = App_Model_PhotoSection::deleteAll(array('photoId = ?' => $id));
-                if ($status != -1) {
-                    foreach ($sectionsIds as $sectionId) {
-                        $photoSection = new App_Model_PhotoSection(array(
-                            'photoId' => $id,
-                            'sectionId' => (int) $sectionId
-                        ));
-
-                        $photoSection->save();
-                    }
+                if (empty($sectionsIds[0])) {
+                    $errors['sections'] = array('At least one section has to be selected');
                 }
 
-                Event::fire('admin.log', array('success', 'Photo id: ' . $id));
-                $view->successMessage('All changes were successfully saved');
-                self::redirect('/admin/photo/');
-            } else {
-                Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
-                $view->set('errors', $errors + $photo->getErrors());
+                if (empty($errors) && $photo->validate()) {
+                    $photo->save();
+
+                    $status = App_Model_PhotoSection::deleteAll(array('photoId = ?' => $id));
+                    if ($status != -1) {
+                        foreach ($sectionsIds as $sectionId) {
+                            $photoSection = new App_Model_PhotoSection(array(
+                                'photoId' => $id,
+                                'sectionId' => (int) $sectionId
+                            ));
+
+                            $photoSection->save();
+                        }
+                    }
+
+                    Event::fire('admin.log', array('success', 'Photo id: ' . $id));
+                    $view->successMessage('All changes were successfully saved');
+                    self::redirect('/admin/photo/');
+                } else {
+                    Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
+                    $view->set('errors', $errors + $photo->getErrors());
+                }
             }
         }
     }
@@ -254,15 +275,14 @@ class Admin_Controller_Photo extends Controller
         $this->willRenderLayoutView = false;
 
         $photo = App_Model_Photo::first(
-                        array('id = ?' => (int) $id), array('id', 'thumbPath', 'path')
+                        array('id = ?' => (int) $id), 
+                        array('id', 'thumbPath', 'path')
         );
 
         if (NULL === $photo) {
             echo 'Photo not found';
         } else {
-            if ($photo->delete()) {
-                unlink($photo->getUnlinkPath());
-                unlink($photo->getUnlinkThumbPath());
+            if (unlink($photo->getUnlinkPath()) && unlink($photo->getUnlinkThumbPath()) && $photo->delete()) {
                 Event::fire('admin.log', array('success', 'Photo id: ' . $id));
                 echo 'ok';
             } else {
@@ -431,9 +451,9 @@ class Admin_Controller_Photo extends Controller
             $photoQuery = App_Model_Photo::getQuery(
                             array('ph.id', 'ph.active', 'ph.photoName', 'ph.thumbPath', 'ph.path',
                                 'ph.size', 'ph.width', 'ph.height', 'ph.priority', 'ph.created'))
-                    ->join('tb_photosection', 'ph.id = phs.photoId', 'phs', 
+                    ->leftjoin('tb_photosection', 'ph.id = phs.photoId', 'phs', 
                             array('photoId', 'sectionId'))
-                    ->join('tb_section', 'phs.sectionId = se.id', 'se', 
+                    ->leftjoin('tb_section', 'phs.sectionId = se.id', 'se', 
                             array('se.title' => 'secTitle'))
                     ->wheresql($whereCond, $search, $search, $search, $search, $search);
 
@@ -465,9 +485,9 @@ class Admin_Controller_Photo extends Controller
             $photos = App_Model_Photo::initialize($photoQuery);
 
             $photoCountQuery = App_Model_Photo::getQuery(array('ph.id'))
-                    ->join('tb_photosection', 'ph.id = phs.photoId', 'phs', 
+                    ->leftjoin('tb_photosection', 'ph.id = phs.photoId', 'phs', 
                             array('photoId', 'sectionId'))
-                    ->join('tb_section', 'phs.sectionId = se.id', 'se', 
+                    ->leftjoin('tb_section', 'phs.sectionId = se.id', 'se', 
                             array('se.title' => 'secTitle'))
                     ->wheresql($whereCond, $search, $search, $search, $search, $search);
 
@@ -480,9 +500,9 @@ class Admin_Controller_Photo extends Controller
             $photoQuery = App_Model_Photo::getQuery(
                             array('ph.id', 'ph.active', 'ph.photoName', 'ph.thumbPath', 'ph.path',
                                 'ph.size', 'ph.width', 'ph.height', 'ph.priority', 'ph.created'))
-                    ->join('tb_photosection', 'ph.id = phs.photoId', 'phs', 
+                    ->leftjoin('tb_photosection', 'ph.id = phs.photoId', 'phs', 
                             array('photoId', 'sectionId'))
-                    ->join('tb_section', 'phs.sectionId = se.id', 'se', 
+                    ->leftjoin('tb_section', 'phs.sectionId = se.id', 'se', 
                             array('se.title' => 'secTitle'));
 
             if (RequestMethods::issetpost('iSortCol_0')) {

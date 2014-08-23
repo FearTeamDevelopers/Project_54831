@@ -4,12 +4,33 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta http-equiv="Content-Language" content="cs" />
         <meta http-equiv="CACHE-CONTROL" content="public">
+        
         <meta name="viewport" content="width=device-width, maximum-scale=2.0, minimum-scale=1.0, initial-scale=1.0" />
         <meta name="keywords" content="{echo $metakeywords}" />
         <meta name="author" content="Tomas Hodan" />
         <meta name="robots" content="{echo $metarobots}" />
         <meta name="description" content="{echo $metadescription}" />
+        <meta name="revisit-after" content="4 Days" />
+        <meta name="distribution" content="global"/>
+        <meta name="language" content="czech" />
 
+        {if isset($article)}
+        <meta property="og:title" content="{echo $metatitle}" />
+        <meta property="og:type" content="{echo $metaogtype}" />
+        <meta property="og:url" content="{echo $metaogurl}" />
+        <meta property="og:image" content="{echo $metaogimage}" />
+        <meta property="og:description" content="{echo $metadescription}" />
+        <meta property="og:site_name" content="{echo $metaogsitename}" />
+        <meta property="article:published_time" content="{echo $artcreated}" />
+        <meta property="article:modified_time" content="{echo $artmodified}" />
+        {/if}{else}
+        <meta property="og:url" content="{echo $metaogurl}" />
+        <meta property="og:title" content="{echo $metatitle}" />
+        <meta property="og:description" content="{echo $metadescription}" />
+        <meta property="og:type" content="{echo $metaogtype}" />
+        <meta property="og:site_name" content="{echo $metaogsitename}" />
+        {/else}
+        
         <link href="/public/images/markoin_favicon.jpg" rel="icon" type="image/x-icon"/>
         <link href="/public/css/reset.css" media="screen" rel="stylesheet" type="text/css" />
         <link href="/public/css/plugins/smoothness/jquery-ui-1.10.4.custom.min.css" media="screen" rel="stylesheet" type="text/css" />
@@ -22,9 +43,12 @@
         <script type="text/javascript" src="/public/js/plugins/jquery-1.11.1.min.js"></script>
         <script type="text/javascript" src="/public/js/plugins/jquery-ui-1.10.4.custom.min.js"></script>
 
-        <title>Marko.in</title>
+        <title>{echo $metatitle}</title>
     </head>
     <body lang="cs">
+        <div id="fb-root"></div>
+        <script type="text/javascript" src="/public/js/custom/fbshare.js"></script>
+        
         <div id="page">
             {if !isset($hidetop)}<div id="temptopdiv"></div>{/if}
             <div id="navi">
@@ -39,7 +63,6 @@
             </div>
 
             <div id="main">
-
                 <div id="news" {if !isset($shownews)} class="nodisplay" {/if}>
                     <a href="#" class="close">Zavřít</a>
                     <div class="content">{if isset($shownews)}{yield action}{/if}</div>
@@ -80,7 +103,21 @@
         <script type="text/javascript" src="/public/js/custom/pagination.js"></script>
 
         <!-- Piwik --> 
-        
+        {if $env == "live"}
+        <script type="text/javascript">
+            var pkBaseURL = (("https:" == document.location.protocol) ? "https://marko.in/piwik/" : "http://marko.in/piwik/");
+            document.write(unescape("%3Cscript src=\"" + pkBaseURL + "piwik.js\" type=\"text/javascript\"%3E%3C/script%3E"));
+        </script>
+        <script type="text/javascript">
+            try {
+                var piwikTracker = Piwik.getTracker(pkBaseURL + "piwik.php", 1);
+                piwikTracker.trackPageView();
+                piwikTracker.enableLinkTracking();
+            } catch (err) {
+            }
+        </script>
+        <noscript><p><img src="http://marko.in/piwik/piwik.php?idsite=1" style="border:0" alt="" /></p></noscript>
+        {/if}
         <!-- End Piwik Tracking Code -->
     </body>
 </html>

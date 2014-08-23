@@ -23,13 +23,13 @@
                     </span>
                 </p>
                 <p>
-                    <label>Author</label>
+                    <label>Author*</label>
                     <span class="field">
                         <input type="text" name="author" class="longinput" value="{echo $news->author}"/>
                     </span>
                 </p>
                 <p>
-                    <label>URL key<small>Automaticaly created from title</small></label>
+                    <label>URL key*<small>Automaticaly created from title</small></label>
                     <span class="field">
                         <input type="text" name="urlkey" class="longinput" value="{echo $news->urlKey}" />
                         {if isset($errors["urlKey"])}
@@ -47,7 +47,7 @@
                     </span>
                 </p>
                 <p>
-                    <label>Expiration Date</label>
+                    <label>Expiration Date*</label>
                     <span class="field">
                         <input type="text" name="expiration" class="longinput datepicker" 
                                value="{echo $news->expirationDate}"/>
@@ -78,6 +78,7 @@
                         <br/>
                         <button id="news-clear-teaser">Clear</button>
                         <button id="news-readmore-link">Add Read More link</button>
+                        <button id="news-teaser-to-meta">Copy teaser to meta desc</button>
                     </span>
                 </p>
                 <p>
@@ -98,11 +99,39 @@
                 <p>
                     <label>Rss feed text<small>Max. 5000 characters<br/>Text only</small></label>
                     <span class="field">
-                        <textarea rows="10" name="feedtext" class="longinput" >{echo $news->rssFeedBody}</textarea>
+                        <textarea rows="5" name="feedtext" class="longinput" >{echo $news->rssFeedBody}</textarea>
                         {if isset($errors["rssFeedBody"])}
                             <label class="error">{echo join("<br/>", $errors["rssFeedBody"])}</label>
                         {/if}
                         <br/>
+                    </span>
+                </p>
+                <p>
+                    <label>Meta Title<small>Fill if different form Title</small></label>
+                    <span class="field">
+                        <input type="text" name="metatitle" value="{echo $news->metaTitle}" />
+                        {if isset($errors["metaTitle"])}
+                            <label class="error">{echo join("<br/>", $errors["metaTitle"])}</label>
+                        {/if}
+                    </span>
+                </p>
+                <p>
+                    <label>Meta description<small>Max. 250 characters<br/>Text only<br/>Fill if different from Teaser</small></label>
+                    <span class="field">
+                        <textarea rows="5" name="metadescription" class="longinput" >{echo $news->metaDescription}</textarea>
+                        {if isset($errors["metaDescription"])}
+                            <label class="error">{echo join("<br/>", $errors["metaDescription"])}</label>
+                        {/if}
+                        <br/>
+                    </span>
+                </p>
+                <p>
+                    <label>Meta Image<small>FB use this image if article is shared</small></label>
+                    <span class="field">
+                        <input type="text" name="metaimage" value="{echo $news->metaImage}" />
+                        {if isset($errors["metaImage"])}
+                            <label class="error">{echo join("<br/>", $errors["metaImage"])}</label>
+                        {/if}
                     </span>
                 </p>
 
@@ -124,8 +153,9 @@
                     {foreach $photo in $photos}
                         <span class="news-photo">
                             <img src="{echo $photo->getThumbPath()}" alt="{echo $photo->getPhotoName()}" width="150px"/>
-                            <button class="stdbtn img-to-text" value="{echo $photo->getId()}">To Text</button>
-                            <button class="stdbtn img-to-teaser" value="{echo $photo->getId()}">To Teaser</button>
+                            <button class="stdbtn img-to-text" value="{echo $photo->getId()}">Txt</button>
+                            <button class="stdbtn img-to-teaser" value="{echo $photo->getId()}">Teaser</button>
+                            <button class="stdbtn img-to-meta" value="{echo $photo->getPath()}">Meta</button>
                         </span>
                     {/foreach}
                 {/if}

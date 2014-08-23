@@ -33,9 +33,12 @@ class Admin_Controller_Announcement extends Controller
     public function add()
     {
         $view = $this->getActionView();
+        
+        $view->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddAnc')) {
             $this->checkToken();
+            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
             $cache = Registry::get('cache');
             
             $announc = new App_Model_Announcement(array(

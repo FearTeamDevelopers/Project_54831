@@ -30,7 +30,7 @@ html{
 body {
     margin:0;
     padding: 0;
-    font:16px 'Calibri', sans-serif;
+    font:15px 'Calibri', sans-serif;
     color: white;
     overflow-y: auto;
     overflow-x: hidden;
@@ -52,8 +52,7 @@ a:hover{color: #ccc;}
 /* ---------- Index page style ---------- */
 
 #page {position: relative; width: 100%; z-index: 20;}
-#main {position: relative; width: 100%; height: auto; }
-
+#main {position: relative; width: 100%; height: auto;}
 
 #news, #collection, #news-detail, #showaction{
     position: absolute;
@@ -64,8 +63,6 @@ a:hover{color: #ccc;}
     height: auto;
     padding: 5px;
 }
-
-iframe{width: 380px; height: 214px;}
 
 #news, #collection, #news-detail, #showaction{
     border-width: 4px;
@@ -101,7 +98,7 @@ iframe{width: 380px; height: 214px;}
     width: 70%; /* Set width. Do not set height else it will fail in IE8-10. Use padding for height. */
     color: #333;
     font-weight: normal;
-    font-size: 1.3em;
+    font-size: 1.2em;
     line-height:1.2em;
     margin: 0 0 10px;
     padding: 6px 0; /* use this to set a specific height for your dropdown (DO NOT use the attribute 'height') */
@@ -122,6 +119,7 @@ iframe{width: 380px; height: 214px;}
     -ms-appearance: none; /* get rid of default appearance for IE8, 9 and 10*/
     appearance: none;
 }
+
 .styled-select select option {
     background: #fff; /* style the dropdown bg color */
 }
@@ -178,7 +176,7 @@ iframe{width: 380px; height: 214px;}
 /* ---------- Section content ----------*/
 .section-title{font-size: 22px; font-weight: bold; padding: 8px;}
 
-.section-content-text{position: relative; margin: 20px; color: white;}
+.section-content-text{position: relative; margin: 25px 15px; color: white;}
 .section-content-photos{position: relative; margin: 20px;}
 .section-content-photos img{margin: 5px;}
 .section-content-photos .socialIcon{text-decoration: none; margin-top: 15px;}
@@ -197,12 +195,8 @@ iframe{width: 380px; height: 214px;}
 .nodisplay {display: none;}
 .fs25{font-size: 25px;}
 
-a.close {position: inherit; top:5px; left: 80%;}
-
 /* --------- pagination --------------- */
-.paginationCont{
-    padding: 15px; 
-}
+.paginationCont{padding: 15px;}
 
 .pagination { list-style: none; overflow: hidden;}
 .pagination li { display: inline-block; float: left; margin-right: 5px; }
@@ -226,8 +220,12 @@ a.close {position: inherit; top:5px; left: 80%;}
 
 @media (orientation: landscape) { 
     #temptopdiv{margin-top: 35%;}
+    iframe{width: 380px; height: 214px;}
+    a.close {position: inherit; top:5px; left: 85%;}
 }
 
 @media (orientation: portrait) { 
     #temptopdiv{margin-top: 98%;}
+    iframe{width: 90%;}
+    a.close {position: inherit; top:5px; left: 80%;}
 }

@@ -1,7 +1,7 @@
 jQuery.noConflict();
 
 jQuery(document).ready(function() {
-    jQuery('.close').click(function() {
+    jQuery('.close, .close-announcement').click(function() {
         jQuery(this).parent().hide(1000)
     });
 

@@ -12,6 +12,29 @@ class App_Controller_News extends Controller
 {
 
     /**
+     * Check if are sets category specific metadata or leave their default values
+     */
+    private function _checkMetaData($layoutView, App_Model_News $object)
+    {
+        if($object->getMetaTitle() != ''){
+            $layoutView->set('metatitle', $object->getMetaTitle());
+        }
+        
+        if($object->getMetaDescription() != ''){
+            $layoutView->set('metadescription', $object->getMetaDescription());
+        }
+        
+        if($object->getMetaImage() != ''){
+            $layoutView->set('metaogimage', 'http://marko.in'.$object->getMetaImage());
+        }
+        
+        $layoutView->set('metaogurl', 'http://marko.in/news/detail/'.$object->getUrlKey());
+        $layoutView->set('metaogtype', 'article');
+        
+        return;
+    }
+    
+    /**
      *
      * @param \App_Model_News $news
      */
@@ -105,16 +128,24 @@ class App_Controller_News extends Controller
     {
         $view = $this->getActionView();
         $this->checkRefferer('shownd');
-        $this->willRenderActionView = true;
 
         $news = App_Model_News::first(
                         array(
                     'urlKey = ?' => $title,
                     'active = ?' => true
-                        ), array('id', 'author', 'title', 'body', 'created', 'urlKey'));
+                        ));
 
         $newsParsed = $this->_parseNewsBody($news, 'body');
 
+        if($this->willRenderLayoutView){
+            $layoutView = $this->getLayoutView();
+            $this->_checkMetaData($layoutView, $news);
+            $layoutView
+                ->set('article', 1)
+                ->set('artcreated', $news->getCreated())
+                ->set('artmodified', $news->getModified());
+        }
+        
         $view->set('news', $newsParsed);
     }
 

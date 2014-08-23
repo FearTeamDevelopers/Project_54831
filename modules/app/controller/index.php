@@ -89,30 +89,7 @@ class App_Controller_Index extends Controller
         $view = $this->getActionView();
         $layoutView = $this->getLayoutView();
 
-        $lastAnnouncement = App_Model_Announcement::first(
-                        array(
-                            'active = ?' => true,
-                            'dateStart < ?' => date('Y-m-d H:i:s'),
-                            'dateEnd > ?' => date('Y-m-d H:i:s'),
-                        )
-        );
-
-        $npp = (int) $this->loadConfigFromDb('news_per_page');
-
-        $newsCount = App_Model_News::count(
-                        array('active = ?' => true,
-                            'expirationDate >= ?' => date('Y-m-d H:i:s'))
-        );
-
-        $newsPageCount = ceil($newsCount / $npp);
-        $maxPageCount = (int) $this->loadConfigFromDb('news_max_page_count');
-
-        if ((int) $newsPageCount > $maxPageCount) {
-            $newsPageCount = $maxPageCount;
-        }
-
-        $view->set('lastannouncement', $lastAnnouncement);
-        $layoutView->set('newspagecount', $newsPageCount);
+        
     }
 
     /**
@@ -122,7 +99,6 @@ class App_Controller_Index extends Controller
     {
         $view = $this->getActionView();
         $this->checkRefferer('showbio');
-        $this->willRenderActionView = true;
 
         $content = $this->_getSectionContent('bio');
 
@@ -144,7 +120,6 @@ class App_Controller_Index extends Controller
     {
         $view = $this->getActionView();
         $this->checkRefferer('showcust');
-        $this->willRenderActionView = true;
 
         $content = $this->_getSectionContent('provas');
 
@@ -166,7 +141,6 @@ class App_Controller_Index extends Controller
     {
         $view = $this->getActionView();
         $this->checkRefferer('showdesign');
-        $this->willRenderActionView = true;
 
         $content = $this->_getSectionContent('design');
 
@@ -188,7 +162,6 @@ class App_Controller_Index extends Controller
     {
         $view = $this->getActionView();
         $this->checkRefferer('showstyling');
-        $this->willRenderActionView = true;
 
         $content = $this->_getSectionContent('styling');
 
@@ -210,7 +183,6 @@ class App_Controller_Index extends Controller
     {
         $view = $this->getActionView();
         $this->checkRefferer('showcontact');
-        $this->willRenderActionView = true;
 
         $content = $this->_getSectionContent('contact');
 
@@ -232,7 +204,6 @@ class App_Controller_Index extends Controller
     {
         $view = $this->getActionView();
         $this->checkRefferer('showpartners');
-        $this->willRenderActionView = true;
 
         $partnerSections = $this->getSectionsByParentId(6);
 

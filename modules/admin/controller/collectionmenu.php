@@ -57,10 +57,12 @@ class Admin_Controller_CollectionMenu extends Controller
                         ), array('id', 'urlKey', 'title')
         );
 
-        $view->set('sections', $sections);
+        $view->set('sections', $sections)
+                ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddClmenu')) {
             $this->checkToken();
+            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
             $errors = array();
             $urlKey = $this->_createUrlKey(RequestMethods::post('urlkey'));
 

@@ -16,13 +16,7 @@
             <p>
                 <label>{echo $conf->getTitle()}</label>
                 <span class="field">
-                    {if strlen($conf->getValue()) > 200}
-                        <textarea name="{echo $conf->getXkey()}" rows="3" class="longinput">{echo $conf->getValue()}</textarea>
-                    {/if}
-                    {else}
-                        <input type="text" class="longinput" name="{echo $conf->getXkey()}" value="{echo $conf->getValue()}" />
-                    {/else}
-                    
+                    <textarea name="{echo $conf->getXkey()}" rows="1" class="longinput">{echo $conf->getValue()}</textarea>
                     {if isset($errors[$conf->getXkey()])}
                         <label class="error">{echo join("<br/>", $errors[$conf->getXkey()])}</label>
                     {/if}

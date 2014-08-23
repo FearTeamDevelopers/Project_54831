@@ -103,7 +103,7 @@ class Profiler
             $time = round(microtime(true) - $startTime, 8);
 
 
-            $str = '<link href="/public/css/profiler.min.css" media="screen" rel="stylesheet" type="text/css" /><div id="profiler">';
+            $str = '<link href="/public/css/plugins/profiler.min.css" media="screen" rel="stylesheet" type="text/css" /><div id="profiler">';
             $str .= "<div id='profiler-basic'><span title='Request URI'>{$_SERVER['REQUEST_URI']}</span><span title='Execution time [s]'>{$time}</span>"
                     . "<span title='Memory peak usage'>{$endMemoryPeakUsage}</span><span title='Memory usage'>{$endMemoryUsage}</span>"
                     . '<span title="SQL Query"><a href="#" class="profiler-show-query">SQL Query:</a> '.  count($this->_dbData).'</span>'
@@ -138,7 +138,7 @@ class Profiler
                 $str .= '<tr><td>'.$key.'</td><td>'.$value.'</td></tr>';
             }
             $str .= '</table></div>';
-            $str .= '</div><script type="text/javascript" src="/public/js/custom/profiler.min.js"></script>';
+            $str .= '</div><script type="text/javascript" src="/public/js/plugins/profiler.min.js"></script>';
             \THCFrame\Core\Core::log($str, 'profiler.log', true, false);
 
         } else {

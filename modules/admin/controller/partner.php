@@ -41,10 +41,12 @@ class Admin_Controller_Partner extends Controller
                         ), array('id', 'parentId', 'title')
         );
 
-        $view->set('sections', $sections);
+        $view->set('sections', $sections)
+                ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddPartner')) {
             $this->checkToken();
+            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
             $errors = array();
 
             $fileManager = new FileManager(array(

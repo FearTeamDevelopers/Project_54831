@@ -114,6 +114,39 @@ class App_Model_News extends Model
      * @label rank
      */
     protected $_rank;
+    
+    /**
+     * @column
+     * @readwrite
+     * @type text
+     * @length 150
+     * 
+     * @validate alphanumeric, max(150)
+     * @label meta title
+     */
+    protected $_metaTitle;
+    
+    /**
+     * @column
+     * @readwrite
+     * @type text
+     * @length 255
+     * 
+     * @validate alphanumeric, max(250)
+     * @label meta description
+     */
+    protected $_metaDescription;
+    
+    /**
+     * @column
+     * @readwrite
+     * @type text
+     * @length 255
+     * 
+     * @validate alphanumeric, max(255)
+     * @label meta image
+     */
+    protected $_metaImage;
 
     /**
      * @column

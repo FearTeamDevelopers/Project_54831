@@ -97,10 +97,13 @@ class Admin_Controller_User extends Controller
 
         $errors = array();
         $superAdmin = $security->isGranted('role_superadmin');
-        $view->set('superadmin', $superAdmin);
+        
+        $view->set('superadmin', $superAdmin)
+                ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddUser')) {
             $this->checkToken();
+            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
             
             if (RequestMethods::post('password') !== RequestMethods::post('password2')) {
                 $errors['password2'] = array('Paswords doesnt match');
