@@ -63,6 +63,17 @@ class App_Model_User extends Model implements UserInterface {
      * @validate max(3)
      */
     protected $_active;
+    
+    /**
+     * @column
+     * @readwrite
+     * @type text
+     * @length 30
+     *
+     * @validate alphanumeric, max(30)
+     * @label username
+     */
+    protected $_username;
 
     /**
      * @column
@@ -96,6 +107,27 @@ class App_Model_User extends Model implements UserInterface {
      * @label last name
      */
     protected $_lastname;
+    
+    /**
+     * @column
+     * @readwrite
+     * @type text
+     * @length 30
+     *
+     * @validate numeric, max(30)
+     * @label account lockdown time
+     */
+    protected $_loginLockdownTime;
+    
+    /**
+     * @column
+     * @readwrite
+     * @type tinyint
+     *
+     * @validate numeric, max(2)
+     * @label login attemp counter
+     */
+    protected $_loginAttempCounter;
     
     /**
      * @column

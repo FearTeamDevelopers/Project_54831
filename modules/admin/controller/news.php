@@ -94,8 +94,11 @@ class Admin_Controller_News extends Controller
                 ->set('submstoken', $this->mutliSubmissionProtectionToken());
         
         if (RequestMethods::post('submitAddNews')) {
-            $this->checkToken();
-            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
+            if($this->checkToken() !== true && 
+                    $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true){
+                self::redirect('/admin/news/');
+            }
+            
             $errors = array();
             $urlKey = $this->_createUrlKey(RequestMethods::post('urlkey'));
             
@@ -121,7 +124,7 @@ class Admin_Controller_News extends Controller
                 $id = $news->save();
 
                 Event::fire('admin.log', array('success', 'News id: ' . $id));
-                $view->successMessage('News has been successfully saved');
+                $view->successMessage('News'.self::SUCCESS_MESSAGE_1);
                 self::redirect('/admin/news/');
             } else {
                 Event::fire('admin.log', array('fail'));
@@ -144,7 +147,7 @@ class Admin_Controller_News extends Controller
         $news = App_Model_News::first(array('id = ?' => (int)$id));
 
         if ($news === null) {
-            $view->errorMessage('News not found');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/news/');
         }
         
@@ -153,7 +156,10 @@ class Admin_Controller_News extends Controller
                 ->set('videos', $videos);
 
         if (RequestMethods::post('submitEditNews')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/news/');
+            }
+            
             $errors = array();
             $urlKey = $this->_createUrlKey(RequestMethods::post('urlkey'));
 
@@ -178,7 +184,7 @@ class Admin_Controller_News extends Controller
                 $news->save();
 
                 Event::fire('admin.log', array('success', 'News id: ' . $id));
-                $view->successMessage('All changes were successfully saved');
+                $view->successMessage(self::SUCCESS_MESSAGE_2);
                 self::redirect('/admin/news/');
             } else {
                 Event::fire('admin.log', array('fail', 'News id: ' . $id));
@@ -194,23 +200,25 @@ class Admin_Controller_News extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
-        $this->checkToken();
         
-        $news = App_Model_News::first(
-                        array('id = ?' => (int)$id), 
-                        array('id')
-        );
+        if ($this->checkToken()) {
+            $news = App_Model_News::first(
+                            array('id = ?' => (int) $id), array('id')
+            );
 
-        if (NULL === $news) {
-            echo 'News not found';
-        } else {
-            if ($news->delete()) {
-                Event::fire('admin.log', array('success', 'News id: ' . $id));
-                echo 'ok';
+            if (NULL === $news) {
+                echo self::ERROR_MESSAGE_2;
             } else {
-                Event::fire('admin.log', array('fail', 'News id: ' . $id));
-                echo 'Unknown error eccured';
+                if ($news->delete()) {
+                    Event::fire('admin.log', array('success', 'News id: ' . $id));
+                    echo 'ok';
+                } else {
+                    Event::fire('admin.log', array('fail', 'News id: ' . $id));
+                    echo self::ERROR_MESSAGE_1;
+                }
             }
+        } else {
+            echo self::ERROR_MESSAGE_1;
         }
     }
 
@@ -223,7 +231,10 @@ class Admin_Controller_News extends Controller
         $errors = array();
 
         if (RequestMethods::post('performNewsAction')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/news/');
+            }
+            
             $ids = RequestMethods::post('newsids');
             $action = RequestMethods::post('action');
 
@@ -242,7 +253,7 @@ class Admin_Controller_News extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('delete success', 'News ids: ' . join(',', $ids)));
-                        $view->successMessage('News have been deleted');
+                        $view->successMessage(self::SUCCESS_MESSAGE_6);
                     } else {
                         Event::fire('admin.log', array('delete fail', 'Error count:' . count($errors)));
                         $message = join(PHP_EOL, $errors);
@@ -271,7 +282,7 @@ class Admin_Controller_News extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('activate success', 'News ids: ' . join(',', $ids)));
-                        $view->successMessage('News have been activated');
+                        $view->successMessage(self::SUCCESS_MESSAGE_4);
                     } else {
                         Event::fire('admin.log', array('activate fail', 'Error count:' . count($errors)));
                         $message = join(PHP_EOL, $errors);
@@ -300,7 +311,7 @@ class Admin_Controller_News extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('deactivate success', 'News ids: ' . join(',', $ids)));
-                        $view->successMessage('News have been deactivated');
+                        $view->successMessage(self::SUCCESS_MESSAGE_5);
                     } else {
                         Event::fire('admin.log', array('deactivate fail', 'Error count:' . count($errors)));
                         $message = join(PHP_EOL, $errors);

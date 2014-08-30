@@ -153,7 +153,7 @@ class Admin_Controller_System extends Controller
                 self::redirect('/admin/system/');
             } else {
                 Event::fire('admin.log', array('success', 'Count: ' . $count));
-                $view->successMessage('Expired news have been successfully archivated');
+                $view->successMessage(self::SUCCESS_MESSAGE_8);
                 self::redirect('/admin/system/');
             }
         }
@@ -167,7 +167,10 @@ class Admin_Controller_System extends Controller
         $view = $this->getActionView();
 
         if (RequestMethods::post('changeStatus')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/system/');
+            }
+            
             $status = $this->loadConfigFromDb('appstatus');
 
             if ($status == 2) {
@@ -181,7 +184,7 @@ class Admin_Controller_System extends Controller
                 self::redirect('/admin/system/');
             } else {
                 Event::fire('admin.log', array('fail', 'Status: ' . $value));
-                $view->errorMessage('An error occured while saving application status');
+                $view->errorMessage(self::ERROR_MESSAGE_3);
                 self::redirect('/admin/system/');
             }
         }
@@ -197,7 +200,10 @@ class Admin_Controller_System extends Controller
         $view->set('config', $config);
         
         if(RequestMethods::post('submitEditSet')){
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/system/');
+            }
+            
             $errors = array();
             
             foreach($config as $conf){
@@ -212,7 +218,7 @@ class Admin_Controller_System extends Controller
             }
 
             if(empty($errors)){
-                $view->successMessage('Settings have been successfully changed');
+                $view->successMessage(self::SUCCESS_MESSAGE_2);
                 self::redirect('/admin/system/');
             }else{
                 $view->set('errors', $errors);

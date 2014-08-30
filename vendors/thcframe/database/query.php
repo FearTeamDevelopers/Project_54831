@@ -2,10 +2,11 @@
 
 namespace THCFrame\Database;
 
-use THCFrame\Core\Base as Base;
-use THCFrame\Core\ArrayMethods as ArrayMethods;
-use THCFrame\Core\StringMethods as StringMethods;
+use THCFrame\Core\Base;
+use THCFrame\Core\ArrayMethods;
+use THCFrame\Core\StringMethods;
 use THCFrame\Database\Exception as Exception;
+use THCFrame\Core\Core;
 
 /**
  * Description of Query
@@ -364,9 +365,10 @@ class Query extends Base
 
         if ($result === false) {
             if (ENV == 'dev') {
-                \THCFrame\Core\Core::log($sql);
+                Core::getLogger()->logError($sql);
                 throw new Exception\Sql(sprintf('SQL: %s', $this->connector->getLastError()));
             } else {
+                Core::getLogger()->logError($sql);
                 throw new Exception\Sql('There was an error with your SQL query');
             }
         }
@@ -390,8 +392,10 @@ class Query extends Base
 
         if ($result === false) {
             if (ENV == 'dev') {
+                Core::getLogger()->logError($sql);
                 throw new Exception\Sql(sprintf('SQL: %s', $this->connector->getLastError()));
             } else {
+                Core::getLogger()->logError($sql);
                 throw new Exception\Sql('There was an error with your SQL query');
             }
         }

@@ -2,8 +2,8 @@
 
 namespace THCFrame\Database;
 
-use THCFrame\Core\Base as Base;
-use THCFrame\Database\Exception as Exception;
+use THCFrame\Core\Base;
+use THCFrame\Database\Exception;
 
 /**
  * Description of Connector
@@ -23,11 +23,11 @@ abstract class Connector extends Base
     {
         return $this;
     }
-
+    
     /**
      * 
-     * @param string $method
-     * @return \THCFrame\Database\Exception\Implementation
+     * @param type $method
+     * @return \THCFrame\Session\Exception\Implementation
      */
     protected function _getImplementationException($method)
     {

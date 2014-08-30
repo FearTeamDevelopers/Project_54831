@@ -1,19 +1,35 @@
 <?php
 
 use THCFrame\Registry\Registry;
+use THCFrame\Events\SubscriberInterface;
 
 /**
+ * Observer class handling events defined in configuration file
  * 
+ * @author Tomy
  */
-class Admin_Etc_Observer
+class Admin_Etc_Observer implements SubscriberInterface
 {
 
     /**
      * 
+     * @return type
+     */
+    public function getSubscribedEvents()
+    {
+        return array(
+            'admin.log' => 'adminLog'
+        );
+    }
+    
+    /**
+     * 
      * @param array $params
      */
-    public function adminLog($params = array())
+    public function adminLog()
     {
+        $params = func_get_args();
+        
         $router = Registry::get('router');
         $route = $router->getLastRoute();
 

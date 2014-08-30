@@ -45,8 +45,11 @@ class Admin_Controller_Partner extends Controller
                 ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddPartner')) {
-            $this->checkToken();
-            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
+            if($this->checkToken() !== true && 
+                    $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true){
+                self::redirect('/admin/partner/');
+            }
+            
             $errors = array();
 
             $fileManager = new FileManager(array(
@@ -78,7 +81,7 @@ class Admin_Controller_Partner extends Controller
                 $id = $partner->save();
 
                 Event::fire('admin.log', array('success', 'Partner id: ' . $id));
-                $view->successMessage('Partner has been successfully created');
+                $view->successMessage('Partner'.self::SUCCESS_MESSAGE_1);
                 self::redirect('/admin/partner/');
             } else {
                 Event::fire('admin.log', array('fail'));
@@ -106,7 +109,7 @@ class Admin_Controller_Partner extends Controller
         $partner = App_Model_Partner::first(array('id = ?' => (int) $id));
 
         if (NULL === $partner) {
-            $view->errorMessage('Partner not found');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/partner/');
         }
 
@@ -114,7 +117,9 @@ class Admin_Controller_Partner extends Controller
                 ->set('partner', $partner);
 
         if (RequestMethods::post('submitEditPartner')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/partner/');
+            }
 
             if ($partner->logo == '') {
                 $fileManager = new FileManager(array(
@@ -149,7 +154,7 @@ class Admin_Controller_Partner extends Controller
                 $partner->save();
 
                 Event::fire('admin.log', array('success', 'Partner id: ' . $id));
-                $view->successMessage('All changes were successfully saved');
+                $view->successMessage(self::SUCCESS_MESSAGE_2);
                 self::redirect('/admin/partner/');
             } else {
                 Event::fire('admin.log', array('fail', 'Partner id: ' . $id));
@@ -167,22 +172,25 @@ class Admin_Controller_Partner extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
-        $this->checkToken();
+        
+        if ($this->checkToken()) {
+            $partner = App_Model_Partner::first(
+                            array('id = ?' => (int) $id), array('id', 'logo')
+            );
 
-        $partner = App_Model_Partner::first(
-                        array('id = ?' => (int) $id), array('id', 'logo')
-        );
-
-        if (NULL === $partner) {
-            echo 'Partner not found';
-        } else {
-            if (unlink($partner->getUnlinkLogoPath()) && $partner->delete()) {
-                Event::fire('admin.log', array('success', 'Partner id: ' . $id));
-                echo 'ok';
+            if (NULL === $partner) {
+                echo self::ERROR_MESSAGE_2;
             } else {
-                Event::fire('admin.log', array('fail', 'Partner id: ' . $id));
-                echo 'Unknown error eccured';
+                if (unlink($partner->getUnlinkLogoPath()) && $partner->delete()) {
+                    Event::fire('admin.log', array('success', 'Partner id: ' . $id));
+                    echo 'ok';
+                } else {
+                    Event::fire('admin.log', array('fail', 'Partner id: ' . $id));
+                    echo self::ERROR_MESSAGE_1;
+                }
             }
+        } else {
+            echo self::ERROR_MESSAGE_1;
         }
     }
 
@@ -208,11 +216,11 @@ class Admin_Controller_Partner extends Controller
                 echo 'ok';
             } else {
                 Event::fire('admin.log', array('fail', 'Partner id: ' . $id));
-                echo 'Required fields are not valid';
+                echo self::ERROR_MESSAGE_5;
             }
         } else {
             Event::fire('admin.log', array('fail', 'Partner id: ' . $id));
-            echo 'Partner not found';
+            echo self::ERROR_MESSAGE_2;
         }
     }
 
@@ -225,7 +233,10 @@ class Admin_Controller_Partner extends Controller
         $errors = array();
 
         if (RequestMethods::post('performPartnerAction')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/partner/');
+            }
+            
             $ids = RequestMethods::post('partnerids');
             $action = RequestMethods::post('action');
 
@@ -249,7 +260,7 @@ class Admin_Controller_Partner extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('delete success', 'Partner ids: ' . join(',', $ids)));
-                        $view->successMessage('Partners have been deleted');
+                        $view->successMessage(self::SUCCESS_MESSAGE_6);
                     } else {
                         Event::fire('admin.log', array('delete fail', 'Error count:' . count($errors)));
                         $message = join('<br/>', $errors);
@@ -280,7 +291,7 @@ class Admin_Controller_Partner extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('activate success', 'Partner ids: ' . join(',', $ids)));
-                        $view->successMessage('Partners have been activated');
+                        $view->successMessage(self::SUCCESS_MESSAGE_4);
                     } else {
                         Event::fire('admin.log', array('activate fail', 'Error count:' . count($errors)));
                         $message = join('<br/>', $errors);
@@ -311,7 +322,7 @@ class Admin_Controller_Partner extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('deactivate success', 'Partner ids: ' . join(',', $ids)));
-                        $view->successMessage('Partners have been deactivated');
+                        $view->successMessage(self::SUCCESS_MESSAGE_5);
                     } else {
                         Event::fire('admin.log', array('deactivate fail', 'Error count:' . count($errors)));
                         $message = join('<br/>', $errors);
@@ -349,14 +360,16 @@ class Admin_Controller_Partner extends Controller
         $section = App_Model_Section::first(array('id = ?' => (int) $id));
 
         if (NULL === $section) {
-            $view->errorMessage('Section not found');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/partner/sections/');
         }
 
         $view->set('section', $section);
 
         if (RequestMethods::post('submitEditPartnerSection')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/partner/sections/');
+            }
 
             $section->title = RequestMethods::post('title');
             $section->urlKey = RequestMethods::post('urlkey');
@@ -371,7 +384,7 @@ class Admin_Controller_Partner extends Controller
                 $section->save();
 
                 Event::fire('admin.log', array('success', 'Section id: ' . $id));
-                $view->successMessage('All changes were successfully saved');
+                $view->successMessage(self::SUCCESS_MESSAGE_2);
                 self::redirect('/admin/partner/sections/');
             } else {
                 Event::fire('admin.log', array('fail', 'Section id: ' . $id));
@@ -389,7 +402,10 @@ class Admin_Controller_Partner extends Controller
         $errors = array();
 
         if (RequestMethods::post('performPartnerSectionAction')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/partner/sections/');
+            }
+            
             $ids = RequestMethods::post('sectionids');
             $action = RequestMethods::post('action');
 
@@ -415,7 +431,7 @@ class Admin_Controller_Partner extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('activate success', 'Section ids: ' . join(',', $ids)));
-                        $view->successMessage('Sections have been activated');
+                        $view->successMessage(self::SUCCESS_MESSAGE_4);
                     } else {
                         Event::fire('admin.log', array('activate fail', 'Error count:' . count($errors)));
                         $message = join('<br/>', $errors);
@@ -446,7 +462,7 @@ class Admin_Controller_Partner extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('deactivate success', 'Section ids: ' . join(',', $ids)));
-                        $view->successMessage('Sections have been deactivated');
+                        $view->successMessage(self::SUCCESS_MESSAGE_5);
                     } else {
                         Event::fire('admin.log', array('deactivate fail', 'Error count:' . count($errors)));
                         $message = join('<br/>', $errors);

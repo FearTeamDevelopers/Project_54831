@@ -37,7 +37,10 @@ class Admin_Controller_Content extends Controller
         $view->set('sections', $sections);
 
         if (RequestMethods::post('submitAddContent')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/content/');
+            }
+            
             $cache = Registry::get('cache');
 
             $content = new App_Model_PageContent(array(
@@ -51,7 +54,7 @@ class Admin_Controller_Content extends Controller
                 $id = $content->save();
 
                 Event::fire('admin.log', array('success', 'Content id: ' . $id));
-                $view->successMessage('Content has been successfully saved');
+                $view->successMessage('Content'.self::SUCCESS_MESSAGE_1);
                 $cache->invalidate();
                 self::redirect('/admin/content/');
             } else {
@@ -75,7 +78,7 @@ class Admin_Controller_Content extends Controller
         $content = App_Model_PageContent::first(array('id = ?' => (int)$id));
 
         if (NULL === $content) {
-            $view->errorMessage('Content not found');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/content/');
         }
         
@@ -83,7 +86,10 @@ class Admin_Controller_Content extends Controller
                 ->set('content', $content);
 
         if (RequestMethods::post('submitEditContent')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/content/');
+            }
+            
             $cache = Registry::get('cache');
             
             $content->sectionId = RequestMethods::post('section');
@@ -96,7 +102,7 @@ class Admin_Controller_Content extends Controller
                 $content->save();
 
                 Event::fire('admin.log', array('success', 'Content id: ' . $id));
-                $view->successMessage('All changes were successfully saved');
+                $view->successMessage(self::SUCCESS_MESSAGE_2);
                 $cache->invalidate();
                 self::redirect('/admin/content/');
             } else {
@@ -119,22 +125,24 @@ class Admin_Controller_Content extends Controller
         );
 
         if (NULL === $content) {
-            $view->errorMessage('Content not found');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/content/');
         }
 
         $view->set('content', $content);
 
         if (RequestMethods::post('submitDeleteContent')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/content/');
+            }
 
             if ($content->delete()) {
                 Event::fire('admin.log', array('success', 'Content id: ' . $id));
-                $view->successMessage('Content has been deleted');
+                $view->successMessage('Content'.self::SUCCESS_MESSAGE_3);
                 self::redirect('/admin/content/');
             } else {
                 Event::fire('admin.log', array('fail', 'Content id: ' . $id));
-                $view->errorMessage('Unknown error eccured');
+                $view->errorMessage(self::ERROR_MESSAGE_1);
                 self::redirect('/admin/content/');
             }
         } elseif (RequestMethods::post('cancel')) {

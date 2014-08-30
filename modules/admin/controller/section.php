@@ -96,7 +96,7 @@ class Admin_Controller_Section extends Controller
         $section = App_Model_Section::first(array('id = ?' => (int)$id));
 
         if (NULL === $section) {
-            $view->errorMessage('Section not found');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/section/');
         }
 
@@ -104,7 +104,10 @@ class Admin_Controller_Section extends Controller
                 ->set('sections', $sections);
 
         if (RequestMethods::post('submitEditSection')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/section/');
+            }
+            
             $errors = array();
             $urlKey = $this->_createUrlKey(RequestMethods::post('title'));
             
@@ -124,7 +127,7 @@ class Admin_Controller_Section extends Controller
             if (empty($errors) && $section->validate()) {
                 $section->save();
 
-                $view->successMessage('All changes were successfully saved');
+                $view->successMessage(self::SUCCESS_MESSAGE_2);
                 self::redirect('/admin/section/');
             } else {
                 $view->set('errors', $errors + $section->getErrors());

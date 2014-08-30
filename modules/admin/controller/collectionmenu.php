@@ -3,8 +3,6 @@
 use Admin\Etc\Controller;
 use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
-use THCFrame\Core\StringMethods;
-use THCFrame\Registry\Registry;
 
 /**
  * 
@@ -61,8 +59,11 @@ class Admin_Controller_CollectionMenu extends Controller
                 ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddClmenu')) {
-            $this->checkToken();
-            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
+            if($this->checkToken() !== true && 
+                    $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true){
+                self::redirect('/admin/collectionmenu/');
+            }
+            
             $errors = array();
             $urlKey = $this->_createUrlKey(RequestMethods::post('urlkey'));
 
@@ -82,7 +83,7 @@ class Admin_Controller_CollectionMenu extends Controller
                 $id = $clm->save();
 
                 Event::fire('admin.log', array('success', 'Collection menu id: ' . $id));
-                $view->successMessage('Item has been successfully saved');
+                $view->successMessage('Item'.self::SUCCESS_MESSAGE_1);
                 self::redirect('/admin/collectionmenu/');
             } else {
                 Event::fire('admin.log', array('fail'));
@@ -110,7 +111,7 @@ class Admin_Controller_CollectionMenu extends Controller
         $clm = App_Model_CollectionMenu::first(array('id = ?' => $id));
 
         if (NULL === $clm) {
-            $view->errorMessage('Item not found');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/collectionmenu/');
         }
 
@@ -118,7 +119,10 @@ class Admin_Controller_CollectionMenu extends Controller
                 ->set('sections', $sections);
 
         if (RequestMethods::post('submitEditClmenu')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/collectionmenu/');
+            }
+            
             $errors = array();
             $urlKey = $this->_createUrlKey(RequestMethods::post('urlkey'));
             
@@ -137,7 +141,7 @@ class Admin_Controller_CollectionMenu extends Controller
                 $clm->save();
 
                 Event::fire('admin.log', array('success', 'Collection menu id: ' . $id));
-                $view->successMessage('All changes were successfully saved');
+                $view->successMessage(self::SUCCESS_MESSAGE_2);
                 self::redirect('/admin/collectionmenu/');
             } else {
                 Event::fire('admin.log', array('fail', 'Collection menu id: ' . $id));
@@ -154,22 +158,25 @@ class Admin_Controller_CollectionMenu extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
-        $this->checkToken();
+        
+        if ($this->checkToken()) {
+            $clm = App_Model_CollectionMenu::first(
+                            array('id = ?' => $id), array('id')
+            );
 
-        $clm = App_Model_CollectionMenu::first(
-                        array('id = ?' => $id), array('id')
-        );
-
-        if (NULL === $clm) {
-            echo 'Item not found';
-        } else {
-            if ($clm->delete()) {
-                Event::fire('admin.log', array('success', 'Collection menu id: ' . $id));
-                echo 'ok';
+            if ($clm === null) {
+                echo self::ERROR_MESSAGE_2;
             } else {
-                Event::fire('admin.log', array('fail', 'Collection menu id: ' . $id));
-                echo 'Unknown error eccured';
+                if ($clm->delete()) {
+                    Event::fire('admin.log', array('success', 'Collection menu id: ' . $id));
+                    echo 'ok';
+                } else {
+                    Event::fire('admin.log', array('fail', 'Collection menu id: ' . $id));
+                    echo self::ERROR_MESSAGE_1;
+                }
             }
+        } else {
+            echo self::ERROR_MESSAGE_1;
         }
     }
 
@@ -182,7 +189,10 @@ class Admin_Controller_CollectionMenu extends Controller
         $errors = array();
 
         if (RequestMethods::post('performClmAction')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/collectionmenu/');
+            }
+            
             $ids = RequestMethods::post('clmids');
             $action = RequestMethods::post('action');
 
@@ -202,7 +212,7 @@ class Admin_Controller_CollectionMenu extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('delete success', 'Collection menu ids: ' . join(',', $ids)));
-                        $view->successMessage('Items have been deleted');
+                        $view->successMessage(self::SUCCESS_MESSAGE_6);
                     } else {
                         Event::fire('admin.log', array('delete fail', 'Error count:' . count($errors)));
                         $message = join(PHP_EOL, $errors);
@@ -232,7 +242,7 @@ class Admin_Controller_CollectionMenu extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('activate success', 'Collection menu ids: ' . join(',', $ids)));
-                        $view->successMessage('Items have been activated');
+                        $view->successMessage(self::SUCCESS_MESSAGE_4);
                     } else {
                         Event::fire('admin.log', array('activate fail', 'Error count:' . count($errors)));
                         $message = join(PHP_EOL, $errors);
@@ -261,7 +271,7 @@ class Admin_Controller_CollectionMenu extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('deactivate success', 'Collection menu ids: ' . join(',', $ids)));
-                        $view->successMessage('Items have been deactivated');
+                        $view->successMessage(self::SUCCESS_MESSAGE_5);
                     } else {
                         Event::fire('admin.log', array('deactivate fail', 'Error count:' . count($errors)));
                         $message = join(PHP_EOL, $errors);

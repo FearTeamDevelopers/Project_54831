@@ -3,7 +3,8 @@
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <meta http-equiv="Content-Language" content="cs" />
-        <meta http-equiv="CACHE-CONTROL" content="public">
+        {if $env == "live"}<meta http-equiv="CACHE-CONTROL" content="public, max-age=10800">{/if}
+        {else}<meta http-equiv="CACHE-CONTROL" content="no-store">{/else}
 
         <meta name="viewport" content="width=device-width, maximum-scale=2.0, minimum-scale=1.0, initial-scale=1.0" />
         <meta name="keywords" content="{echo $metakeywords}" />
@@ -33,8 +34,7 @@
 
         <link href="/public/images/markoin_favicon.jpg" rel="icon" type="image/x-icon"/>
         <link href="/public/css/reset.css" media="screen" rel="stylesheet" type="text/css" />
-        <link href="/public/css/plugins/smoothness/jquery-ui-1.10.4.custom.min.css" media="screen" rel="stylesheet" type="text/css" />
-        <link href="/public/css/styles.css" media="screen" rel="stylesheet" type="text/css" />
+        <link href="/public/css/styles.min.css" media="screen" rel="stylesheet" type="text/css" />
         <!--[if IE]> <link href="/public/css/stylesIE.css" media="screen" rel="stylesheet" type="text/css" /><![endif]-->
         <link href="/public/css/plugins/highslide.min.css" media="screen" rel="stylesheet" type="text/css" />
         <!--[if lt IE 7]> <link href="/public/css/plugins/highslide-ie6.css" media="screen" rel="stylesheet" type="text/css" /><![endif]-->

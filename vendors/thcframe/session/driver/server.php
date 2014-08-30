@@ -2,7 +2,7 @@
 
 namespace THCFrame\Session\Driver;
 
-use THCFrame\Session as Session;
+use THCFrame\Session;
 
 /**
  * Description of Server
@@ -15,7 +15,7 @@ class Server extends Session\Driver
     /**
      * @readwrite
      */
-    protected $_prefix = 'app_';
+    protected $_prefix;
 
     /**
      * 

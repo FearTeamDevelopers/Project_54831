@@ -17,6 +17,23 @@ class Controller extends BaseController
 {
 
     private $_security;
+    
+    const SUCCESS_MESSAGE_1 = ' has been successfully created';
+    const SUCCESS_MESSAGE_2 = 'All changes were successfully saved';
+    const SUCCESS_MESSAGE_3 = ' has been successfully deleted';
+    const SUCCESS_MESSAGE_4 = 'Everything has been successfully activated';
+    const SUCCESS_MESSAGE_5 = 'Everything has been successfully deactivated';
+    const SUCCESS_MESSAGE_6 = 'Everything has been successfully deleted';
+    const SUCCESS_MESSAGE_7 = 'Everything has been successfully uploaded';
+    const SUCCESS_MESSAGE_8 = 'Everything has been successfully saved';
+    const SUCCESS_MESSAGE_9 = 'Everything has been successfully added';
+    
+    const ERROR_MESSAGE_1 = 'Oops, something went wrong';
+    const ERROR_MESSAGE_2 = 'Not found';
+    const ERROR_MESSAGE_3 = 'Unknown error eccured';
+    const ERROR_MESSAGE_4 = 'You dont have permissions to do this';
+    const ERROR_MESSAGE_5 = 'Required fields are not valid';
+    const ERROR_MESSAGE_6 = 'Access denied';
 
     /**
      * 
@@ -41,8 +58,9 @@ class Controller extends BaseController
         $session = Registry::get('session');
         $lastActive = $session->get('lastActive');
         $user = $this->getUser();
-
+        
         if (!$user) {
+            $this->_security->logout();
             self::redirect('/admin/login');
         }
 
@@ -62,9 +80,9 @@ class Controller extends BaseController
      */
     public function _publisher()
     {
-        if ($this->_security->getUser() && !$this->_security->isGranted('role_publisher')) {
+        if ($this->_security->getUser() && $this->_security->isGranted('role_publisher') !== true) {
             $view = $this->getActionView();
-            $view->infoMessage('Access denied! Publisher access level required.');
+            $view->infoMessage(self::ERROR_MESSAGE_6);
             $this->_security->logout();
             self::redirect('/admin/login');
         }
@@ -75,9 +93,9 @@ class Controller extends BaseController
      */
     public function _admin()
     {
-        if ($this->_security->getUser() && !$this->_security->isGranted('role_admin')) {
+        if ($this->_security->getUser() && $this->_security->isGranted('role_admin') !== true) {
             $view = $this->getActionView();
-            $view->infoMessage('Access denied! Administrator access level required.');
+            $view->infoMessage(self::ERROR_MESSAGE_6);
             $this->_security->logout();
             self::redirect('/admin/login');
         }
@@ -89,7 +107,7 @@ class Controller extends BaseController
      */
     protected function isAdmin()
     {
-        if ($this->_security->getUser() && $this->_security->isGranted('role_admin')) {
+        if ($this->_security->getUser() && $this->_security->isGranted('role_admin') === true) {
             return true;
         } else {
             return false;
@@ -101,9 +119,9 @@ class Controller extends BaseController
      */
     public function _superadmin()
     {
-        if ($this->_security->getUser() && !$this->_security->isGranted('role_superadmin')) {
+        if ($this->_security->getUser() && $this->_security->isGranted('role_superadmin') !== true) {
             $view = $this->getActionView();
-            $view->infoMessage('Access denied! Super admin access level required.');
+            $view->infoMessage(self::ERROR_MESSAGE_6);
             $this->_security->logout();
             self::redirect('/admin/login');
         }
@@ -115,7 +133,7 @@ class Controller extends BaseController
      */
     protected function isSuperAdmin()
     {
-        if ($this->_security->getUser() && $this->_security->isGranted('role_superadmin')) {
+        if ($this->_security->getUser() && $this->_security->isGranted('role_superadmin') === true) {
             return true;
         } else {
             return false;
@@ -162,15 +180,13 @@ class Controller extends BaseController
     public function checkMutliSubmissionProtectionToken($token)
     {
         $session = Registry::get('session');
-        $view = $this->getActionView();
         $sessionToken = $session->get('submissionprotection');
 
         if ($token == $sessionToken) {
             $session->erase('submissionprotection');
-            return;
+            return true;
         } else {
-            $view->errorMessage('Multiple form submission protection');
-            self::redirect('/admin/');
+            return false;
         }
     }
 
@@ -179,28 +195,9 @@ class Controller extends BaseController
      */
     public function checkToken()
     {
-        $session = Registry::get('session');
-        //$this->_security = Registry::get('security');
-        $view = $this->getActionView();
-
-        if (base64_decode(RequestMethods::post('tk')) !== $session->get('csrftoken')) {
-            $view->errorMessage('Security token is not valid');
-            //$this->_security->logout();
-            self::redirect('/admin/');
-        }
-    }
-
-    /**
-     * 
-     * @return boolean
-     */
-    public function checkTokenAjax()
-    {
-        $session = Registry::get('session');
-
-        if (base64_decode(RequestMethods::post('tk')) === $session->get('csrftoken')) {
+        if($this->_security->checkCsrfToken(RequestMethods::post('tk'))){
             return true;
-        } else {
+        }else{
             return false;
         }
     }
@@ -210,10 +207,7 @@ class Controller extends BaseController
      */
     public function getUser()
     {
-        $security = Registry::get('security');
-        $user = $security->getUser();
-
-        return $user;
+        return $this->_security->getUser();
     }
 
     /**

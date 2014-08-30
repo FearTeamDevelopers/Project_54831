@@ -48,8 +48,11 @@ class Admin_Controller_Photo extends Controller
         ));
 
         if (RequestMethods::post('submitAddPhoto')) {
-            $this->checkToken();
-            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
+            if($this->checkToken() !== true && 
+                    $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true){
+                self::redirect('/admin/photo/');
+            }
+            
             $errors = array();
             
             try {
@@ -92,7 +95,7 @@ class Admin_Controller_Photo extends Controller
                 }
 
                 Event::fire('admin.log', array('success', 'Photo id: ' . $photoId));
-                $view->successMessage('Photo has been successfully uploaded');
+                $view->successMessage(self::SUCCESS_MESSAGE_7);
                 self::redirect('/admin/photo/');
             } else {
                 Event::fire('admin.log', array('fail'));
@@ -158,7 +161,7 @@ class Admin_Controller_Photo extends Controller
                 }
 
                 if (empty($errors)) {
-                    $view->successMessage('Photos have been successfully uploaded');
+                    $view->successMessage(self::SUCCESS_MESSAGE_7);
                     self::redirect('/admin/photo/');
                 } else {
                     $view->set('errors', $errors);
@@ -189,7 +192,7 @@ class Admin_Controller_Photo extends Controller
         $photo = App_Model_Photo::first(array('id = ?' => (int) $id));
 
         if (NULL === $photo) {
-            $view->errorMessage('Photo not found');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/photo/');
         }
 
@@ -214,7 +217,9 @@ class Admin_Controller_Photo extends Controller
                 ->set('sections', $sections);
 
         if (RequestMethods::post('submitEditPhoto')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/photo/');
+            }
 
             $photo->description = RequestMethods::post('description', '');
             $photo->category = RequestMethods::post('category', '');
@@ -226,7 +231,7 @@ class Admin_Controller_Photo extends Controller
                     $photo->save();
 
                     Event::fire('admin.log', array('success', 'Photo id: ' . $id));
-                    $view->successMessage('All changes were successfully saved');
+                    $view->successMessage(self::SUCCESS_MESSAGE_2);
                     self::redirect('/admin/photo/');
                 } else {
                     Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
@@ -255,7 +260,7 @@ class Admin_Controller_Photo extends Controller
                     }
 
                     Event::fire('admin.log', array('success', 'Photo id: ' . $id));
-                    $view->successMessage('All changes were successfully saved');
+                    $view->successMessage(self::SUCCESS_MESSAGE_2);
                     self::redirect('/admin/photo/');
                 } else {
                     Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
@@ -274,21 +279,24 @@ class Admin_Controller_Photo extends Controller
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
 
-        $photo = App_Model_Photo::first(
-                        array('id = ?' => (int) $id), 
-                        array('id', 'thumbPath', 'path')
-        );
+        if ($this->checkToken()) {
+            $photo = App_Model_Photo::first(
+                            array('id = ?' => (int) $id), array('id', 'thumbPath', 'path')
+            );
 
-        if (NULL === $photo) {
-            echo 'Photo not found';
-        } else {
-            if (unlink($photo->getUnlinkPath()) && unlink($photo->getUnlinkThumbPath()) && $photo->delete()) {
-                Event::fire('admin.log', array('success', 'Photo id: ' . $id));
-                echo 'ok';
+            if (NULL === $photo) {
+                echo self::ERROR_MESSAGE_2;
             } else {
-                Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
-                echo 'Unknown error eccured';
+                if (unlink($photo->getUnlinkPath()) && unlink($photo->getUnlinkThumbPath()) && $photo->delete()) {
+                    Event::fire('admin.log', array('success', 'Photo id: ' . $id));
+                    echo 'ok';
+                } else {
+                    Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
+                    echo self::ERROR_MESSAGE_1;
+                }
             }
+        } else {
+            echo self::ERROR_MESSAGE_1;
         }
     }
 
@@ -301,109 +309,112 @@ class Admin_Controller_Photo extends Controller
         $this->willRenderActionView = false;
         $errors = array();
 
-        $this->checkToken();
-        $ids = RequestMethods::post('photoids');
-        $action = RequestMethods::post('action');
-        $cache = Registry::get('cache');
+        if ($this->checkToken()) {
+            $ids = RequestMethods::post('photoids');
+            $action = RequestMethods::post('action');
+            $cache = Registry::get('cache');
 
-        if (empty($ids)) {
-            echo 'No row selected';
-            return;
-        }
+            if (empty($ids)) {
+                echo 'No row selected';
+                return;
+            }
 
-        switch ($action) {
-            case 'delete':
-                $photos = App_Model_Photo::all(array(
-                            'id IN ?' => $ids
-                ));
+            switch ($action) {
+                case 'delete':
+                    $photos = App_Model_Photo::all(array(
+                                'id IN ?' => $ids
+                    ));
 
-                if (NULL !== $photos) {
-                    foreach ($photos as $photo) {
+                    if (NULL !== $photos) {
+                        foreach ($photos as $photo) {
 
-                        if (unlink($photo->getUnlinkPath()) && unlink($photo->getUnlinkThumbPath())) {
-                            if (!$photo->delete()) {
-                                $errors[] = 'An error occured while deleting ' . $photo->getPhotoName();
+                            if (unlink($photo->getUnlinkPath()) && unlink($photo->getUnlinkThumbPath())) {
+                                if (!$photo->delete()) {
+                                    $errors[] = 'An error occured while deleting ' . $photo->getPhotoName();
+                                }
+                            } else {
+                                $errors[] = 'An error occured while deleting files of ' . $photo->getPhotoName();
                             }
-                        } else {
-                            $errors[] = 'An error occured while deleting files of ' . $photo->getPhotoName();
                         }
                     }
-                }
 
-                if (empty($errors)) {
-                    Event::fire('admin.log', array('delete success', 'Photo ids: ' . join(',', $ids)));
-                    $cache->invalidate();
-                    echo 'Photos have been deleted';
-                } else {
-                    Event::fire('admin.log', array('delete fail', 'Error count:' . count($errors)));
-                    $message = join('<br/>', $errors);
-                    echo $message;
-                }
+                    if (empty($errors)) {
+                        Event::fire('admin.log', array('delete success', 'Photo ids: ' . join(',', $ids)));
+                        $cache->invalidate();
+                        echo self::SUCCESS_MESSAGE_6;
+                    } else {
+                        Event::fire('admin.log', array('delete fail', 'Error count:' . count($errors)));
+                        $message = join('<br/>', $errors);
+                        echo $message;
+                    }
 
-                break;
-            case 'activate':
-                $photos = App_Model_Photo::all(array(
-                            'id IN ?' => $ids
-                ));
+                    break;
+                case 'activate':
+                    $photos = App_Model_Photo::all(array(
+                                'id IN ?' => $ids
+                    ));
 
-                if (NULL !== $photos) {
-                    foreach ($photos as $photo) {
-                        $photo->active = true;
+                    if (NULL !== $photos) {
+                        foreach ($photos as $photo) {
+                            $photo->active = true;
 
-                        if ($photo->validate()) {
-                            $photo->save();
-                        } else {
-                            $errors[] = "Photo id {$photo->getId()} - "
-                                    . "{$photo->getPhotoName()} errors: "
-                                    . join(', ', array_shift($photo->getErrors()));
+                            if ($photo->validate()) {
+                                $photo->save();
+                            } else {
+                                $errors[] = "Photo id {$photo->getId()} - "
+                                        . "{$photo->getPhotoName()} errors: "
+                                        . join(', ', array_shift($photo->getErrors()));
+                            }
                         }
                     }
-                }
 
-                if (empty($errors)) {
-                    Event::fire('admin.log', array('activate success', 'Photo ids: ' . join(',', $ids)));
-                    $cache->invalidate();
-                    echo 'Photos have been activated';
-                } else {
-                    Event::fire('admin.log', array('activate fail', 'Error count:' . count($errors)));
-                    $message = join('<br/>', $errors);
-                    echo $message;
-                }
+                    if (empty($errors)) {
+                        Event::fire('admin.log', array('activate success', 'Photo ids: ' . join(',', $ids)));
+                        $cache->invalidate();
+                        echo self::SUCCESS_MESSAGE_4;
+                    } else {
+                        Event::fire('admin.log', array('activate fail', 'Error count:' . count($errors)));
+                        $message = join('<br/>', $errors);
+                        echo $message;
+                    }
 
-                break;
-            case 'deactivate':
-                $photos = App_Model_Photo::all(array(
-                            'id IN ?' => $ids
-                ));
+                    break;
+                case 'deactivate':
+                    $photos = App_Model_Photo::all(array(
+                                'id IN ?' => $ids
+                    ));
 
-                if (NULL !== $photos) {
-                    foreach ($photos as $photo) {
-                        $photo->active = false;
+                    if (NULL !== $photos) {
+                        foreach ($photos as $photo) {
+                            $photo->active = false;
 
-                        if ($photo->validate()) {
-                            $photo->save();
-                        } else {
-                            $errors[] = "Photo id {$photo->getId()} - "
-                                    . "{$photo->getPhotoName()} errors: "
-                                    . join(', ', array_shift($photo->getErrors()));
+                            if ($photo->validate()) {
+                                $photo->save();
+                            } else {
+                                $errors[] = "Photo id {$photo->getId()} - "
+                                        . "{$photo->getPhotoName()} errors: "
+                                        . join(', ', array_shift($photo->getErrors()));
+                            }
                         }
                     }
-                }
 
-                if (empty($errors)) {
-                    Event::fire('admin.log', array('deactivate success', 'Photo ids: ' . join(',', $ids)));
-                    $cache->invalidate();
-                    echo 'Photos have been deactivated';
-                } else {
-                    Event::fire('admin.log', array('deactivate fail', 'Error count:' . count($errors)));
-                    $message = join('<br/>', $errors);
-                    echo $message;
-                }
+                    if (empty($errors)) {
+                        Event::fire('admin.log', array('deactivate success', 'Photo ids: ' . join(',', $ids)));
+                        $cache->invalidate();
+                        echo self::SUCCESS_MESSAGE_5;
+                    } else {
+                        Event::fire('admin.log', array('deactivate fail', 'Error count:' . count($errors)));
+                        $message = join('<br/>', $errors);
+                        echo $message;
+                    }
 
-                break;
-            default:
-                echo 'Unknown action';
-                break;
+                    break;
+                default:
+                    echo self::ERROR_MESSAGE_1;
+                    break;
+            }
+        } else {
+            echo self::ERROR_MESSAGE_1;
         }
     }
 

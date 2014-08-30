@@ -41,10 +41,10 @@ class Admin_Controller_User extends Controller
                     $security = Registry::get('security');
                     $status = $security->authenticate($email, $password);
 
-                    if ($status) {
+                    if ($status === true) {
                         self::redirect('/admin/');
                     } else {
-                        $view->set('account_error', 'Email address and/or password are incorrect');
+                        $view->set('account_error', $status);
                     }
                 } catch (\Exception $e) {
                     if (ENV == 'dev') {
@@ -102,8 +102,10 @@ class Admin_Controller_User extends Controller
                 ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddUser')) {
-            $this->checkToken();
-            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
+            if($this->checkToken() !== true && 
+                    $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true){
+                self::redirect('/admin/user/');
+            }
             
             if (RequestMethods::post('password') !== RequestMethods::post('password2')) {
                 $errors['password2'] = array('Paswords doesnt match');
@@ -131,7 +133,7 @@ class Admin_Controller_User extends Controller
                 $id = $user->save();
 
                 Event::fire('admin.log', array('success', 'User id: ' . $id));
-                $view->successMessage('Account has been successfully created');
+                $view->successMessage('Account'.self::SUCCESS_MESSAGE_1);
                 self::redirect('/admin/user/');
             } else {
                 Event::fire('admin.log', array('fail'));
@@ -152,14 +154,17 @@ class Admin_Controller_User extends Controller
         $user = App_Model_User::first(array('id = ?' => $loggedUser->getId()));
         
         if (NULL === $user) {
-            $view->errorMessage('User not found');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/user/');
         }
         $view->set('user', $user);
         
         if (RequestMethods::post('submitUpdateProfile')) {
+            if($this->checkToken() !== true){
+                self::redirect('/admin/user/');
+            }
+            
             $security = Registry::get('security');
-            $this->checkToken();
             $errors = array();
             
             if (RequestMethods::post('password') !== RequestMethods::post('password2')) {
@@ -199,7 +204,7 @@ class Admin_Controller_User extends Controller
                 $user->save();
 
                 Event::fire('admin.log', array('success', 'User id: ' . $user->getId()));
-                $view->successMessage('All changes were successfully saved');
+                $view->successMessage(self::SUCCESS_MESSAGE_2);
                 self::redirect('/admin/');
             } else {
                 Event::fire('admin.log', array('fail', 'User id: ' . $user->getId()));
@@ -222,10 +227,10 @@ class Admin_Controller_User extends Controller
         $user = App_Model_User::first(array('id = ?' => (int)$id));
 
         if (NULL === $user) {
-            $view->errorMessage('User not found');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/user/');
         } elseif ($user->role == 'role_superadmin' && !$superAdmin) {
-            $view->errorMessage('You dont have permissions to update this user');
+            $view->errorMessage(self::ERROR_MESSAGE_4);
             self::redirect('/admin/user/');
         }
         
@@ -233,7 +238,9 @@ class Admin_Controller_User extends Controller
                 ->set('superadmin', $superAdmin);
 
         if (RequestMethods::post('submitEditUser')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/user/');
+            }
             
             if (RequestMethods::post('password') !== RequestMethods::post('password2')) {
                 $errors['password2'] = array('Paswords doesnt match');
@@ -272,7 +279,7 @@ class Admin_Controller_User extends Controller
                 $user->save();
 
                 Event::fire('admin.log', array('success', 'User id: ' . $id));
-                $view->successMessage('All changes were successfully saved');
+                $view->successMessage(self::SUCCESS_MESSAGE_2);
                 self::redirect('/admin/user/');
             } else {
                 Event::fire('admin.log', array('fail', 'User id: ' . $id));
@@ -291,23 +298,22 @@ class Admin_Controller_User extends Controller
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
 
-        if ($this->checkTokenAjax()) {
-
+        if ($this->checkToken()) {
             $user = App_Model_User::first(array('id = ?' => (int) $id));
 
             if (NULL === $user) {
-                echo 'User not found';
+                echo self::ERROR_MESSAGE_2;
             } else {
                 if ($user->delete()) {
                     Event::fire('admin.log', array('success', 'User id: ' . $id));
                     echo 'ok';
                 } else {
                     Event::fire('admin.log', array('fail', 'User id: ' . $id));
-                    echo 'Unknown error eccured';
+                    echo self::ERROR_MESSAGE_1;
                 }
             }
         } else {
-            echo 'Security token is not valid';
+            echo self::ERROR_MESSAGE_1;
         }
     }
 

@@ -2,8 +2,8 @@
 
 namespace THCFrame\Session;
 
-use THCFrame\Core\Base as Base;
-use THCFrame\Session\Exception as Exception;
+use THCFrame\Core\Base;
+use THCFrame\Session\Exception;
 
 /**
  * Description of Driver

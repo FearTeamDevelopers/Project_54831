@@ -2,8 +2,7 @@
 
 namespace THCFrame\Profiler;
 
-use THCFrame\Profiler\Exception as Exception;
-use THCFrame\Registry\Registry as Registry;
+use THCFrame\Registry\Registry;
 use THCFrame\Events\Events as Event;
 
 /**
@@ -52,8 +51,8 @@ class Profiler
     private function __construct()
     {
         Event::fire('framework.profiler.construct');
-
-        $configuration = Registry::get('config');
+        
+        $configuration = Registry::get('configuration');
         $this->_enabled = (bool) $configuration->profiler->active;
         $this->_logging = $configuration->profiler->logging;
 
@@ -128,6 +127,11 @@ class Profiler
             $str .= '</table></div>';
             
             $str .= '<div id="profiler-globalvar"><table>';
+            $str .= '<tr><td colspan=2>SESSION</td></tr>';
+            foreach ($_SESSION as $key => $value) {
+                $str .= '<tr><td>'.$key.'</td><td>'.$value.'</td></tr>';
+            }
+            $str .= '</table><table>';
             $str .= '<tr><td colspan=2>POST</td></tr>';
             foreach ($_POST as $key => $value) {
                 $str .= '<tr><td>'.$key.'</td><td>'.$value.'</td></tr>';
@@ -139,8 +143,8 @@ class Profiler
             }
             $str .= '</table></div>';
             $str .= '</div><script type="text/javascript" src="/public/js/plugins/profiler.min.js"></script>';
-            \THCFrame\Core\Core::log($str, 'profiler.log', true, false);
 
+            file_put_contents('./application/logs/profiler.log', $str);
         } else {
             return;
         }
@@ -197,14 +201,6 @@ class Profiler
         }else{
             return '';
         }
-    }
-
-    /**
-     * 
-     */
-    public function __destruct()
-    {
-        Event::fire('framework.profiler.destruct');
     }
 
 }

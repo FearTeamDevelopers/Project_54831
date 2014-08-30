@@ -60,8 +60,10 @@ class Admin_Controller_Video extends Controller
                 ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddVideo')) {
-            $this->checkToken();
-            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
+            if($this->checkToken() !== true && 
+                    $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true){
+                self::redirect('/admin/video/');
+            }
             $path = str_replace('watch?v=', 'embed/', RequestMethods::post('path'));
             
             $video = new App_Model_Video(array(
@@ -89,7 +91,7 @@ class Admin_Controller_Video extends Controller
                 }
 
                 Event::fire('admin.log', array('success', 'Video id: ' . $id));
-                $view->successMessage('Video has been successfully saved');
+                $view->successMessage('Video'.self::SUCCESS_MESSAGE_1);
                 self::redirect('/admin/video/');
             } else {
                 Event::fire('admin.log', array('fail'));
@@ -118,7 +120,7 @@ class Admin_Controller_Video extends Controller
         $video = App_Model_Video::first(array('id = ?' => (int)$id));
 
         if (NULL === $video) {
-            $view->errorMessage('Video not found');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/video/');
         }
 
@@ -137,7 +139,10 @@ class Admin_Controller_Video extends Controller
                 ->set('sections', $sections);
 
         if (RequestMethods::post('submitEditVideo')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/video/');
+            }
+            
             $path = str_replace('watch?v=', 'embed/', RequestMethods::post('path'));
             
             $video->title = RequestMethods::post('title');
@@ -169,7 +174,7 @@ class Admin_Controller_Video extends Controller
                 }
 
                 Event::fire('admin.log', array('success', 'Video id: ' . $id));
-                $view->successMessage('All changes were successfully saved');
+                $view->successMessage(self::SUCCESS_MESSAGE_2);
                 self::redirect('/admin/video/');
             } else {
                 Event::fire('admin.log', array('fail', 'Video id: ' . $id));
@@ -187,24 +192,24 @@ class Admin_Controller_Video extends Controller
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
 
-        if ($this->checkTokenAjax()) {
+        if ($this->checkToken()) {
             $video = App_Model_Video::first(
                             array('id = ?' => (int) $id), array('id')
             );
 
             if (NULL === $video) {
-                echo 'Video not found';
+                echo self::ERROR_MESSAGE_2;
             } else {
                 if ($video->delete()) {
                     Event::fire('admin.log', array('success', 'Video id: ' . $id));
                     echo 'ok';
                 } else {
                     Event::fire('admin.log', array('fail', 'Video id: ' . $id));
-                    echo 'Unknown error eccured';
+                    echo self::ERROR_MESSAGE_1;
                 }
             }
         } else {
-            echo 'Security token is not valid';
+            echo self::ERROR_MESSAGE_1;
         }
     }
 
@@ -217,7 +222,10 @@ class Admin_Controller_Video extends Controller
         $errors = array();
 
         if (RequestMethods::post('performVideoAction')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/video/');
+            }
+            
             $ids = RequestMethods::post('videoids');
             $action = RequestMethods::post('action');
 
@@ -238,7 +246,7 @@ class Admin_Controller_Video extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('delete success', 'IDs: ' . join(',', $ids)));
-                        $view->successMessage('Videos have been deleted');
+                        $view->successMessage(self::SUCCESS_MESSAGE_6);
                     } else {
                         Event::fire('admin.log', array('delete fail', 'Error count:' . count($errors)));
                         $message = join(PHP_EOL, $errors);
@@ -268,7 +276,7 @@ class Admin_Controller_Video extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('activate success', 'Video ids: ' . join(',', $ids)));
-                        $view->successMessage('Videos have been activated');
+                        $view->successMessage(self::SUCCESS_MESSAGE_4);
                     } else {
                         Event::fire('admin.log', array('activate fail', 'Error count:' . count($errors)));
                         $message = join(PHP_EOL, $errors);
@@ -298,7 +306,7 @@ class Admin_Controller_Video extends Controller
 
                     if (empty($errors)) {
                         Event::fire('admin.log', array('deactivate success', 'Video ids: ' . join(',', $ids)));
-                        $view->successMessage('Videos have been deactivated');
+                        $view->successMessage(self::SUCCESS_MESSAGE_5);
                     } else {
                         Event::fire('admin.log', array('deactivate fail', 'Error count:' . count($errors)));
                         $message = join(PHP_EOL, $errors);

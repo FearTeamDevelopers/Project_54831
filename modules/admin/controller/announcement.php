@@ -37,8 +37,11 @@ class Admin_Controller_Announcement extends Controller
         $view->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddAnc')) {
-            $this->checkToken();
-            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
+            if($this->checkToken() !== true && 
+                    $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true){
+                self::redirect('/admin/announcement/');
+            }
+            
             $cache = Registry::get('cache');
             
             $announc = new App_Model_Announcement(array(
@@ -53,7 +56,7 @@ class Admin_Controller_Announcement extends Controller
                 $id = $announc->save();
 
                 Event::fire('admin.log', array('success', 'Announcement id: ' . $id));
-                $view->successMessage('Announcement has been successfully created');
+                $view->successMessage('Announcement'.self::SUCCESS_MESSAGE_1);
                 $cache->invalidate();
                 self::redirect('/admin/announcement/');
             } else {
@@ -79,14 +82,17 @@ class Admin_Controller_Announcement extends Controller
         ));
 
         if (NULL === $announc) {
-            $view->errorMessage('Announcement not found');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/announcement/');
         }
         
         $view->set('announcement', $announc);
 
         if (RequestMethods::post('submitEditAnc')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/announcement/');
+            }
+            
             $cache = Registry::get('cache');
             
             $announc->title = RequestMethods::post('title');
@@ -100,7 +106,7 @@ class Admin_Controller_Announcement extends Controller
                 $announc->save();
 
                 Event::fire('admin.log', array('success', 'Announcement id: ' . $id));
-                $view->successMessage('All changes were successfully saved');
+                $view->successMessage(self::SUCCESS_MESSAGE_2);
                 $cache->invalidate();
                 self::redirect('/admin/announcement/');
             } else {
@@ -122,14 +128,14 @@ class Admin_Controller_Announcement extends Controller
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
 
-        if (!$this->checkTokenAjax()) {
+        if ($this->checkToken()) {
             $cache = Registry::get('cache');
             $announc = App_Model_Announcement::first(
                             array('id = ?' => (int) $id), array('id')
             );
 
             if (NULL === $announc) {
-                echo 'Announcement not found';
+                echo self::ERROR_MESSAGE_2;
             } else {
                 if ($announc->delete()) {
                     Event::fire('admin.log', array('success', 'Announcement id: ' . $id));
@@ -137,11 +143,11 @@ class Admin_Controller_Announcement extends Controller
                     echo 'ok';
                 } else {
                     Event::fire('admin.log', array('fail', 'Announcement id: ' . $id));
-                    echo 'Unknown error eccured';
+                    echo self::ERROR_MESSAGE_1;
                 }
             }
         } else {
-            echo 'Security token is not valid';
+            echo self::ERROR_MESSAGE_1;
         }
     }
 

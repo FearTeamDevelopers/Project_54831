@@ -51,8 +51,11 @@ class Admin_Controller_Collection extends Controller
                 ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddCollection')) {
-            $this->checkToken();
-            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
+            if($this->checkToken() !== true && 
+                    $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true){
+                self::redirect('/admin/collection/');
+            }
+            
             $cache = Registry::get('cache');
 
             $collection = new App_Model_Collection(array(
@@ -70,7 +73,7 @@ class Admin_Controller_Collection extends Controller
                 $id = $collection->save();
 
                 Event::fire('admin.log', array('success', 'Collection id: ' . $id));
-                $view->successMessage('Collection has been successfully saved');
+                $view->successMessage('Collection'.self::SUCCESS_MESSAGE_1);
                 $cache->invalidate();
                 self::redirect('/admin/collection/');
             } else {
@@ -127,7 +130,7 @@ class Admin_Controller_Collection extends Controller
                     ->set('photos', $collectionPhotos)
                     ->set('videos', $collectionVideos);
         } else {
-            $view->warningMessage('Collection not foud');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/collection/');
         }
     }
@@ -146,7 +149,7 @@ class Admin_Controller_Collection extends Controller
         $collection = App_Model_Collection::first(array('id = ?' => (int) $id));
 
         if (NULL === $collection) {
-            $view->errorMessage('Collection not found');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/collection/');
         }
 
@@ -159,7 +162,10 @@ class Admin_Controller_Collection extends Controller
                 ->set('menu', $menu);
         
         if (RequestMethods::post('submitEditCollection')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/collection/');
+            }
+            
             $cache = Registry::get('cache');
 
             $collection->title = RequestMethods::post('title');
@@ -176,7 +182,7 @@ class Admin_Controller_Collection extends Controller
                 $collection->save();
 
                 Event::fire('admin.log', array('success', 'Collection id: ' . $id));
-                $view->successMessage('All changes were successfully saved');
+                $view->successMessage(self::SUCCESS_MESSAGE_2);
                 $cache->invalidate();
                 self::redirect('/admin/collection/');
             } else {
@@ -204,7 +210,7 @@ class Admin_Controller_Collection extends Controller
         );
 
         if (NULL === $collection) {
-            $view->errorMessage('Collection not found');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/collection/');
         }
 
@@ -214,7 +220,10 @@ class Admin_Controller_Collection extends Controller
                 ->set('photocount', count($colPhotos));
 
         if (RequestMethods::post('submitDeleteCollection')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/collection/');
+            }
+            
             $cache = Registry::get('cache');
 
             if ($collection->delete()) {
@@ -235,12 +244,12 @@ class Admin_Controller_Collection extends Controller
                 }
 
                 Event::fire('admin.log', array('success', 'Collection id: ' . $id));
-                $view->successMessage('Collection has been deleted');
+                $view->successMessage('Collection'.self::SUCCESS_MESSAGE_3);
                 $cache->invalidate();
                 self::redirect('/admin/collection/');
             } else {
                 Event::fire('admin.log', array('fail', 'Collection id: ' . $id));
-                $view->errorMessage('Unknown error eccured');
+                $view->errorMessage(self::ERROR_MESSAGE_1);
                 self::redirect('/admin/collection/');
             }
         }
@@ -263,7 +272,7 @@ class Admin_Controller_Collection extends Controller
         );
 
         if ($collection === null) {
-            $view->warningMessage('Collection not found');
+            $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/collection/');
         }
 
@@ -279,8 +288,11 @@ class Admin_Controller_Collection extends Controller
         ));
 
         if (RequestMethods::post('submitAddPhoto')) {
-            $this->checkToken();
-            $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken'));
+            if($this->checkToken() !== true && 
+                    $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true){
+                self::redirect('/admin/collection/detail/'.$collection->getId());
+            }
+            
             $errors = array();
 
             try {
@@ -317,7 +329,7 @@ class Admin_Controller_Collection extends Controller
                 $collectionPhoto->save();
 
                 Event::fire('admin.log', array('success', 'Photo id: ' . $photoId . ' in collection ' . $collection->getId()));
-                $view->successMessage('Photo has been successfully uploaded');
+                $view->successMessage(self::SUCCESS_MESSAGE_7);
                 $cache->invalidate();
                 self::redirect('/admin/collection/detail/' . $id);
             } else {
@@ -376,7 +388,7 @@ class Admin_Controller_Collection extends Controller
                 }
 
                 if (empty($errors)) {
-                    $view->successMessage('Photos have been successfully uploaded');
+                    $view->successMessage(self::SUCCESS_MESSAGE_7);
                     $cache->invalidate();
                     self::redirect('/admin/collection/detail/' . $id);
                 } else {
@@ -397,25 +409,25 @@ class Admin_Controller_Collection extends Controller
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
 
-        if (!$this->checkTokenAjax()) {
+        if ($this->checkToken()) {
             $photo = App_Model_Photo::first(
                             array('id = ?' => (int) $id), 
                             array('id', 'path', 'thumbPath')
             );
 
             if (null === $photo) {
-                echo 'Photo not found';
+                echo self::ERROR_MESSAGE_2;
             } else {
                 if (@unlink($photo->getUnlinkPath()) && @unlink($photo->getUnlinkThumbPath()) && $photo->delete()) {
                     Event::fire('admin.log', array('success', 'Photo id: ' . $id));
                     echo 'ok';
                 } else {
                     Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
-                    echo 'Unknown error eccured';
+                    echo self::ERROR_MESSAGE_1;
                 }
             }
         } else {
-            echo 'Security token is not valid';
+            echo self::ERROR_MESSAGE_1;
         }
     }
 
@@ -434,7 +446,7 @@ class Admin_Controller_Collection extends Controller
         $photo = App_Model_Photo::first(array('id = ?' => (int)$id));
 
         if (null === $photo) {
-            echo 'Photo not found';
+            echo self::ERROR_MESSAGE_2;
         } else {
             if (!$photo->active) {
                 $photo->active = true;
@@ -504,11 +516,19 @@ class Admin_Controller_Collection extends Controller
                     'active = ?' => true
                         ), array('id', 'title')
         );
+        
+        if($collection === null){
+            $view->warningMessage(self::ERROR_MESSAGE_2);
+            self::redirect('/admin/collection/');
+        }
 
         $view->set('collection', $collection);
 
         if (RequestMethods::post('submitAddVideo')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/collection/');
+            }
+            
             $path = str_replace('watch?v=', 'embed/', RequestMethods::post('path'));
 
             $video = new App_Model_Video(array(
@@ -529,7 +549,7 @@ class Admin_Controller_Collection extends Controller
                 $collectionvideo->save();
 
                 Event::fire('admin.log', array('success', 'Video id: ' . $videoId. 'in collection '. $id));
-                $view->successMessage('Video has been successfully saved');
+                $view->successMessage(self::SUCCESS_MESSAGE_9);
                 self::redirect('/admin/collection/detail/' . $id);
             } else {
                 Event::fire('admin.log', array('fail'));
