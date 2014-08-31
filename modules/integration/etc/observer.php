@@ -24,7 +24,7 @@ class Integration_Etc_Observer implements SubscriberInterface
      * 
      * @param array $params
      */
-    public function cronLog($params = array())
+    public function cronLog()
     {
         $params = func_get_args();
         

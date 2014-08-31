@@ -4,9 +4,7 @@ namespace THCFrame\Module;
 
 use THCFrame\Core\Base;
 use THCFrame\Events\Events as Event;
-use THCFrame\Registry\Registry;
 use THCFrame\Module\Exception;
-use THCFrame\Router\Route;
 use THCFrame\Events\SubscriberInterface;
 
 /**
@@ -38,6 +36,10 @@ class Module extends Base
         Event::fire('framework.module.initialize.before', array($this->moduleName));
 
         $this->addModuleEvents();
+        
+        Event::add('framework.router.construct.after', function($router){
+            $router->createRoutes($this->getModuleRoutes());
+        });
 
         Event::fire('framework.module.initialize.after', array($this->moduleName));
     }
@@ -56,8 +58,15 @@ class Module extends Base
                 $events = $moduleObserver->getSubscribedEvents();
 
                 foreach ($events as $name => $callback) {
+                    if(is_array($callback)){
+                        foreach ($callback as $call){
+                            Event::add($name, array($moduleObserver, $call));
+                        }
+                    }else{
+                        Event::add($name, array($moduleObserver, $callback));
+                    }
 
-                    Event::add($name, array($moduleObserver, $callback));
+                    
                 }
             }
         }

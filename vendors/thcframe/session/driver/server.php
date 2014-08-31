@@ -65,4 +65,13 @@ class Server extends Session\Driver
         return $this;
     }
 
+    /**
+     * 
+     * @return \THCFrame\Session\Driver\Server
+     */
+    public function clear()
+    {
+        $_SESSION = array();
+        return $this;
+    }
 }

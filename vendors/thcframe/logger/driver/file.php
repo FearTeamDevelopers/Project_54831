@@ -33,7 +33,7 @@ class File extends Logger\Driver
      * 
      * @param type $olderThan   date yyyy-mm-dd
      */
-    protected function deleteOldLogs($olderThan)
+    public function deleteOldLogs($olderThan)
     {
         $path = DIRECTORY_SEPARATOR . trim($this->path, DIRECTORY_SEPARATOR);
 

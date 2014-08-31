@@ -52,10 +52,10 @@ abstract class Driver extends Base
         return new Exception\Implementation(sprintf('%s method not implemented', $method));
     }
 
-    abstract protected function log($message);
+    public abstract function log($message);
     
-    abstract protected function logError($message);
+    public abstract function logError($message);
     
-    abstract protected function deleteOldLogs($olderThan);
+    public abstract function deleteOldLogs($olderThan);
     
 }

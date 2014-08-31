@@ -185,8 +185,7 @@ class Security extends Base implements SecurityInterface
     public function logout()
     {
         $session = Registry::get('session');
-        $session->erase('authUser')
-                ->erase('lastActive');
+        $session->clear();
 
         $this->_user = NULL;
         @session_regenerate_id();

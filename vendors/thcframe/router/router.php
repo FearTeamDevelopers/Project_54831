@@ -3,11 +3,9 @@
 namespace THCFrame\Router;
 
 use THCFrame\Core\Base;
-use THCFrame\Core\Core;
 use THCFrame\Events\Events as Event;
 use THCFrame\Router\Exception;
 use THCFrame\Router\Route;
-use THCFrame\Registry\Registry;
 
 /**
  * Description of Router
@@ -95,15 +93,12 @@ class Router extends Base
     {
         parent::__construct($options);
 
+        Event::fire('framework.router.construct.before');
+
         $this->_createRoutes(self::$_defaultRoutes);
 
-        $modules = Core::getModules();
-
-        foreach ($modules as $module) {
-            $routes = $module->getModuleRoutes();
-            $this->_createRoutes($routes);
-        }
-
+        Event::fire('framework.router.construct.after', array($this));
+        
         $this->_findRoute($this->_url);
     }
 
@@ -120,7 +115,7 @@ class Router extends Base
     /**
      * Method creates routes based on Module routes variable
      */
-    private function _createRoutes($routes)
+    private function _createRoutes(array $routes)
     {
         foreach ($routes as $route) {
             $new_route = new Route\Dynamic(array('pattern' => $route['pattern']));
@@ -226,6 +221,15 @@ class Router extends Base
         }
 
         return $list;
+    }
+
+    /**
+     * 
+     * @param array $routes
+     */
+    public function createRoutes(array $routes)
+    {
+        $this->_createRoutes($routes);
     }
 
 }

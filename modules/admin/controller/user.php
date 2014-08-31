@@ -44,13 +44,13 @@ class Admin_Controller_User extends Controller
                     if ($status === true) {
                         self::redirect('/admin/');
                     } else {
-                        $view->set('account_error', $status);
+                        $view->set('account_error', 'Email and/or password is wrong');
                     }
                 } catch (\Exception $e) {
                     if (ENV == 'dev') {
-                        $view->set('account_error', 'Login system is down ' . $e->getMessage());
+                        $view->set('account_error', $e->getMessage());
                     } else {
-                        $view->set('account_error', 'Unknown error occured');
+                        $view->set('account_error', 'Email and/or password is wrong');
                     }
                 }
             }

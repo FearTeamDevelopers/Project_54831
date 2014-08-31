@@ -141,7 +141,7 @@ class Core
         if (ENV == 'dev') {
             return substr(rtrim(base64_encode(md5(microtime())), "="), 5, 25);
         } else {
-            return 'Function is not allowed in this environment';
+            return null;
         }
     }
 
@@ -250,7 +250,7 @@ class Core
      * 
      * @param type $moduleArray
      */
-    public static function registerModules($moduleArray)
+    public static function registerModules(array $moduleArray)
     {
         foreach ($moduleArray as $moduleName) {
             self::registerModule($moduleName);
@@ -300,7 +300,7 @@ class Core
      */
     public static function getModules()
     {
-        if (count(self::$_modules) < 1) {
+        if (empty(self::$_modules)) {
             return null;
         } else {
             return self::$_modules;
@@ -313,7 +313,7 @@ class Core
      */
     public static function getModuleNames()
     {
-        if (count(self::$_modules) < 1) {
+        if (empty(self::$_modules)) {
             return null;
         } else {
             $moduleNames = array();
@@ -403,28 +403,15 @@ class Core
         } catch (\Exception $e) {
             $exception = get_class($e);
 
-            if ($router instanceof \THCFrame\Router\Router) {
-                $module = $router->getLastRoute()->getModule();
-            } else {
-                $module = 'app';
-            }
-
             // attempt to find the approapriate error template, and render
             foreach (self::$_exceptions as $template => $classes) {
                 foreach ($classes as $class) {
                     if ($class == $exception) {
-                        $moduleErrorFile = APP_PATH . "/modules/{$module}/view/errors/{$template}.phtml";
-                        $defaultErrorFile = APP_PATH . "/modules/app/view/errors/{$template}.phtml";
+                        $defaultErrorFile = "./modules/app/view/errors/{$template}.phtml";
 
-                        if (file_exists($moduleErrorFile)) {
-                            header('Content-type: text/html');
-                            include($moduleErrorFile);
-                            exit();
-                        } elseif (file_exists($defaultErrorFile)) {
-                            header('Content-type: text/html');
-                            include($defaultErrorFile);
-                            exit();
-                        }
+                        header('Content-type: text/html');
+                        include($defaultErrorFile);
+                        exit();
                     }
                 }
             }

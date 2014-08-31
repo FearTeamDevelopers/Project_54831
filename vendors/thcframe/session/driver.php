@@ -32,9 +32,11 @@ abstract class Driver extends Base
         return new Exception\Implementation(sprintf('%s method not implemented', $method));
     }
 
-    abstract function get($key, $default = null);
+    public abstract function get($key, $default = null);
 
-    abstract function set($key, $value);
+    public abstract function set($key, $value);
 
-    abstract function erase($key);
+    public abstract function erase($key);
+    
+    public abstract function clear();
 }

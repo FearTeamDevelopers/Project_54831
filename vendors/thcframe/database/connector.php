@@ -34,21 +34,21 @@ abstract class Connector extends Base
         return new Exception\Implementation(sprintf('%s method not implemented', $method));
     }
 
-    abstract function connect();
+    public abstract function connect();
 
-    abstract function disconnect();
+    public abstract function disconnect();
 
-    abstract function query();
+    public abstract function query();
 
-    abstract function execute($sql);
+    public abstract function execute($sql);
 
-    abstract function escape($value);
+    public abstract function escape($value);
 
-    abstract function getLastInsertId();
+    public abstract function getLastInsertId();
 
-    abstract function getAffectedRows();
+    public abstract function getAffectedRows();
 
-    abstract function getLastError();
+    public abstract function getLastError();
 
-    abstract function sync(\THCFrame\Model\Model $model);
+    public abstract function sync(\THCFrame\Model\Model $model);
 }

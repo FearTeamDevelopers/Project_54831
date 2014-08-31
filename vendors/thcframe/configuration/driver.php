@@ -40,7 +40,7 @@ abstract class Driver extends Base
         return $this;
     }
 
-    abstract protected function parse($path);
+    protected abstract function _parse($path);
 
-    abstract protected function parseDefault($path);
+    protected abstract function _parseDefault($path);
 }
