@@ -21,13 +21,13 @@ class Admin_Etc_Module extends Module
     protected $_observerClass = 'Admin_Etc_Observer';
     protected $_routes = array(
         array(
-            'pattern' => '/admin/login',
+            'pattern' => '/login',
             'module' => 'admin',
             'controller' => 'user',
             'action' => 'login',
         ),
         array(
-            'pattern' => '/admin/logout',
+            'pattern' => '/logout',
             'module' => 'admin',
             'controller' => 'user',
             'action' => 'logout',

@@ -14,29 +14,28 @@ use THCFrame\Controller\Controller as BaseController;
 class Controller extends BaseController
 {
 
+    private $_security;
+    
     /**
      * @protected
      */
     public function _secured()
     {
         $session = Registry::get('session');
-        $security = Registry::get('security');
-        $lastActive = $session->get('lastActive');
-
         $user = $this->getUser();
 
         if (!$user) {
-            self::redirect('/admin/login');
+            self::redirect('/login');
         }
 
-        if ($lastActive > time() - 1800) {
+        if ($session->get('lastActive') > time() - 1800) {
             $session->set('lastActive', time());
         } else {
             $view = $this->getActionView();
 
             $view->infoMessage('You has been logged out for long inactivity');
-            $security->logout();
-            self::redirect('/admin/login');
+            $this->_security->logout();
+            self::redirect('/login');
         }
     }
 
@@ -57,13 +56,12 @@ class Controller extends BaseController
      */
     public function _superadmin()
     {
-        $security = Registry::get('security');
         $view = $this->getActionView();
 
-        if ($security->getUser() && !$security->isGranted('role_superadmin')) {
-            $view->infoMessage('Access denied! Super admin access level required.');
-            $security->logout();
-            self::redirect('/admin/login');
+        if ($this->_security->getUser() && $this->_security->isGranted('role_superadmin') !== true) {
+            $view->infoMessage('Access denied');
+            $this->_security->logout();
+            self::redirect('/login');
         }
     }
 
@@ -74,6 +72,8 @@ class Controller extends BaseController
     public function __construct($options = array())
     {
         parent::__construct($options);
+        
+        $this->_security = Registry::get('security');
 
         // schedule disconnect from database 
         Events::add('framework.controller.destruct.after', function($name) {
@@ -87,10 +87,7 @@ class Controller extends BaseController
      */
     public function getUser()
     {
-        $security = Registry::get('security');
-        $user = $security->getUser();
-
-        return $user;
+        return $this->_security->getUser();
     }
 
     /**

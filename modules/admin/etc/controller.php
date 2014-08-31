@@ -56,22 +56,21 @@ class Controller extends BaseController
     public function _secured()
     {
         $session = Registry::get('session');
-        $lastActive = $session->get('lastActive');
         $user = $this->getUser();
         
         if (!$user) {
             $this->_security->logout();
-            self::redirect('/admin/login');
+            self::redirect('/login');
         }
 
-        if ($lastActive > time() - 1800) {
+        if ($session->get('lastActive') > time() - 1800) {
             $session->set('lastActive', time());
         } else {
             $view = $this->getActionView();
 
             $view->infoMessage('You has been logged out for long inactivity');
             $this->_security->logout();
-            self::redirect('/admin/login');
+            self::redirect('/login');
         }
     }
 
@@ -84,7 +83,7 @@ class Controller extends BaseController
             $view = $this->getActionView();
             $view->infoMessage(self::ERROR_MESSAGE_6);
             $this->_security->logout();
-            self::redirect('/admin/login');
+            self::redirect('/login');
         }
     }
 
@@ -97,7 +96,7 @@ class Controller extends BaseController
             $view = $this->getActionView();
             $view->infoMessage(self::ERROR_MESSAGE_6);
             $this->_security->logout();
-            self::redirect('/admin/login');
+            self::redirect('/login');
         }
     }
 
@@ -123,7 +122,7 @@ class Controller extends BaseController
             $view = $this->getActionView();
             $view->infoMessage(self::ERROR_MESSAGE_6);
             $this->_security->logout();
-            self::redirect('/admin/login');
+            self::redirect('/login');
         }
     }
 
