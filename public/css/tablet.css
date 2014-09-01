@@ -61,8 +61,6 @@ a:hover{color: #ccc;}
     padding: 10px;
 }
 
-iframe{width: 380px; height: 214px;}
-
 #news, #collection, #news-detail, #showaction{
     border-width: 4px;
     -moz-border-image:url('../images/ramecek.png') 4 4 4 4 stretch stretch; /* Firefox */
@@ -167,13 +165,13 @@ iframe{width: 380px; height: 214px;}
 .section-title{font-size: 22px; font-weight: bold; padding: 8px;}
 
 .section-content-text{position: relative; margin: 20px; color: white;}
-.section-content-photos{position: relative; margin: 20px;}
+.section-content-photos{position: relative; margin: 10px;}
 .section-content-photos img{margin: 5px;}
 .section-content-photos .socialIcon{text-decoration: none; margin-top: 15px;}
 .section-content-collection{}
 .section-content-collectionList{position: relative; margin: 20px; line-height: 30px;}
-.section-content-videos{position: relative; margin: 20px;}
-.section-content-videos iframe{margin: 5px;}
+.section-content-videos{position: relative; margin: 15px;}
+.section-content-videos iframe{margin: 0;}
 
 .collection-title{font-size: 23px; font-weight: bold; padding: 8px;}
 .collection-link, .message-empty{font-size: 20px; margin: 6px; color: #fff;}
@@ -208,3 +206,6 @@ a.close {position: inherit; top:5px; left: 90%;}
 
 .stencilla {font-family: 'stencilla', sans-serif; font-size: 14px;}
 .ancSignature{margin-left: 75%;}
+
+.styling-photos{width: 39%;}
+.styling-videos{width: 56%;}

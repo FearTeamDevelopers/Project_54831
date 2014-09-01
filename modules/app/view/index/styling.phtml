@@ -26,7 +26,7 @@
 </div>
 
 {if ($videos && !empty($videos))}
-    <div class="section-content-videos float-right">
+    <div class="section-content-videos float-right styling-videos">
         {foreach $video in $videos}
             <iframe width="{echo $video->width}" height="{echo $video->height}" 
                     src="{echo $video->path}" frameborder="0" allowfullscreen></iframe>
