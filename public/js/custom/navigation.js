@@ -184,7 +184,7 @@ jQuery(document).ready(function() {
             opacity: '1',
             zIndex: '40'
         });
-        jQuery('.content', this).css('opacity', '1');
+        jQuery('.text', this).css('opacity', '1');
     });
 
 });
