@@ -18,9 +18,9 @@ class Admin_Controller_Video extends Controller
         $view = $this->getActionView();
 
         $videos = App_Model_Video::all();
+        $sectionString = '';
 
         foreach ($videos as $video) {
-            $sectionString = '';
             $sectionArr = array();
             
             $videosQuery = App_Model_VideoSection::getQuery(array('vis.videoId', 'vis.sectionId'))

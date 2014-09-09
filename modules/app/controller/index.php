@@ -34,13 +34,20 @@ class App_Controller_Index extends Controller
                             array(
                         'sectionId = ?' => $section->getId(),
                         'active = ?' => true
-                            ), array('pageName', 'body')
+                            ), array('pageName', 'body', 'metaTitle', 'metaDescription')
             );
+
+            if ($contentText->metaTitle != '') {
+                $this->getLayoutView()->set('metatitle', $contentText->metaTitle);
+            }
+
+            if ($contentText->metaDescription != '') {
+                $this->getLayoutView()->set('metadescription', $contentText->metaDescription);
+            }
 
             if ($section->getSupportPhoto()) {
                 $query = App_Model_Photo::getQuery(array('ph.*'))
-                        ->join('tb_photosection', 'ph.id = phs.photoId', 'phs', 
-                                array('phs.photoId', 'phs.sectionId'))
+                        ->join('tb_photosection', 'ph.id = phs.photoId', 'phs', array('phs.photoId', 'phs.sectionId'))
                         ->where('phs.sectionId = ?', $section->getId())
                         ->order('ph.priority', 'DESC')
                         ->order('ph.created', 'DESC');
@@ -50,8 +57,7 @@ class App_Controller_Index extends Controller
 
             if ($section->getSupportVideo()) {
                 $queryVi = App_Model_Video::getQuery(array('vi.*'))
-                        ->join('tb_videosection', 'vi.id = vis.videoId', 'vis', 
-                                array('vis.videoId', 'vis.sectionId'))
+                        ->join('tb_videosection', 'vi.id = vis.videoId', 'vis', array('vis.videoId', 'vis.sectionId'))
                         ->where('vis.sectionId = ?', $section->getId())
                         ->order('vi.priority', 'DESC')
                         ->order('vi.created', 'DESC');
@@ -86,9 +92,6 @@ class App_Controller_Index extends Controller
      */
     public function index()
     {
-        $view = $this->getActionView();
-        $layoutView = $this->getLayoutView();
-
         
     }
 
@@ -246,9 +249,7 @@ class App_Controller_Index extends Controller
         $news = App_Model_News::all(
                         array('active = ?' => true,
                     'rssFeedBody <> ?' => '',
-                    'expirationDate >= ?' => date('Y-m-d H:i:s')), 
-                array('urlKey', 'title', 'rssFeedBody'), 
-                array('created' => 'desc'), 10
+                    'expirationDate >= ?' => date('Y-m-d H:i:s')), array('urlKey', 'title', 'rssFeedBody'), array('created' => 'desc'), 10
         );
 
         foreach ($news as $nws) {

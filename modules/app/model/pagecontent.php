@@ -55,10 +55,43 @@ class App_Model_PageContent extends Model
      * @type text
      * @length 256
      * 
-     * @validate required, html, max(50000)
+     * @validate required, html, max(80000)
      * @label text
      */
     protected $_body;
+
+    /**
+     * @column
+     * @readwrite
+     * @type text
+     * @length 256
+     * 
+     * @validate html, max(80000)
+     * @label text en
+     */
+    protected $_bodyEn;
+
+    /**
+     * @column
+     * @readwrite
+     * @type text
+     * @length 250
+     * 
+     * @validate alphanumeric, max(250)
+     * @label meta title
+     */
+    protected $_metaTitle;
+
+    /**
+     * @column
+     * @readwrite
+     * @type text
+     * @length 256
+     * 
+     * @validate alphanumeric, max(10000)
+     * @label meta description
+     */
+    protected $_metaDescription;
 
     /**
      * @column

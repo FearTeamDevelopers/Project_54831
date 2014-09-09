@@ -62,10 +62,10 @@ class Admin_Controller_Collection extends Controller
                 'menuId' => RequestMethods::post('show'),
                 'title' => RequestMethods::post('title'),
                 'year' => RequestMethods::post('year', date('Y', time())),
-                'season' => RequestMethods::post('season', ''),
-                'date' => RequestMethods::post('date', ''),
-                'photographer' => RequestMethods::post('photographer', ''),
-                'description' => RequestMethods::post('description', ''),
+                'season' => RequestMethods::post('season'),
+                'date' => RequestMethods::post('date'),
+                'photographer' => RequestMethods::post('photographer'),
+                'description' => RequestMethods::post('description'),
                 'rank' => RequestMethods::post('rank', 1)
             ));
 
@@ -172,10 +172,10 @@ class Admin_Controller_Collection extends Controller
             $collection->menuId = RequestMethods::post('show');
             $collection->active = RequestMethods::post('active');
             $collection->year = RequestMethods::post('year', date('Y', time()));
-            $collection->season = RequestMethods::post('season', '');
-            $collection->date = RequestMethods::post('date', '');
-            $collection->photographer = RequestMethods::post('photographer', '');
-            $collection->description = RequestMethods::post('description', '');
+            $collection->season = RequestMethods::post('season');
+            $collection->date = RequestMethods::post('date');
+            $collection->photographer = RequestMethods::post('photographer');
+            $collection->description = RequestMethods::post('description');
             $collection->rank = RequestMethods::post('rank', 1);
 
             if ($collection->validate()) {
@@ -303,8 +303,8 @@ class Admin_Controller_Collection extends Controller
             }
 
             $photo = new App_Model_Photo(array(
-                'description' => RequestMethods::post('description', ''),
-                'category' => RequestMethods::post('category', ''),
+                'description' => RequestMethods::post('description'),
+                'category' => RequestMethods::post('category'),
                 'priority' => RequestMethods::post('priority', 0),
                 'photoName' => $uploaded->file->filename,
                 'thumbPath' => trim($uploaded->thumb->path, '.'),
@@ -355,8 +355,8 @@ class Admin_Controller_Collection extends Controller
                     $object = ArrayMethods::toObject($image);
 
                     $photo = new App_Model_Photo(array(
-                        'description' => RequestMethods::post('description', ''),
-                        'category' => RequestMethods::post('category', ''),
+                        'description' => RequestMethods::post('description'),
+                        'category' => RequestMethods::post('category'),
                         'priority' => RequestMethods::post('priority', 0),
                         'photoName' => $object->file->filename,
                         'thumbPath' => trim($object->thumb->path, '.'),

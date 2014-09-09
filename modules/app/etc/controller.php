@@ -171,6 +171,7 @@ class Controller extends BaseController
         if ($view->getHttpReferer() === null || !preg_match('#^http:\/\/'.$host.'#', $view->getHttpReferer())) {
             $this->willRenderLayoutView = true;
             $layoutView = $this->getLayoutView();
+            
             $layoutView->set('hidetop', true)
                     ->set('showaction', true)
                     ->set($newVar, true);

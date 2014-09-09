@@ -45,9 +45,11 @@ class Admin_Controller_Content extends Controller
 
             $content = new App_Model_PageContent(array(
                 'sectionId' => RequestMethods::post('section'),
-                'pageName' => RequestMethods::post('page', ''),
-                'body' => RequestMethods::post('text', ''),
-                'bodyEn' => RequestMethods::post('texten', '')
+                'pageName' => RequestMethods::post('page'),
+                'body' => RequestMethods::post('text'),
+                'bodyEn' => RequestMethods::post('texten'),
+                'metaTitle' => RequestMethods::post('metatitle'),
+                'metaDescription' => RequestMethods::post('metadescription')
             ));
 
             if ($content->validate()) {
@@ -93,9 +95,11 @@ class Admin_Controller_Content extends Controller
             $cache = Registry::get('cache');
             
             $content->sectionId = RequestMethods::post('section');
-            $content->pageName = RequestMethods::post('page', '');
-            $content->body = RequestMethods::post('text', '');
-            $content->bodyEn = RequestMethods::post('texten', '');
+            $content->pageName = RequestMethods::post('page');
+            $content->body = RequestMethods::post('text');
+            $content->bodyEn = RequestMethods::post('texten');
+            $content->metaTitle = RequestMethods::post('metatitle');
+            $content->metaDescription = RequestMethods::post('metadescription');
             $content->active = RequestMethods::post('active');
 
             if ($content->validate()) {

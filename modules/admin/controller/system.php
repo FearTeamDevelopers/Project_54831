@@ -58,12 +58,12 @@ class Admin_Controller_System extends Controller
         $dump = new Mysqldump(array('exclude-tables-reqex' => array('wp_.*', 'piwik_.*')));
         $fm = new THCFrame\Filesystem\FileManager();
 
-        if (!is_dir(APP_PATH.'/temp/db/')) {
-            $fm->mkdir(APP_PATH.'/temp/db/');
+        if (!is_dir(APP_PATH . '/temp/db/')) {
+            $fm->mkdir(APP_PATH . '/temp/db/');
         }
 
         if (RequestMethods::post('createBackup')) {
-            Event::fire('admin.log');
+            Event::fire('admin.log', array('success'));
 
             if (RequestMethods::post('downloadDump')) {
                 $dump->create()->downloadDump();
@@ -90,7 +90,7 @@ class Admin_Controller_System extends Controller
         $log = Admin_Model_AdminLog::all(array(), array('*'), array('created' => 'DESC'));
         $view->set('adminlog', $log);
     }
-    
+
     /**
      * @before _secured
      */
@@ -137,7 +137,7 @@ class Admin_Controller_System extends Controller
 
                 if ($archNews->validate()) {
                     $archNews->save();
-                    
+
                     $exp->delete();
                 } else {
                     $err = true;
@@ -146,7 +146,7 @@ class Admin_Controller_System extends Controller
 
                 unset($archNews);
             }
-            
+
             if ($err) {
                 Event::fire('admin.log', array('fail', 'Error count: ' . $errCount));
                 $view->errorMessage('An error occured while archiving expired news');
@@ -167,10 +167,10 @@ class Admin_Controller_System extends Controller
         $view = $this->getActionView();
 
         if (RequestMethods::post('changeStatus')) {
-            if($this->checkToken() !== true){
+            if ($this->checkToken() !== true) {
                 self::redirect('/admin/system/');
             }
-            
+
             $status = $this->loadConfigFromDb('appstatus');
 
             if ($status == 2) {
@@ -198,31 +198,78 @@ class Admin_Controller_System extends Controller
         $view = $this->getActionView();
         $config = Config::all();
         $view->set('config', $config);
-        
-        if(RequestMethods::post('submitEditSet')){
-            if($this->checkToken() !== true){
+
+        if (RequestMethods::post('submitEditSet')) {
+            if ($this->checkToken() !== true) {
                 self::redirect('/admin/system/');
             }
-            
+
             $errors = array();
-            
-            foreach($config as $conf){
+
+            foreach ($config as $conf) {
                 $conf->value = RequestMethods::post($conf->getXkey(), '');
-                if($conf->validate()){
-                    Event::fire('admin.log', array('success', $conf->getXkey().': ' . $conf->getValue()));
+                if ($conf->validate()) {
+                    Event::fire('admin.log', array('success', $conf->getXkey() . ': ' . $conf->getValue()));
                     $conf->save();
-                }else{
-                    Event::fire('admin.log', array('fail', $conf->getXkey().': ' . $conf->getValue()));
+                } else {
+                    Event::fire('admin.log', array('fail', $conf->getXkey() . ': ' . $conf->getValue()));
                     $errors[$conf->xkey] = array_shift($conf->getErrors());
                 }
             }
 
-            if(empty($errors)){
+            if (empty($errors)) {
                 $view->successMessage(self::SUCCESS_MESSAGE_2);
                 self::redirect('/admin/system/');
-            }else{
+            } else {
                 $view->set('errors', $errors);
             }
+        }
+    }
+
+    /**
+     * @before _secured, _admin
+     */
+    public function generateSitemap()
+    {
+        $view = $this->getActionView();
+
+        if (RequestMethods::post('generateSitemap')) {
+            if ($this->checkToken() !== true) {
+                self::redirect('/admin/system/');
+            }
+
+            $xml = '<?xml version="1.0" encoding="UTF-8"?>'. PHP_EOL
+            . '<urlset
+            xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+            xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
+            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">' . PHP_EOL;
+
+            $xmlEnd = '</urlset>';
+
+            $host = RequestMethods::server('HTTP_HOST');
+
+            $pageContentXml = "<url><loc>http://{$host}</loc></url>" . PHP_EOL
+                    . "<url><loc>http://{$host}/design</loc></url>" . PHP_EOL
+                    . "<url><loc>http://{$host}/provas</loc></url>" . PHP_EOL
+                    . "<url><loc>http://{$host}/news</loc></url>" . PHP_EOL
+                    . "<url><loc>http://{$host}/styling</loc></url>" . PHP_EOL
+                    . "<url><loc>http://{$host}/partners</loc></url>" . PHP_EOL
+                    . "<url><loc>http://{$host}/contact</loc></url>" . PHP_EOL;
+
+            $news = App_Model_News::all(
+                            array('active = ?' => true, 'expirationDate >= ?' => date('Y-m-d H:i:s')), array('urlKey'));
+
+            $newsXml = '';
+            foreach ($news as $_news) {
+                $newsXml .= "<url><loc>http://{$host}/news/detail/{$_news->urlKey}</loc></url>" . PHP_EOL;
+            }
+
+            file_put_contents('./sitemap.xml', $xml . $pageContentXml . $newsXml . $xmlEnd);
+            
+            Event::fire('admin.log', array('success', 'Sitemap.xml generated'));
+            $view->successMessage('Sitemap file has been generated');
+            self::redirect('/admin/system/');
         }
     }
 

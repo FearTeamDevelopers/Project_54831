@@ -86,11 +86,8 @@ class Admin_Controller_News extends Controller
     {
         $view = $this->getActionView();
 
-        $photos = $this->_getPhotos();
-        $videos = $this->_getVideos();
-
-        $view->set('photos', $photos)
-                ->set('videos', $videos)
+        $view->set('photos', $this->_getPhotos())
+                ->set('videos', $this->_getVideos())
                 ->set('submstoken', $this->mutliSubmissionProtectionToken());
         
         if (RequestMethods::post('submitAddNews')) {
@@ -111,13 +108,13 @@ class Admin_Controller_News extends Controller
                 'author' => RequestMethods::post('author', $this->getUser()->getWholeName()),
                 'urlKey' => $urlKey,
                 'shortBody' => RequestMethods::post('shorttext'),
-                'rssFeedBody' => RequestMethods::post('feedtext', ''),
+                'rssFeedBody' => RequestMethods::post('feedtext'),
                 'body' => RequestMethods::post('text'),
                 'expirationDate' => RequestMethods::post('expiration'),
                 'rank' => RequestMethods::post('rank', 1),
                 'metaTitle' => RequestMethods::post('metatitle', RequestMethods::post('title')),
                 'metaDescription' => RequestMethods::post('metadescription', RequestMethods::post('shorttext')),
-                'metaImage' => RequestMethods::post('metaimage', '')
+                'metaImage' => RequestMethods::post('metaimage')
             ));
 
             if (empty($errors) && $news->validate()) {
@@ -173,7 +170,7 @@ class Admin_Controller_News extends Controller
             $news->expirationDate = RequestMethods::post('expiration');
             $news->body = RequestMethods::post('text');
             $news->shortBody = RequestMethods::post('shorttext');
-            $news->rssFeedBody = RequestMethods::post('feedtext', '');
+            $news->rssFeedBody = RequestMethods::post('feedtext');
             $news->rank = RequestMethods::post('rank', 1);
             $news->active = RequestMethods::post('active');
             $news->metaTitle = RequestMethods::post('metatitle', RequestMethods::post('title'));

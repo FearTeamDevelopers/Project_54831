@@ -63,8 +63,8 @@ class Admin_Controller_Photo extends Controller
             }
 
             $photo = new App_Model_Photo(array(
-                'description' => RequestMethods::post('description', ''),
-                'category' => RequestMethods::post('category', ''),
+                'description' => RequestMethods::post('description'),
+                'category' => RequestMethods::post('category'),
                 'priority' => RequestMethods::post('priority', 0),
                 'photoName' => $uploaded->file->filename,
                 'thumbPath' => trim($uploaded->thumb->path, '.'),
@@ -121,8 +121,8 @@ class Admin_Controller_Photo extends Controller
                     $object = ArrayMethods::toObject($image);
 
                     $photo = new App_Model_Photo(array(
-                        'description' => RequestMethods::post('description', ''),
-                        'category' => RequestMethods::post('category', ''),
+                        'description' => RequestMethods::post('description'),
+                        'category' => RequestMethods::post('category'),
                         'priority' => RequestMethods::post('priority', 0),
                         'photoName' => $object->file->filename,
                         'thumbPath' => trim($object->thumb->path, '.'),
@@ -221,8 +221,8 @@ class Admin_Controller_Photo extends Controller
                 self::redirect('/admin/photo/');
             }
 
-            $photo->description = RequestMethods::post('description', '');
-            $photo->category = RequestMethods::post('category', '');
+            $photo->description = RequestMethods::post('description');
+            $photo->category = RequestMethods::post('category');
             $photo->priority = RequestMethods::post('priority', 0);
             $photo->active = RequestMethods::post('active');
 

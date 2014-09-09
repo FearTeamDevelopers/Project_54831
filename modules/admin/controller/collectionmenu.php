@@ -75,7 +75,7 @@ class Admin_Controller_CollectionMenu extends Controller
                 'sectionId' => RequestMethods::post('section'),
                 'title' => RequestMethods::post('title'),
                 'urlKey' => $urlKey,
-                'customName' => RequestMethods::post('custom', ''),
+                'customName' => RequestMethods::post('custom'),
                 'rank' => RequestMethods::post('rank', 1)
             ));
 
@@ -133,7 +133,7 @@ class Admin_Controller_CollectionMenu extends Controller
             $clm->sectionId = RequestMethods::post('section');
             $clm->title = RequestMethods::post('title');
             $clm->urlKey = $urlKey;
-            $clm->customName = RequestMethods::post('custom', '');
+            $clm->customName = RequestMethods::post('custom');
             $clm->rank = RequestMethods::post('rank', 1);
             $clm->active = RequestMethods::post('active');
 
