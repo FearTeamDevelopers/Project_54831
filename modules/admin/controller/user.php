@@ -138,6 +138,7 @@ class Admin_Controller_User extends Controller
             } else {
                 Event::fire('admin.log', array('fail'));
                 $view->set('errors', $errors + $user->getErrors())
+                        ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken())
                         ->set('user', $user);
             }
         }

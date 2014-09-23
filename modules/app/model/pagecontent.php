@@ -88,7 +88,7 @@ class App_Model_PageContent extends Model
      * @type text
      * @length 256
      * 
-     * @validate alphanumeric, max(10000)
+     * @validate alphanumeric, max(500)
      * @label meta description
      */
     protected $_metaDescription;

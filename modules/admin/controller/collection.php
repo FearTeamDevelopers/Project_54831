@@ -79,6 +79,7 @@ class Admin_Controller_Collection extends Controller
             } else {
                 Event::fire('admin.log', array('fail'));
                 $view->set('collection', $collection)
+                        ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken())
                         ->set('errors', $collection->getErrors());
             }
         }

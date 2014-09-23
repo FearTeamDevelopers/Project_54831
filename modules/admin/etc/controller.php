@@ -171,6 +171,20 @@ class Controller extends BaseController
 
         return $token;
     }
+    
+        /**
+     * 
+     * @return type
+     */
+    public function revalidateMutliSubmissionProtectionToken()
+    {
+        $session = Registry::get('session');
+        $session->erase('submissionprotection');
+        $token = md5(microtime());
+        $session->set('submissionprotection', $token);
+        
+        return $token;
+    }
 
     /**
      * 

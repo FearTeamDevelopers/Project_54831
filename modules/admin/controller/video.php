@@ -96,6 +96,7 @@ class Admin_Controller_Video extends Controller
             } else {
                 Event::fire('admin.log', array('fail'));
                 $view->set('errors', $video->getErrors())
+                        ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken())
                         ->set('video', $video);
                 
             }

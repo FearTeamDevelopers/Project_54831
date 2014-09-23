@@ -100,6 +100,7 @@ class Admin_Controller_Photo extends Controller
             } else {
                 Event::fire('admin.log', array('fail'));
                 $view->set('errors', $errors + $photo->getErrors())
+                        ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken())
                         ->set('photo', $photo);
             }
         } elseif (RequestMethods::post('submitAddMultiPhoto')) {
@@ -164,11 +165,13 @@ class Admin_Controller_Photo extends Controller
                     $view->successMessage(self::SUCCESS_MESSAGE_7);
                     self::redirect('/admin/photo/');
                 } else {
-                    $view->set('errors', $errors);
+                    $view->set('errors', $errors)
+                        ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken());
                 }
             }
 
-            $view->set('errors', $errors);
+            $view->set('errors', $errors)
+                ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken());
         }
     }
 
@@ -542,7 +545,16 @@ class Admin_Controller_Photo extends Controller
             $limit = (int) RequestMethods::post('iDisplayLength', 50);
             $photoQuery->limit($limit, $page + 1);
             $photos = App_Model_Photo::initialize($photoQuery);
-            $count = App_Model_Photo::count();
+            $photoCountQuery = App_Model_Photo::getQuery(array('ph.id'))
+                    ->leftjoin('tb_photosection', 'ph.id = phs.photoId', 'phs', 
+                            array('photoId', 'sectionId'))
+                    ->leftjoin('tb_section', 'phs.sectionId = se.id', 'se', 
+                            array('se.title' => 'secTitle'));
+
+            $photosCount = App_Model_Photo::initialize($photoCountQuery);
+            unset($photoCountQuery);
+            $count = count($photosCount);
+            unset($photosCount);
         }
         
         $draw = $page + 1 + time();

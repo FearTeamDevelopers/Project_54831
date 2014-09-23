@@ -69,7 +69,6 @@ class App_Model_PhotoSection extends Model
 
         if (empty($this->$raw)) {
             $this->setCreated(date('Y-m-d H:i:s'));
-            $this->setActive(true);
         }
         $this->setModified(date('Y-m-d H:i:s'));
     }

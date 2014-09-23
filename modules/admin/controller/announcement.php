@@ -62,6 +62,7 @@ class Admin_Controller_Announcement extends Controller
             } else {
                 Event::fire('admin.log', array('fail'));
                 $view->set('errors', $announc->getErrors())
+                        ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken())
                         ->set('announc', $announc);
             }
         }

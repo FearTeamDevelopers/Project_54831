@@ -88,6 +88,7 @@ class Admin_Controller_CollectionMenu extends Controller
             } else {
                 Event::fire('admin.log', array('fail'));
                 $view->set('errors', $errors + $clm->getErrors())
+                        ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken())
                         ->set('clmenu', $clm);
             }
         }

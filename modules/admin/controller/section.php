@@ -52,7 +52,9 @@ class Admin_Controller_Section extends Controller
         $view->set('sections', $sections);
 
         if (RequestMethods::post('submitAddSection')) {
-            $this->checkToken();
+            if($this->checkToken() !== true){
+                self::redirect('/admin/section/');
+            }
             $errors = array();
             $urlKey = $this->_createUrlKey(RequestMethods::post('title'));
 
@@ -76,7 +78,8 @@ class Admin_Controller_Section extends Controller
                 $view->flashMessage('Section has been successfully saved');
                 self::redirect('/admin/section/');
             } else {
-                $view->set('errors', $errors + $section->getErrors());
+                $view->set('errors', $errors + $section->getErrors())
+                    ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken());
             }
         }
     }

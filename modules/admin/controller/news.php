@@ -126,6 +126,7 @@ class Admin_Controller_News extends Controller
             } else {
                 Event::fire('admin.log', array('fail'));
                 $view->set('errors', $errors + $news->getErrors())
+                        ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken())
                         ->set('news', $news);
             }
         }

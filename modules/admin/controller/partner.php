@@ -86,6 +86,7 @@ class Admin_Controller_Partner extends Controller
             } else {
                 Event::fire('admin.log', array('fail'));
                 $view->set('errors', $errors + $partner->getErrors())
+                        ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken())
                         ->set('partner', $partner);
             }
         }
