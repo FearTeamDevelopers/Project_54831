@@ -648,7 +648,7 @@ button,input,select,textarea { font-size: 13px; font-family: Arial, Helvetica, s
 .announcement p { margin: 20px 0; color: #666; }
 .announcement p:first-child { margin-top: 0; }
 .announcement p:last-child { margin-bottom: 0; }
-.announcement p span { color: #333; background: #999; padding: 1px 10px; color: #fff; font-size: 11px; display: inline-block; }
+.announcement p span.announc-background { color: #333; background: #999; padding: 1px 10px; color: #fff; font-size: 11px; display: inline-block; }
 
 .statement table td { text-align: center; }
 .statement table tbody tr td:first-child, .statement table thead tr th:first-child { border-left: 0; }

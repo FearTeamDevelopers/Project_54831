@@ -4,191 +4,83 @@
 </ul><!--maintabmenu-->
 
 <div class="content">
-    <div class="one_half">
-        <div class="widgetbox">
-            <div class="contenttitle radiusbottom0">
-                <h2 class="table"><span>Upload Single Photo</span></h2>
-            </div><!--contenttitle-->
+    <div class="contenttitle radiusbottom0">
+        <h2 class="table"><span>Upload Photo</span></h2>
+    </div><!--contenttitle-->
 
-            <form class="stdform stdform2 uploadPhotoForm" method="post" action="#" enctype="multipart/form-data">
-                <input type="hidden" name="tk" id="tk" value="{echo $token}" />
-                <input type="hidden" name="submstoken" id="submstoken" value="{echo $submstoken}" />
-                <input type="hidden" name="MAX_FILE_SIZE" value="5000000"/>
-                <p>
-                    <label>Section</label>
-                    <span class="field">
-                        {foreach $section in $sections}
-                            <span class="block fs15 margintop10">
-                                <input type="checkbox" name="sections[]" value="{echo $section->id}">
-                                    {echo ucfirst($section->title)}
-                            </span>
-                        {/foreach}
-                        {if isset($errors["sections"])}
-                          <label class="error">{echo join("<br/>", $errors["sections"])}</label>
-                        {/if}
-                    </span>
-                </p>
-                <p>
-                    <label>Description</label>
-                    <span class="field">
-                        <input type="text" name="description" class="longinput" 
-                               value="{echo isset($photo)? $photo->description: ""}"/>
-                        {if isset($errors["description"])}
-                            <label class="error">
-                                {echo join("<br/>", $errors["description"])}
-                            </label>
-                        {/if}
-                    </span>
-                </p>
-                <p>
-                    <label>Category</label>
-                    <span class="field">
-                        <input type="text" name="category" class="longinput" 
-                               value="{echo isset($photo)? $photo->category: ""}"/>
-                        {if isset($errors["category"])}
-                            <label class="error">
-                                {echo join("<br/>", $errors["category"])}
-                            </label>
-                        {/if}
-                    </span>
-                </p>
-                <p>
-                    <label>Priority</label>
-                    <span class="field">
-                        <select name="priority" >
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
-                    </span>
-                </p>
-                <p>
-                    <label>Image</label>
-                    <span class="field">
-                        <input type="file" name="photo"/>
-                    </span> 
-                    {if isset($errors["photo"])}
-                    <label class="error">
-                        {echo join("<br/>", $errors["photo"])}
-                    </label>
-                    {/if}
-                    {if isset($errors["size"])}
-                    <label class="error">
-                        {echo join("<br/>", $errors["size"])}
-                    </label>
-                    {/if}
-                    {if isset($errors["mime"])}
-                    <label class="error">
-                        {echo join("<br/>", $errors["mime"])}
-                    </label>
-                    {/if}
-                </p>
+    <form class="stdform stdform2 uploadPhotoForm" method="post" action="#" enctype="multipart/form-data">
+        <input type="hidden" name="tk" id="tk" value="{echo $token}" />
+        <input type="hidden" name="submstoken" id="submstoken" value="{echo $submstoken}" />
+        <input type="hidden" name="MAX_FILE_SIZE" value="5000000"/>
 
-                <p class="stdformbutton">
-                    <input name="submitAddPhoto" type="submit" value="Save" class="submit radius2" />
-                    <input type="reset" class="reset radius2" value="Reset" />
-                </p>
-            </form>
-        </div>
-    </div>
+        <p>
+            <label>Section</label>
+            <span class="field">
+                {foreach $section in $sections}
+                <span class="block fs15 margintop10">
+                    <input type="checkbox" name="sections[]" value="{echo $section->id}">
+                    {echo ucfirst($section->title)}
+                </span>
+                {/foreach}
+                {if isset($errors["sections"])}
+                <label class="error">{echo join("<br/>", $errors["sections"])}</label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Description</label>
+            <span class="field">
+                <input type="text" name="description" class="longinput" value=""/>
+                {if isset($errors["description"])}
+                <label class="error">
+                    {echo join("<br/>", $errors["description"])}
+                </label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Category</label>
+            <span class="field">
+                <input type="text" name="category" class="longinput" value=""/>
+                {if isset($errors["category"])}
+                <label class="error">
+                    {echo join("<br/>", $errors["category"])}
+                </label>
+                {/if}
+            </span>
+        </p>
+        <p>
+            <label>Priority</label>
+            <span class="field">
+                <select name="priority" >
+                    <option value="0">0</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </span>
+        </p>
+        <p>
+            <label>Image</label>
+            <span class="field">
+                <a href="#" class="btn btn_folder multi_upload"><span>+</span></a>
+                <a href="#" class="btn btn_folder multi_upload_dec"><span>-</span></a>
+            </span>
+            <span class="field file_inputs">
+                <input type="file" name="photos[]"/>
+                {if isset($errors["photom"])}
+                <label class="error">
+                    {echo join("<br/>", $errors["photom"])}
+                </label>
+                {/if}
+            </span> 
+        </p>
 
-    <div class="one_half last">
-        <div class="widgetbox">
-            <div class="contenttitle radiusbottom0">
-                <h2 class="table"><span>Upload More Photos</span></h2>
-            </div><!--contenttitle-->
-
-            <form class="stdform stdform2 uploadPhotoForm" method="post" action="#" enctype="multipart/form-data">
-                <input type="hidden" name="tk" id="tk" value="{echo $token}" />
-                <input type="hidden" name="MAX_FILE_SIZE" value="5000000"/>
-                <p>
-                    <label>Section</label>
-                    <span class="field">
-                        {foreach $section in $sections}
-                            <span class="block fs15 margintop10">
-                                <input type="checkbox" name="sections[]" value="{echo $section->id}">
-                                    {echo ucfirst($section->title)}
-                            </span>
-                        {/foreach}
-                        {if isset($errors["sections"])}
-                            <label class="error">{echo join("<br/>", $errors["sections"])}</label>
-                        {/if}
-                    </span>
-                </p>
-                <p>
-                    <label>Description</label>
-                    <span class="field">
-                        <input type="text" name="description" class="longinput" value=""/>
-                        {if isset($errors["description"])}
-                            <label class="error">
-                                {echo join("<br/>", $errors["description"])}
-                            </label>
-                        {/if}
-                    </span>
-                </p>
-                <p>
-                    <label>Category</label>
-                    <span class="field">
-                        <input type="text" name="category" class="longinput" value=""/>
-                        {if isset($errors["category"])}
-                            <label class="error">
-                                {echo join("<br/>", $errors["category"])}
-                            </label>
-                        {/if}
-                    </span>
-                </p>
-                <p>
-                    <label>Priority</label>
-                    <span class="field">
-                        <select name="priority" >
-                            <option value="0">0</option>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
-                    </span>
-                </p>
-                <p>
-                    <label>Image</label>
-                    <span class="field">
-                        <a href="#" class="btn btn_folder multi_upload"><span>+</span></a>
-                        <a href="#" class="btn btn_folder multi_upload_dec"><span>-</span></a>
-                    </span>
-                    <span class="field file_inputs">
-                        <input type="file" name="photos[]"/>
-                        <input type="file" name="photos[]"/>
-                    </span> 
-                    <span class="field">
-                    {if isset($errors["photom"])}
-                    <label class="error">
-                        {echo join("<br/>", $errors["photom"])}
-                    </label>
-                    {/if}
-                    {if isset($errors["sizem"])}
-                    <label class="error">
-                        {echo join("<br/>", $errors["sizem"])}
-                    </label>
-                    {/if}
-                    {if isset($errors["mimem"])}
-                    <label class="error">
-                        {echo join("<br/>", $errors["mimem"])}
-                    </label>
-                    {/if}
-                    </span>
-                </p>
-
-                <p class="stdformbutton">
-                    <input name="submitAddMultiPhoto" type="submit" value="Save" class="submit radius2" />
-                    <input type="reset" class="reset radius2" value="Reset" />
-                </p>
-            </form>
-        </div>
-    </div>
-    <br class="clear-all"/>
+        <p class="stdformbutton">
+            <input name="submitAddPhoto" type="submit" value="Save" class="submit radius2" />
+            <input type="reset" class="reset radius2" value="Reset" />
+        </p>
+    </form>
 </div>
-<br class="clear-all"/>

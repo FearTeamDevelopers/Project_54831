@@ -1,0 +1,28 @@
+<ul class="maintabmenu multipletabmenu">
+    <li><a href="/admin/photo/">Photo List</a></li>
+    <li><a href="/admin/photo/add/">Add Photo</a></li>
+    <li class="current"><a href="#">Delete Photo</a></li>
+</ul><!--maintabmenu-->
+
+<div class="content">
+    <div class="contenttitle radiusbottom0">
+        <h2 class="table"><span>Delete Photo</span></h2>
+    </div><!--contenttitle-->
+    
+    <form class="stdform stdform2" method="post" action="#">
+        <input type="hidden" name="tk" value="{echo $token}" />
+        <p>
+            <label>Photo Name</label>
+            <span class="field">{echo $photo->photoName}</span>
+        </p>
+        <p>
+            <label>Photo</label>
+            <span class="field"><img src="{echo $photo->imgThumb}" alt="" /></span>
+        </p>
+        
+        <p class="stdformbutton">
+            <input name="submitDeletePhoto" type="submit" value="Delete" class="submit radius2" />
+        </p>
+    </form>
+</div>
+<br class="clear-all" />

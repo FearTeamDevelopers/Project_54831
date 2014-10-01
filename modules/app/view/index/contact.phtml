@@ -12,9 +12,9 @@
     
     {if ($photos && !empty($photos))}
         {foreach $photo in $photos}
-            <a href="{echo $photo->path}" class="highslide" 
+            <a href="{echo $photo->imgMain}" class="highslide" 
                     title="{echo $photo->description}" onclick="return hs.expand(this, configstyling)">
-                <img src="{echo $photo->thumbPath}" alt="Marko.in"/>
+                <img src="{echo $photo->imgThumb}" alt="Marko.in"/>
             </a>
         {/foreach}
     {/if}

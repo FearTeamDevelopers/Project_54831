@@ -39,10 +39,7 @@ RewriteRule .* - [F]
 
 ## Back-end protection
 ## This also blocks fingerprinting attacks browsing for XML and INI files
-RewriteRule ^modules/admin/?$ - [L]
-RewriteRule ^modules/admin/index\.(php|html?)$ - [L]
-RewriteRule ^modules/admin/(controller|model|view|etc)/([^/]+/)*([^/.]+\.)+(jp(e?g|2)?|png|gif|bmp|css|js|swf|html?|mp(eg?|[34])|avi|wav|og[gv]|xlsx?|docx?|pptx?|zip|rar|pdf|xps|txt|7z|svg|od[tsp]|flv|mov)$ - [L]
-RewriteRule ^modules/admin/ - [F] 
+RewriteRule (.*)/configuration/(.*)\.(ini|xml)$ - [F]
 
 ########## Block bad user agents
  ## The following list may include bots that no longer exist or are not a problem
@@ -155,8 +152,8 @@ RewriteRule /public/(.*)/(.*)\.(css|jpe?g|gif|png|js|ico)$ - [NC,L]
 RewriteCond %{REQUEST_URI} (^/tests/(.*)$) 
 RewriteRule .* - [F]
 
-RewriteCond %{REQUEST_URI} (^/application/(.*)$) 
-RewriteRule .* /index.php [NC,L]
+RewriteCond %{REQUEST_URI} (^/(piwik|blog)/(.*)$) 
+RewriteRule .* - [NC,L]
 
 RewriteCond %{REQUEST_FILENAME} -s [OR]
 RewriteCond %{REQUEST_FILENAME} -l [OR]

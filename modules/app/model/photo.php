@@ -48,12 +48,12 @@ class App_Model_Photo extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 250
+     * @length 256
      * 
-     * @validate required, path, max(250)
-     * @label thum path
+     * @validate alphanumeric, max(2048)
+     * @label description
      */
-    protected $_thumbPath;
+    protected $_description;
 
     /**
      * @column
@@ -64,18 +64,18 @@ class App_Model_Photo extends Model
      * @validate required, path, max(250)
      * @label photo path
      */
-    protected $_path;
+    protected $_imgMain;
 
     /**
      * @column
      * @readwrite
      * @type text
-     * @length 256
+     * @length 250
      * 
-     * @validate alphanumeric, max(2048)
-     * @label description
+     * @validate required, path, max(250)
+     * @label thumb path
      */
-    protected $_description;
+    protected $_imgThumb;
 
     /**
      * @column
@@ -98,6 +98,17 @@ class App_Model_Photo extends Model
      * @label mime type
      */
     protected $_mime;
+
+    /**
+     * @column
+     * @readwrite
+     * @type text
+     * @length 10
+     * 
+     * @validate required, alpha, max(8)
+     * @label format
+     */
+    protected $_format;
 
     /**
      * @column
@@ -128,36 +139,6 @@ class App_Model_Photo extends Model
      * @label height
      */
     protected $_height;
-
-    /**
-     * @column
-     * @readwrite
-     * @type integer
-     * 
-     * @validate required, numeric, max(8)
-     * @label thumb size
-     */
-    protected $_thumbSize;
-
-    /**
-     * @column
-     * @readwrite
-     * @type integer
-     * 
-     * @validate required, numeric, max(8)
-     * @label thumb width
-     */
-    protected $_thumbWidth;
-
-    /**
-     * @column
-     * @readwrite
-     * @type integer
-     * 
-     * @validate required, numeric, max(8)
-     * @label thumb height
-     */
-    protected $_thumbHeight;
 
     /**
      * @column
@@ -231,15 +212,15 @@ class App_Model_Photo extends Model
     public function getUnlinkPath($type = true)
     {
         if ($type) {
-            if (file_exists(APP_PATH . $this->_path)) {
-                return APP_PATH . $this->_path;
-            } elseif (file_exists('.' . $this->_path)) {
-                return '.' . $this->_path;
-            } elseif (file_exists('./' . $this->_path)) {
-                return './' . $this->_path;
+            if (file_exists(APP_PATH . $this->_imgMain)) {
+                return APP_PATH . $this->_imgMain;
+            } elseif (file_exists('.' . $this->_imgMain)) {
+                return '.' . $this->_imgMain;
+            } elseif (file_exists('./' . $this->_imgMain)) {
+                return './' . $this->_imgMain;
             }
         } else {
-            return $this->_path;
+            return $this->_imgMain;
         }
     }
 
@@ -250,15 +231,15 @@ class App_Model_Photo extends Model
     public function getUnlinkThumbPath($type = true)
     {
         if ($type) {
-            if (file_exists(APP_PATH . $this->_thumbPath)) {
-                return APP_PATH . $this->_thumbPath;
-            } elseif (file_exists('.' . $this->_thumbPath)) {
-                return '.' . $this->_thumbPath;
-            } elseif (file_exists('./' . $this->_thumbPath)) {
-                return './' . $this->_thumbPath;
+            if (file_exists(APP_PATH . $this->_imgThumb)) {
+                return APP_PATH . $this->_imgThumb;
+            } elseif (file_exists('.' . $this->_imgThumb)) {
+                return '.' . $this->_imgThumb;
+            } elseif (file_exists('./' . $this->_imgThumb)) {
+                return './' . $this->_imgThumb;
             }
         } else {
-            return $this->_thumbPath;
+            return $this->_imgThumb;
         }
     }
 

@@ -4,7 +4,6 @@ use Admin\Etc\Controller;
 use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
 use THCFrame\Filesystem\FileManager;
-use THCFrame\Core\ArrayMethods;
 use THCFrame\Registry\Registry;
 
 /**
@@ -18,7 +17,7 @@ class Admin_Controller_Photo extends Controller
      */
     public function index()
     {
-
+        
     }
 
     /**
@@ -38,140 +37,78 @@ class Admin_Controller_Photo extends Controller
 
         $view->set('sections', $sections)
                 ->set('submstoken', $this->mutliSubmissionProtectionToken());
-        
-        $fileManager = new FileManager(array(
-            'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
-            'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
-            'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
-            'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
-            'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
-        ));
 
         if (RequestMethods::post('submitAddPhoto')) {
-            if($this->checkToken() !== true && 
-                    $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true){
+            if ($this->checkToken() !== true &&
+                    $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true) {
                 self::redirect('/admin/photo/');
             }
-            
-            $errors = array();
-            
-            try {
-                $photoArr = $fileManager->upload('photo', 'section_photos');
-                $uploaded = ArrayMethods::toObject($photoArr);
-            } catch (Exception $ex) {
-                $errors['photo'] = $ex->getMessage();
-            }
 
-            $photo = new App_Model_Photo(array(
-                'description' => RequestMethods::post('description'),
-                'category' => RequestMethods::post('category'),
-                'priority' => RequestMethods::post('priority', 0),
-                'photoName' => $uploaded->file->filename,
-                'thumbPath' => trim($uploaded->thumb->path, '.'),
-                'path' => trim($uploaded->file->path, '.'),
-                'mime' => $uploaded->file->ext,
-                'size' => $uploaded->file->size,
-                'width' => $uploaded->file->width,
-                'height' => $uploaded->file->height,
-                'thumbSize' => $uploaded->thumb->size,
-                'thumbWidth' => $uploaded->thumb->width,
-                'thumbHeight' => $uploaded->thumb->height
+            $errors = array();
+
+            $fileManager = new FileManager(array(
+                'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
+                'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
+                'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
+                'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
+                'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
             ));
+
+            $fileErrors = $fileManager->upload('photos', 'section_photos', time().'_')->getUploadErrors();
+            $files = $fileManager->getUploadedFiles();
 
             $sectionsIds = (array) RequestMethods::post('sections');
             if (empty($sectionsIds[0])) {
                 $errors['sections'] = array('At least one section has to be selected');
             }
-            
-            if (empty($errors) && $photo->validate()) {
-                $photoId = $photo->save();
 
-                foreach ($sectionsIds as $section) {
-                    $photoSection = new App_Model_PhotoSection(array(
-                        'photoId' => $photoId,
-                        'sectionId' => (int) $section
-                    ));
-                    $photoSection->save();
+            if (!empty($files) && empty($errors)) {
+                foreach ($files as $i => $file) {
+                    if ($file instanceof \THCFrame\Filesystem\Image) {
+                        $info = $file->getOriginalInfo();
+
+                        $photo = new App_Model_Photo(array(
+                            'description' => RequestMethods::post('description'),
+                            'category' => RequestMethods::post('category'),
+                            'priority' => RequestMethods::post('priority', 0),
+                            'photoName' => pathinfo($file->getFilename(), PATHINFO_FILENAME),
+                            'imgMain' => trim($file->getFilename(), '.'),
+                            'imgThumb' => trim($file->getThumbname(), '.'),
+                            'mime' => $info['mime'],
+                            'format' => $info['format'],
+                            'width' => $file->getWidth(),
+                            'height' => $file->getHeight(),
+                            'size' => $file->getSize()
+                        ));
+
+                        if ($photo->validate()) {
+                            $photoId = $photo->save();
+
+                            foreach ($sectionsIds as $section) {
+                                $photoSection = new App_Model_PhotoSection(array(
+                                    'photoId' => $photoId,
+                                    'sectionId' => (int) $section
+                                ));
+                                $photoSection->save();
+                            }
+
+                            Event::fire('admin.log', array('success', 'Photo id: ' . $photoId));
+                        } else {
+                            Event::fire('admin.log', array('fail'));
+                            $errors['photos'][] = $photo->getErrors();
+                        }
+                    }
                 }
+            }
 
-                Event::fire('admin.log', array('success', 'Photo id: ' . $photoId));
+            if (empty($errors) && empty($fileErrors)) {
                 $view->successMessage(self::SUCCESS_MESSAGE_7);
                 self::redirect('/admin/photo/');
             } else {
-                Event::fire('admin.log', array('fail'));
-                $view->set('errors', $errors + $photo->getErrors())
-                        ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken())
-                        ->set('photo', $photo);
-            }
-        } elseif (RequestMethods::post('submitAddMultiPhoto')) {
-            $this->checkToken();
-            $errors = $errors['photos'] = array();
-            
-            try {
-                $result = $fileManager->upload('photos', 'section_photos');
-            } catch (Exception $ex) {
-                $errors['photos'] = $ex->getMessage();
-            }
-
-            if (is_array($result) && !empty($result['errors'])) {
-                $errors['photos'] = $result['errors'];
-            }
-
-            if (is_array($result) && !empty($result['files'])) {
-                foreach ($result['files'] as $image) {
-                    $object = ArrayMethods::toObject($image);
-
-                    $photo = new App_Model_Photo(array(
-                        'description' => RequestMethods::post('description'),
-                        'category' => RequestMethods::post('category'),
-                        'priority' => RequestMethods::post('priority', 0),
-                        'photoName' => $object->file->filename,
-                        'thumbPath' => trim($object->thumb->path, '.'),
-                        'path' => trim($object->file->path, '.'),
-                        'mime' => $object->file->ext,
-                        'size' => $object->file->size,
-                        'width' => $object->file->width,
-                        'height' => $object->file->height,
-                        'thumbSize' => $object->thumb->size,
-                        'thumbWidth' => $object->thumb->width,
-                        'thumbHeight' => $object->thumb->height
-                    ));
-
-                    $sectionsIds = (array) RequestMethods::post('sections');
-                    if (empty($sectionsIds[0])) {
-                        $errors['sections'] = array('At least one section has to be selected');
-                    }
-
-                    if (empty($errors) && $photo->validate()) {
-                        $photoId = $photo->save();
-
-                        foreach ($sectionsIds as $section) {
-                            $photoSection = new App_Model_PhotoSection(array(
-                                'photoId' => $photoId,
-                                'sectionId' => (int) $section
-                            ));
-
-                            $photoSection->save();
-                        }
-
-                        Event::fire('admin.log', array('success', 'Photo id: ' . $photoId));
-                    } else {
-                        Event::fire('admin.log', array('fail'));
-                        $errors = $errors + $photo->getErrors();
-                    }
-                }
-
-                if (empty($errors)) {
-                    $view->successMessage(self::SUCCESS_MESSAGE_7);
-                    self::redirect('/admin/photo/');
-                } else {
-                    $view->set('errors', $errors)
+                $errors['photos'] = $fileErrors;
+                $view->set('errors', $errors)
                         ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken());
-                }
             }
-
-            $view->set('errors', $errors)
-                ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken());
         }
     }
 
@@ -220,7 +157,7 @@ class Admin_Controller_Photo extends Controller
                 ->set('sections', $sections);
 
         if (RequestMethods::post('submitEditPhoto')) {
-            if($this->checkToken() !== true){
+            if ($this->checkToken() !== true) {
                 self::redirect('/admin/photo/');
             }
 
@@ -279,27 +216,43 @@ class Admin_Controller_Photo extends Controller
      */
     public function delete($id)
     {
-        $this->willRenderActionView = false;
-        $this->willRenderLayoutView = false;
+        $view = $this->getActionView();
 
-        if ($this->checkToken()) {
-            $photo = App_Model_Photo::first(
-                            array('id = ?' => (int) $id), array('id', 'thumbPath', 'path')
-            );
+        $photo = App_Model_Photo::first(
+                    array('id = ?' => (int) $id), 
+                    array('id', 'imgThumb', 'imgMain', 'photoName')
+        );
 
-            if (NULL === $photo) {
-                echo self::ERROR_MESSAGE_2;
-            } else {
-                if (unlink($photo->getUnlinkPath()) && unlink($photo->getUnlinkThumbPath()) && $photo->delete()) {
-                    Event::fire('admin.log', array('success', 'Photo id: ' . $id));
-                    echo 'ok';
-                } else {
-                    Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
-                    echo self::ERROR_MESSAGE_1;
-                }
+        if (NULL === $photo) {
+            $view->warningMessage(self::ERROR_MESSAGE_2);
+            self::redirect('/admin/photo/');
+        }
+
+        $view->set('photo', $photo);
+
+        if (RequestMethods::post('submitDeletePhoto')) {
+            if ($this->checkToken() !== true) {
+                self::redirect('/admin/photo/');
             }
-        } else {
-            echo self::ERROR_MESSAGE_1;
+
+            $cache = Registry::get('cache');
+
+            $imgMain = $photo->getUnlinkPath();
+            $imgThumb = $photo->getUnlinkThumbPath();
+
+            if ($photo->delete()) {
+                @unlink($imgMain);
+                @unlink($imgThumb);
+
+                Event::fire('admin.log', array('success', 'Photo id: ' . $id));
+                $view->successMessage('Photo' . self::SUCCESS_MESSAGE_3);
+                $cache->invalidate();
+                self::redirect('/admin/photo/');
+            } else {
+                Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
+                $view->errorMessage(self::ERROR_MESSAGE_1);
+                self::redirect('/admin/photo/');
+            }
         }
     }
 
@@ -426,29 +379,6 @@ class Admin_Controller_Photo extends Controller
      * 
      * @before _secured, _publisher
      */
-    public function checkPhoto()
-    {
-        $this->willRenderActionView = false;
-        $this->willRenderLayoutView = false;
-
-        $filename = pathinfo(RequestMethods::post('filename'), PATHINFO_FILENAME);
-
-        $photo = App_Model_Photo::first(array(
-                    'photoName LIKE ?' => $filename
-        ));
-
-        if ($photo === null) {
-            echo 'ok';
-        } else {
-            echo "Photo with this name {$filename} already exits. Do you want to overwrite it?";
-        }
-    }
-
-    /**
-     * Ajax
-     * 
-     * @before _secured, _publisher
-     */
     public function load()
     {
         $this->willRenderActionView = false;
@@ -459,11 +389,10 @@ class Admin_Controller_Photo extends Controller
 
         if ($search != '') {
             $whereCond = "ph.width='?' OR ph.height='?' "
-                    . "OR ph.size='?' OR se.title='?' "
-                    . "OR ph.photoName LIKE '%%?%%'";
+                    . "OR ph.size='?' OR ph.photoName LIKE '%%?%%'";
 
             $photoQuery = App_Model_Photo::getQuery(
-                            array('ph.id', 'ph.active', 'ph.photoName', 'ph.thumbPath', 'ph.path',
+                            array('ph.id', 'ph.active', 'ph.photoName', 'ph.imgThumb', 'ph.imgMain',
                                 'ph.size', 'ph.width', 'ph.height', 'ph.priority', 'ph.created'))
                     ->leftjoin('tb_photosection', 'ph.id = phs.photoId', 'phs', 
                             array('photoId', 'sectionId'))
@@ -512,7 +441,7 @@ class Admin_Controller_Photo extends Controller
             unset($photosCount);
         } else {
             $photoQuery = App_Model_Photo::getQuery(
-                            array('ph.id', 'ph.active', 'ph.photoName', 'ph.thumbPath', 'ph.path',
+                            array('ph.id', 'ph.active', 'ph.photoName', 'ph.imgThumb', 'ph.imgMain',
                                 'ph.size', 'ph.width', 'ph.height', 'ph.priority', 'ph.created'))
                     ->leftjoin('tb_photosection', 'ph.id = phs.photoId', 'phs', 
                             array('photoId', 'sectionId'))
@@ -556,33 +485,33 @@ class Admin_Controller_Photo extends Controller
             $count = count($photosCount);
             unset($photosCount);
         }
-        
+
         $draw = $page + 1 + time();
-        
+
         $str = '{ "draw": ' . $draw . ', "recordsTotal": ' . $count . ', "recordsFiltered": ' . $count . ', "data": [';
 
         $prodArr = array();
         if ($photos !== null) {
             foreach ($photos as $photo) {
-                if($photo->active){
+                if ($photo->active) {
                     $label = "<span class='labelProduct labelProductGreen'>Active</span>";
-                }else{
+                } else {
                     $label = "<span class='labelProduct labelProductGray'>Inactive</span>";
                 }
 
                 $arr = array();
                 $arr [] = "[ \"" . $photo->id . "\"";
-                $arr [] = "\"<img alt='' src='" . $photo->thumbPath . "' height='80px'/>\"";
+                $arr [] = "\"<img alt='' src='" . $photo->imgThumb . "' height='80px'/>\"";
                 $arr [] = "\"" . $photo->photoName . "\"";
                 $arr [] = "\"" . $photo->secTitle . "\"";
-                $arr [] = "\"" . $photo->size . "\"";
-                $arr [] = "\"" . $photo->width."x". $photo->height."\"";
-                $arr [] = "\"" .$label."\"";
-                $arr [] = "\"" . (int)$photo->priority . "\"";
+                $arr [] = "\"" . $photo->getFormatedSize() . "\"";
+                $arr [] = "\"" . $photo->width . "x" . $photo->height . "\"";
+                $arr [] = "\"" . $label . "\"";
+                $arr [] = "\"" . (int) $photo->priority . "\"";
                 $arr [] = "\"" . $photo->created . "\"";
 
                 $tempStr = "<a href='/admin/photo/edit/" . $photo->id . "' class='btn btn3 btn_pencil' title='Edit'></a>";
-                
+
                 if ($this->isAdmin()) {
                     $tempStr .= "<a href='/admin/photo/delete/" . $photo->id . "' class='btn btn3 btn_trash' title='Delete'></a>";
                 }
@@ -594,8 +523,9 @@ class Admin_Controller_Photo extends Controller
             echo $str;
         } else {
             $str .= "[ \"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\",\"\"]]}";
-            
+
             echo $str;
         }
     }
+
 }

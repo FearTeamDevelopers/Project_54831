@@ -10,9 +10,9 @@
                 {script $colphotos=$collection->photos}
                 {if !empty($colphotos)}
                     {foreach $photo in $colphotos}
-                        <a href="{echo $photo->path}" class="highslide" 
+                        <a href="{echo $photo->imgMain}" class="highslide" 
                                 title="{echo $photo->description}" onclick="return hs.expand(this, configcollection)">
-                            <img src="{echo $photo->thumbPath}" height="140px" alt="Marko.in" title="{echo $photo->description}"/>
+                            <img src="{echo $photo->imgThumb}" height="140px" alt="Marko.in" title="{echo $photo->description}"/>
                         </a>
                     {/foreach}
                 {/if}

@@ -3,8 +3,6 @@
 use Admin\Etc\Controller;
 use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
-use THCFrame\Core\StringMethods;
-use THCFrame\Registry\Registry;
 
 /**
  * 
@@ -34,7 +32,7 @@ class Admin_Controller_News extends Controller
     private function _getPhotos()
     {
         $photoQuery = App_Model_Photo::getQuery(
-                        array('ph.id', 'ph.thumbPath', 'ph.path'))
+                        array('ph.id', 'ph.imgThumb', 'ph.imgMain', 'ph.photoName'))
                 ->join('tb_photosection', 'phs.photoId = ph.id', 'phs', 
                         array('phs.photoId', 'phs.sectionId'))
                 ->join('tb_section', 'phs.sectionId = s.id', 's', 

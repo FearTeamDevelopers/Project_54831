@@ -53,12 +53,12 @@ class App_Controller_News extends Controller
                                 array(
                             'id = ?' => $id,
                             'active = ?' => true
-                                ), array('photoName', 'thumbPath', 'path', 'description')
+                                ), array('photoName', 'imgThumb', 'imgMain', 'description')
                 );
 
-                $tag = "<a href=\"{$photo->path}\" class=\"highslide\" title=\"{$photo->description}\""
+                $tag = "<a href=\"{$photo->imgMain}\" class=\"highslide\" title=\"{$photo->description}\""
                         . " onclick=\"return hs.expand(this, confignews)\">"
-                        . "<img src=\"{$photo->thumbPath}\" alt=\"Marko.in\"/></a>";
+                        . "<img src=\"{$photo->imgThumb}\" alt=\"Marko.in\"/></a>";
 
                 $body = str_replace("(!photo_{$id}!)", $tag, $body);
 

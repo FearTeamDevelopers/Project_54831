@@ -472,7 +472,7 @@ jQuery(document).ready(function() {
     });
 
     jQuery('.uploadPhotoForm .multi_upload_dec').click(function() {
-        if (jQuery('.uploadPhotoForm .file_inputs input[type=file]').length > 2) {
+        if (jQuery('.uploadPhotoForm .file_inputs input[type=file]').length > 1) {
             jQuery('.uploadPhotoForm .file_inputs input[type=file]').last().remove();
         }
     });
@@ -486,72 +486,13 @@ jQuery(document).ready(function() {
     });
 
     jQuery('.uploadCollectionPhotoForm .multi_upload_dec').click(function() {
-        if (jQuery('.uploadCollectionPhotoForm .file_inputs input[type=file]').length > 2) {
+        if (jQuery('.uploadCollectionPhotoForm .file_inputs input[type=file]').length > 1) {
             jQuery('.uploadCollectionPhotoForm .file_inputs input[type=file]').last().remove();
         }
     });
 
     jQuery('.uploadPhotoForm, .uploadCollectionPhotoForm').submit(function() {
         jQuery('#loader').show();
-    });
-
-    jQuery('.uploadPhotoForm input[type=submit]').mouseover(function() {
-        var inputs = jQuery(this).parents('form').find('input[type=file]');
-        var proceed = true;
-
-        inputs.each(function() {
-            var file_data = this.files[0];
-            var filename = file_data.name;
-
-            jQuery.post('/admin/photo/checkPhoto/', {filename: filename}, function(msg) {
-                if (msg == 'ok') {
-                    jQuery('.uploadPhotoForm input[type=submit]').removeAttr('disabled');
-                } else {
-                    var c = confirm(msg);
-
-                    if (c) {
-                        if (proceed) {
-                            jQuery('.uploadPhotoForm input[type=submit]').removeAttr('disabled');
-                        }
-                    } else {
-                        jQuery('.uploadPhotoForm input[type=submit]').attr('disabled', 'disabled');
-                        proceed = false;
-                    }
-                }
-            });
-        });
-    });
-
-    jQuery('.uploadCollectionPhotoForm input[type=submit]').mouseover(function() {
-        var inputs = jQuery(this).parents('form').find('input[type=file]');
-        var collectionId = jQuery(this).parents('form').children('.collid').val();
-        var proceed = true;
-
-        inputs.each(function() {
-            var file_data = this.files[0];
-            var filename = file_data.name;
-
-            jQuery.post('/admin/collection/checkPhoto/', {filename: filename, collectionId: collectionId}, function(msg) {
-                if (msg == 'ok') {
-                    jQuery('.uploadCollectionPhotoForm input[type=submit]').removeAttr('disabled');
-                } else {
-                    var c = confirm(msg);
-
-                    if (c) {
-                        if (proceed) {
-                            jQuery('.uploadCollectionPhotoForm input[type=submit]').removeAttr('disabled');
-                        }
-                    } else {
-                        jQuery('.uploadCollectionPhotoForm input[type=submit]').attr('disabled', 'disabled');
-                        proceed = false;
-                    }
-                }
-            });
-        });
-    });
-
-    jQuery('.uploadPhotoForm input[type=file], .uploadCollectionPhotoForm input[type=file]').change(function() {
-        jQuery('.uploadPhotoForm input[type=submit], .uploadCollectionPhotoForm input[type=submit]').removeAttr('disabled');
     });
 
     //Partner

@@ -46,9 +46,9 @@
                         {else}
                     <li class="photoinactive">
                         {/else}
-                        <img src="{echo $photo->thumbPath}" alt="{echo $photo->photoName}" title="{echo $photo->photoName}" height="100px" />
+                        <img src="{echo $photo->imgThumb}" alt="{echo $photo->photoName}" title="{echo $photo->photoName}" height="100px" />
                         <span>
-                            <a href="{echo $photo->path}" class="view"></a>
+                            <a href="{echo $photo->imgMain}" class="view"></a>
                             <a href="/admin/collection/changePhotoStatus/{echo $photo->id}" class="activate" value="Change photo state"></a>
                             <a href="/admin/collection/deletePhoto/{echo $photo->id}" class="delete" value="Delete photo"></a>
                         </span>

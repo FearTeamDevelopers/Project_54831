@@ -152,10 +152,10 @@
                 {if ($photos && !empty($photos))}
                     {foreach $photo in $photos}
                         <span class="news-photo">
-                            <img src="{echo $photo->getThumbPath()}" alt="{echo $photo->getPhotoName()}" width="150px"/>
+                            <img src="{echo $photo->getImgThumb()}" alt="{echo $photo->getPhotoName()}" width="150px"/>
                             <button class="stdbtn img-to-text" value="{echo $photo->getId()}">Txt</button>
                             <button class="stdbtn img-to-teaser" value="{echo $photo->getId()}">Teaser</button>
-                            <button class="stdbtn img-to-meta" value="{echo $photo->getPath()}">Meta</button>
+                            <button class="stdbtn img-to-meta" value="{echo $photo->getImgMain()}">Meta</button>
                         </span>
                     {/foreach}
                 {/if}

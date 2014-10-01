@@ -20,15 +20,13 @@
                 {if !empty($latestnews)}
                     {foreach $news in $latestnews}
                         <p>
-                            <span class="radius2">Title: {echo $news->getTitle()}</span>
-                            <span class="radius2">Created: {echo $news->getCreated()}</span>
+                            <span class="radius2 announc-background">Title: {echo $news->getTitle()}</span>
+                            <span class="radius2 announc-background">Created: {echo $news->getCreated()}</span>
                             <br/><br/>
                             {echo $news->shortBody}
-                        </p>
-                        <hr/>
+                        </p><hr/>
                     {/foreach}
-                {/if}
-                {else}
+                {/if}{else}
                     <p>No news</p>
                 {/else}
             </div><!--widgetcontent-->
@@ -37,32 +35,43 @@
     </div><!--one_half-->
 
     <div class="one_half last">
-
         <div class="widgetbox">
-            <div class="title"><h2 class="tabbed"><span>Latest Announcement</span></h2></div>
-            <div class="widgetcontent announcement">
-                {if !empty($activeannounc)}
-                    {foreach $announc in $activeannounc}
-                        <p>
-                            <span class="radius2">Title: {echo $announc->getTitle()}</span>
-                            <span class="radius2">Created: {echo $announc->getCreated()}</span><br/>
-                            {echo substr($announc->getBody(), 0, 200)}
-                        </p>
-                        <hr/>
-                    {/foreach}
-                {/if} 
-                {else}
-                    <p>No announcement</p>
-                {/else}
+            <div class="title"><h2 class="tabbed"><span>Collection List</span></h2></div>
+            <div class="widgetcontent padding0 statement">
+                <table cellpadding="0" cellspacing="0" border="0" class="stdtable">
+                    <colgroup>
+                        <col class="con0" />
+                        <col class="con1" />
+                        <col class="con0" />
+                    </colgroup>
+                    <thead>
+                        <tr>
+                            <th class="head0">Title</th>
+                            <th class="head1">Photographer</th>
+                            <th class="head0">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {if !empty($collectionlist)}
+                            {foreach $collection in $collectionlist}
+                                <tr>
+                                    <td>
+                                        <a href="/admin/collection/detail/{echo $collection->getId()}">{echo $collection->getTitle()}</a>
+                                    </td>
+                                    <td>{echo $collection->getPhotographer()}</td>
+                                    <td>{echo $collection->getDate()}</td>
+                                </tr>
+                            {/foreach}
+                        {/if} 
+                    </tbody>
+                </table>
             </div><!--widgetcontent-->
         </div><!--widgetbox-->
-
     </div><!--one_half-->
 
     <br class="clear-all" /><br />
 
     <div class="one_half">
-
         <div class="widgetbox">
             <div class="title"><h2 class="tabbed"><span>Partners</span></h2></div>
             <div class="widgetcontent padding0 statement">
@@ -100,39 +109,23 @@
     </div><!--one_half-->
 
     <div class="one_half last">
-
         <div class="widgetbox">
-            <div class="title"><h2 class="tabbed"><span>Collection List</span></h2></div>
-            <div class="widgetcontent padding0 statement">
-                <table cellpadding="0" cellspacing="0" border="0" class="stdtable">
-                    <colgroup>
-                        <col class="con0" />
-                        <col class="con1" />
-                        <col class="con0" />
-                    </colgroup>
-                    <thead>
-                        <tr>
-                            <th class="head0">Title</th>
-                            <th class="head1">Photographer</th>
-                            <th class="head0">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {if !empty($collectionlist)}
-                            {foreach $collection in $collectionlist}
-                                <tr>
-                                    <td>
-                                        <a href="/admin/collection/detail/{echo $collection->getId()}">{echo $collection->getTitle()}</a>
-                                    </td>
-                                    <td>{echo $collection->getPhotographer()}</td>
-                                    <td>{echo $collection->getDate()}</td>
-                                </tr>
-                            {/foreach}
-                        {/if} 
-                    </tbody>
-                </table>
+            <div class="title"><h2 class="tabbed"><span>Latest Announcement</span></h2></div>
+            <div class="widgetcontent announcement">
+                {if !empty($activeannounc)}
+                    {foreach $announc in $activeannounc}
+                        <p>
+                            <span class="radius2">Title: {echo $announc->getTitle()}</span>
+                            <span class="radius2">Created: {echo $announc->getCreated()}</span><br/>
+                            {echo substr($announc->getBody(), 0, 200)}
+                        </p>
+                        <hr/>
+                    {/foreach}
+                {/if}{else}
+                <p>No announcement</p>
+                {/else}
             </div><!--widgetcontent-->
-        </div><!--widgetbox-->                        
+        </div><!--widgetbox-->
     </div><!--one_half-->
 
     <br class="clear-all" /><br />

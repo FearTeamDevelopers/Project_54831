@@ -2,7 +2,6 @@
 
 use Admin\Etc\Controller;
 use THCFrame\Request\RequestMethods;
-use THCFrame\Core\ArrayMethods;
 use THCFrame\Filesystem\FileManager;
 use THCFrame\Events\Events as Event;
 
@@ -45,11 +44,11 @@ class Admin_Controller_Partner extends Controller
                 ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddPartner')) {
-            if($this->checkToken() !== true && 
-                    $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true){
+            if ($this->checkToken() !== true &&
+                    $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true) {
                 self::redirect('/admin/partner/');
             }
-            
+
             $errors = array();
 
             $fileManager = new FileManager(array(
@@ -60,34 +59,43 @@ class Admin_Controller_Partner extends Controller
                 'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
             ));
 
-            try {
-                $photoArr = $fileManager->uploadWithoutThumb('logo', 'partners');
-                $uploaded = ArrayMethods::toObject($photoArr);
-            } catch (Exception $ex) {
-                $errors['logo'] = $ex->getMessage();
-            }
+            $fileErrors = $fileManager->upload('logo', 'partners', time().'_', false)->getUploadErrors();
+            $files = $fileManager->getUploadedFiles();
 
-            $partner = new App_Model_Partner(array(
-                'sectionId' => RequestMethods::post('section'),
-                'title' => RequestMethods::post('title'),
-                'address' => RequestMethods::post('address'),
-                'email' => RequestMethods::post('email'),
-                'web' => RequestMethods::post('web'),
-                'logo' => trim($uploaded->file->path, '.'),
-                'mobile' => RequestMethods::post('mobile')
-            ));
+            if (!empty($files)) {
+                foreach ($files as $i => $file) {
+                    if ($file instanceof \THCFrame\Filesystem\Image) {
+                        $partner = new App_Model_Partner(array(
+                            'sectionId' => RequestMethods::post('section'),
+                            'title' => RequestMethods::post('title'),
+                            'address' => RequestMethods::post('address'),
+                            'email' => RequestMethods::post('email'),
+                            'web' => RequestMethods::post('web'),
+                            'logo' => trim($file->getFilename(), '.'),
+                            'mobile' => RequestMethods::post('mobile')
+                        ));
 
-            if (empty($errors) && $partner->validate()) {
-                $id = $partner->save();
+                        if ($partner->validate()) {
+                            $id = $partner->save();
 
-                Event::fire('admin.log', array('success', 'Partner id: ' . $id));
-                $view->successMessage('Partner'.self::SUCCESS_MESSAGE_1);
-                self::redirect('/admin/partner/');
+                            Event::fire('admin.log', array('success', 'Partner id: ' . $id));
+                            $view->successMessage('Partner' . self::SUCCESS_MESSAGE_1);
+                            self::redirect('/admin/partner/');
+                        } else {
+                            Event::fire('admin.log', array('fail'));
+                            $view->set('errors', $partner->getErrors())
+                                    ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken())
+                                    ->set('partner', $partner);
+                        }
+
+                        break;
+                    }
+                }
             } else {
+                $errors['logo'] = $fileErrors;
                 Event::fire('admin.log', array('fail'));
-                $view->set('errors', $errors + $partner->getErrors())
-                        ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken())
-                        ->set('partner', $partner);
+                $view->set('errors', $errors)
+                        ->set('submstoken', $this->revalidateMutliSubmissionProtectionToken());
             }
         }
     }
@@ -118,25 +126,33 @@ class Admin_Controller_Partner extends Controller
                 ->set('partner', $partner);
 
         if (RequestMethods::post('submitEditPartner')) {
-            if($this->checkToken() !== true){
+            if ($this->checkToken() !== true) {
                 self::redirect('/admin/partner/');
             }
 
             if ($partner->logo == '') {
                 $fileManager = new FileManager(array(
-                'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
-                'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
-                'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
-                'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
-                'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
-            ));
-                
-                try {
-                    $photoArr = $fileManager->uploadWithoutThumb('logo', 'partners');
-                    $uploaded = ArrayMethods::toObject($photoArr);
-                    $logo = trim($uploaded->file->path, '.');
-                } catch (Exception $ex) {
-                    $errors['logo'] = $ex->getMessage();
+                    'thumbWidth' => $this->loadConfigFromDb('thumb_width'),
+                    'thumbHeight' => $this->loadConfigFromDb('thumb_height'),
+                    'thumbResizeBy' => $this->loadConfigFromDb('thumb_resizeby'),
+                    'maxImageWidth' => $this->loadConfigFromDb('photo_maxwidth'),
+                    'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
+                ));
+
+                $fileErrors = $fileManager->upload('logo', 'partners', time().'_', false)->getUploadErrors();
+                $files = $fileManager->getUploadedFiles();
+
+                if (!empty($files)) {
+                    foreach ($files as $i => $filemain) {
+                        if ($filemain instanceof \THCFrame\Filesystem\Image) {
+                            $file = $filemain;
+                            break;
+                        }
+                    }
+
+                    $logo = trim($file->getFilename(), '.');
+                }else{
+                    $errors['logo'] = $fileErrors;
                 }
             } else {
                 $logo = $partner->logo;
@@ -173,16 +189,20 @@ class Admin_Controller_Partner extends Controller
     {
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
-        
+
         if ($this->checkToken()) {
             $partner = App_Model_Partner::first(
-                            array('id = ?' => (int) $id), array('id', 'logo')
+                        array('id = ?' => (int) $id), 
+                        array('id', 'logo')
             );
 
             if (NULL === $partner) {
                 echo self::ERROR_MESSAGE_2;
             } else {
-                if (unlink($partner->getUnlinkLogoPath()) && $partner->delete()) {
+                $path = $partner->getUnlinkLogoPath();
+
+                if ($partner->delete()) {
+                    @unlink($path);
                     Event::fire('admin.log', array('success', 'Partner id: ' . $id));
                     echo 'ok';
                 } else {
@@ -211,6 +231,7 @@ class Admin_Controller_Partner extends Controller
         if (NULL !== $partner) {
             $path = $partner->getUnlinkLogoPath();
             $partner->logo = '';
+            
             if ($partner->validate() && unlink($path)) {
                 $partner->save();
                 Event::fire('admin.log', array('success', 'Partner id: ' . $id));
@@ -234,10 +255,10 @@ class Admin_Controller_Partner extends Controller
         $errors = array();
 
         if (RequestMethods::post('performPartnerAction')) {
-            if($this->checkToken() !== true){
+            if ($this->checkToken() !== true) {
                 self::redirect('/admin/partner/');
             }
-            
+
             $ids = RequestMethods::post('partnerids');
             $action = RequestMethods::post('action');
 
@@ -368,7 +389,7 @@ class Admin_Controller_Partner extends Controller
         $view->set('section', $section);
 
         if (RequestMethods::post('submitEditPartnerSection')) {
-            if($this->checkToken() !== true){
+            if ($this->checkToken() !== true) {
                 self::redirect('/admin/partner/sections/');
             }
 
@@ -403,10 +424,10 @@ class Admin_Controller_Partner extends Controller
         $errors = array();
 
         if (RequestMethods::post('performPartnerSectionAction')) {
-            if($this->checkToken() !== true){
+            if ($this->checkToken() !== true) {
                 self::redirect('/admin/partner/sections/');
             }
-            
+
             $ids = RequestMethods::post('sectionids');
             $action = RequestMethods::post('action');
 

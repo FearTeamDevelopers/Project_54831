@@ -25,7 +25,7 @@ class Integration_Controller_Cron extends Controller
         
         $sql = "INSERT INTO `tb_newsarchive` SELECT * FROM `tb_news` WHERE expirationDate < now()";
         
-        Event::fire('cron.log');
+        Event::fire('cron.log', array('success'));
         $database->execute($sql);
     }
 
@@ -44,7 +44,7 @@ class Integration_Controller_Cron extends Controller
             $fm->mkdir(APP_PATH . '/temp/db/');
         }
 
-        Event::fire('cron.log');
+        Event::fire('cron.log', array('success'));
         $dump->create();
     }
 

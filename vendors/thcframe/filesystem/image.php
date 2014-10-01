@@ -26,6 +26,11 @@ class Image extends Base
      * @readwrite
      */
     protected $_filename;
+    
+    /**
+     * @readwrite
+     */
+    protected $_thumbname = '';
 
     /**
      * @readwrite
@@ -41,6 +46,11 @@ class Image extends Base
      * @readwrite
      */
     protected $_height;
+    
+    /**
+     * @readwrite
+     */
+    protected $_size;
 
     /**
      * @readwrite
@@ -98,23 +108,6 @@ class Image extends Base
         }
 
         return 'square';
-    }
-
-    /**
-     * 
-     * @return type
-     */
-    public function getDataForDb()
-    {
-        return array(
-            'path' => $this->filename,
-            'filename' => pathinfo($this->filename, PATHINFO_FILENAME),
-            'size' => filesize($this->filename),
-            'width' => $this->getWidth(),
-            'height' => $this->getHeight(),
-            'ext' => strtolower(pathinfo($this->filename, PATHINFO_EXTENSION)),
-            'mime' => $this->_originalInfo['mime']
-        );
     }
 
     /**
