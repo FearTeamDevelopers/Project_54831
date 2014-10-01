@@ -127,6 +127,8 @@ class Admin_Controller_User extends Controller
                 'password' => $hash,
                 'salt' => $salt,
                 'role' => RequestMethods::post('role', 'role_publisher'),
+                'loginLockdownTime' => '',
+                'loginAttempCounter' => 0
             ));
 
             if (empty($errors) && $user->validate()) {
