@@ -127,19 +127,19 @@ RewriteRule (.*)/configuration/(.*)\.(ini|xml)$ - [F]
  RewriteRule .* - [F]
 
  #Block mySQL injects
- RewriteCond %{QUERY_STRING} (;|<|>|â€™|â€ť|\)|%0A|%0D|%22|%27|%3C|%3E|%00).*(/\*|union|select|insert|cast|set|declare|drop|update|md5|benchmark) [NC,OR]
- RewriteCond %{QUERY_STRING} \.\./\.\. [OR]
- RewriteCond %{QUERY_STRING} (localhost|loopback|127\.0\.0\.1) [NC,OR]
- RewriteCond %{QUERY_STRING} \.[a-z0-9] [NC,OR]
- RewriteCond %{QUERY_STRING} (<|>|â€™|%0A|%0D|%27|%3C|%3E|%00) [NC]
- # Return 403 Forbidden error.
- RewriteRule .* index.php [F]
-
-## Disallow access to rogue PHP files throughout the site, unless they are explicitly allowed
-RewriteCond %{REQUEST_FILENAME} \.php$
-RewriteCond %{REQUEST_FILENAME} !/index[23]?\.php$
-RewriteCond %{REQUEST_FILENAME} -f
-RewriteRule ^([^/]+/)*([^/.]+\.)+php$ - [F]
+# RewriteCond %{QUERY_STRING} (;|<|>|â€™|â€ť|\)|%0A|%0D|%22|%27|%3C|%3E|%00).*(/\*|union|select|insert|cast|set|declare|drop|update|md5|benchmark) [NC,OR]
+# RewriteCond %{QUERY_STRING} \.\./\.\. [OR]
+# RewriteCond %{QUERY_STRING} (localhost|loopback|127\.0\.0\.1) [NC,OR]
+# RewriteCond %{QUERY_STRING} \.[a-z0-9] [NC,OR]
+# RewriteCond %{QUERY_STRING} (<|>|â€™|%0A|%0D|%27|%3C|%3E|%00) [NC]
+# # Return 403 Forbidden error.
+# RewriteRule .* index.php [F]
+#
+#### Disallow access to rogue PHP files throughout the site, unless they are explicitly allowed
+#RewriteCond %{REQUEST_FILENAME} \.php$
+#RewriteCond %{REQUEST_FILENAME} !/index[23]?\.php$
+#RewriteCond %{REQUEST_FILENAME} -f
+#RewriteRule ^([^/]+/)*([^/.]+\.)+php$ - [F]
 
 ########## Begin - Redirect non-www to www
 ##RewriteCond %{HTTP_HOST} !^www\. [NC]
@@ -152,7 +152,7 @@ RewriteRule /public/(.*)/(.*)\.(css|jpe?g|gif|png|js|ico)$ - [NC,L]
 RewriteCond %{REQUEST_URI} (^/tests/(.*)$) 
 RewriteRule .* - [F]
 
-RewriteCond %{REQUEST_URI} (^/(piwik|blog)/(.*)$) 
+RewriteCond %{REQUEST_URI} (^/(piwik?2|blog)/(.*)$)
 RewriteRule .* - [NC,L]
 
 RewriteCond %{REQUEST_FILENAME} -s [OR]
