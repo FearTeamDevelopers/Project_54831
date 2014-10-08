@@ -5,65 +5,65 @@
     <div class="contenttitle">
         <h2 class="form"><span>My profile</span></h2>
     </div>
-    
+
     <form class="stdform stdform2" method="post" action="#">
         <input type="hidden" name="tk" id="tk" value="{echo $token}" />
         <p>
             <label>Firstname*</label>
             <span class="field">
                 <input type="text" name="firstname" class="longinput" required value="{echo $user->firstname}"/>
+                {if isset($errors["firstname"])}
+                <label class="error">
+                    {echo join("<br/>", $errors["firstname"])}
+                </label>
+                {/if}
             </span>
-            {if isset($errors["firstname"])}
-            <label class="error">
-                {echo join("<br/>", $errors["firstname"])}
-            </label>
-            {/if}
         </p>
         <p>
             <label>Lastname*</label>
             <span class="field">
                 <input type="text" name="lastname" class="longinput" required value="{echo $user->lastname}"/>
+                {if isset($errors["lastname"])}
+                <label class="error">
+                    {echo join("<br/>", $errors["lastname"])}
+                </label>
+                {/if}
             </span>
-            {if isset($errors["lastname"])}
-            <label class="error">
-                {echo join("<br/>", $errors["lastname"])}
-            </label>
-            {/if}
         </p>
         <p>
             <label>Email*</label>
             <span class="field">
                 <input type="email" name="email" class="longinput" required value="{echo $user->email}"/>
+                {if isset($errors["email"])}
+                <label class="error">
+                    {echo join("<br/>", $errors["email"])}
+                </label>
+                {/if}
             </span>
-            {if isset($errors["email"])}
-            <label class="error">
-                {echo join("<br/>", $errors["email"])}
-            </label>
-            {/if}
         </p>
         <p>
             <label>Password</label>
             <span class="field">
                 <input type="password" name="password" class="longinput" value=""/>
+                {if isset($errors["password"])}
+                <label class="error">
+                    {echo join("<br/>", $errors["password"])}
+                </label>
+                {/if}
             </span>
-            {if isset($errors["password"])}
-            <label class="error">
-                {echo join("<br/>", $errors["password"])}
-            </label>
-            {/if}
         </p>
         <p>
             <label>Confirm password</label>
             <span class="field">
                 <input type="password" name="password2" class="longinput" value=""/>
+                {if isset($errors["password2"])}
+                <label class="error">
+                    {echo join("<br/>", $errors["password2"])}
+                </label>
+                {/if}
             </span>
-            {if isset($errors["password2"])}
-            <label class="error">
-                {echo join("<br/>", $errors["password2"])}
-            </label>
-            {/if}
         </p>
-      
+
         <p class="stdformbutton">
             <input type="submit" name="submitUpdateProfile" value="Save changes" />
         </p>

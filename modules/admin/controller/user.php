@@ -96,10 +96,8 @@ class Admin_Controller_User extends Controller
         $view = $this->getActionView();
 
         $errors = array();
-        $superAdmin = $security->isGranted('role_superadmin');
         
-        $view->set('superadmin', $superAdmin)
-                ->set('submstoken', $this->mutliSubmissionProtectionToken());
+        $view->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddUser')) {
             if($this->checkToken() !== true && 
@@ -226,19 +224,17 @@ class Admin_Controller_User extends Controller
         $security = Registry::get('security');
 
         $errors = array();
-        $superAdmin = $security->isGranted('role_superadmin');
         $user = App_Model_User::first(array('id = ?' => (int)$id));
 
         if (NULL === $user) {
             $view->warningMessage(self::ERROR_MESSAGE_2);
             self::redirect('/admin/user/');
-        } elseif ($user->role == 'role_superadmin' && !$superAdmin) {
+        } elseif ($user->role == 'role_superadmin' && $this->getUser()->getRole != 'role_superadmin') {
             $view->errorMessage(self::ERROR_MESSAGE_4);
             self::redirect('/admin/user/');
         }
         
-        $view->set('user', $user)
-                ->set('superadmin', $superAdmin);
+        $view->set('user', $user);
 
         if (RequestMethods::post('submitEditUser')) {
             if($this->checkToken() !== true){
@@ -275,7 +271,7 @@ class Admin_Controller_User extends Controller
             $user->email = RequestMethods::post('email');
             $user->password = $hash;
             $user->salt = $salt;
-            $user->role = RequestMethods::post('role');
+            $user->role = RequestMethods::post('role', $user->getRole());
             $user->active = RequestMethods::post('active');
 
             if (empty($errors) && $user->validate()) {
