@@ -44,7 +44,7 @@ class Admin_Controller_Partner extends Controller
                 ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddPartner')) {
-            if ($this->checkToken() !== true &&
+            if ($this->checkCSRFToken() !== true &&
                     $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true) {
                 self::redirect('/admin/partner/');
             }
@@ -126,7 +126,7 @@ class Admin_Controller_Partner extends Controller
                 ->set('partner', $partner);
 
         if (RequestMethods::post('submitEditPartner')) {
-            if ($this->checkToken() !== true) {
+            if ($this->checkCSRFToken() !== true) {
                 self::redirect('/admin/partner/');
             }
 
@@ -190,7 +190,7 @@ class Admin_Controller_Partner extends Controller
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
 
-        if ($this->checkToken()) {
+        if ($this->checkCSRFToken()) {
             $partner = App_Model_Partner::first(
                         array('id = ?' => (int) $id), 
                         array('id', 'logo')
@@ -255,7 +255,7 @@ class Admin_Controller_Partner extends Controller
         $errors = array();
 
         if (RequestMethods::post('performPartnerAction')) {
-            if ($this->checkToken() !== true) {
+            if ($this->checkCSRFToken() !== true) {
                 self::redirect('/admin/partner/');
             }
 
@@ -389,7 +389,7 @@ class Admin_Controller_Partner extends Controller
         $view->set('section', $section);
 
         if (RequestMethods::post('submitEditPartnerSection')) {
-            if ($this->checkToken() !== true) {
+            if ($this->checkCSRFToken() !== true) {
                 self::redirect('/admin/partner/sections/');
             }
 
@@ -424,7 +424,7 @@ class Admin_Controller_Partner extends Controller
         $errors = array();
 
         if (RequestMethods::post('performPartnerSectionAction')) {
-            if ($this->checkToken() !== true) {
+            if ($this->checkCSRFToken() !== true) {
                 self::redirect('/admin/partner/sections/');
             }
 

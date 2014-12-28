@@ -9,19 +9,17 @@ use THCFrame\Core\Inspector;
 use THCFrame\Router\Exception;
 
 /**
- * Description of Dispatcher
  * Dispatcher class will use the requested URL, as well as the controller/action metadata, 
  * to determine the correct controller/action to execute. 
  * It needs to handle multiple defined routes and inferred routes if no defined routes
  * are matched.
- *
- * @author Tomy
  */
 final class Dispatcher extends Base
 {
 
     /**
-     * Module active for last reques
+     * Module active for last request
+     * 
      * @var type 
      * @read
      */
@@ -29,6 +27,7 @@ final class Dispatcher extends Base
 
     /**
      * The suffix used to append to the class name
+     * 
      * @var string
      * @read
      */
@@ -36,6 +35,7 @@ final class Dispatcher extends Base
 
     /**
      * The path to look for classes (or controllers)
+     * 
      * @var string
      * @read
      */
@@ -65,8 +65,9 @@ final class Dispatcher extends Base
     }
 
     /**
+     * Get class name suffix
      * 
-     * @return type
+     * @return string
      */
     protected function _getSuffix()
     {
@@ -87,7 +88,7 @@ final class Dispatcher extends Base
     }
 
     /**
-     * 
+     * Initialisation method
      */
     public function initialize()
     {
@@ -107,7 +108,7 @@ final class Dispatcher extends Base
     }
 
     /**
-     * Attempts to dispatch the supplied Route object. 
+     * Attempts to dispatch the supplied Route object
      * 
      * @param \THCFrame\Router\Route $route
      * @throws Exception\Module
@@ -129,22 +130,22 @@ final class Dispatcher extends Base
             throw new Exception\Action('Method Name not specified');
         }
 
-        if ($module == 'app') {
-            $status = $this->loadConfigFromDb('appstatus');
+        $status = $this->loadConfigFromDb($module.'status');
 
-            if ($status !== null && $status != 1) {
-                throw new Exception\Offline('Application is offline');
-            }
+        if ($status !== null && $status != 1) {
+            throw new Exception\Offline('Application is offline');
         }
 
         $module = str_replace('\\', '', $module);
         preg_match('/^[a-zA-Z0-9_]+$/', $module, $matches);
+        
         if (count($matches) !== 1) {
             throw new Exception\Module(sprintf('Disallowed characters in module name %s', $module));
         }
 
         $class = str_replace('\\', '', $class);
         preg_match('/^[a-zA-Z0-9_]+$/', $class, $matches);
+        
         if (count($matches) !== 1) {
             throw new Exception\Controller(sprintf('Disallowed characters in class name %s', $class));
         }
@@ -211,8 +212,8 @@ final class Dispatcher extends Base
         Event::fire('framework.dispatcher.beforehooks.after', array($action, $parameters));
         Event::fire('framework.dispatcher.action.before', array($action, $parameters));
         
-        call_user_func_array(array(
-            $instance, $action), is_array($parameters) ? $parameters : array());
+        call_user_func_array(
+                array($instance, $action), is_array($parameters) ? $parameters : array());
 
         Event::fire('framework.dispatcher.action.after', array($action, $parameters));
         Event::fire('framework.dispatcher.afterhooks.before', array($action, $parameters));

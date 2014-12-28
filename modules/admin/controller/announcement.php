@@ -37,7 +37,7 @@ class Admin_Controller_Announcement extends Controller
         $view->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddAnc')) {
-            if($this->checkToken() !== true && 
+            if($this->checkCSRFToken() !== true && 
                     $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true){
                 self::redirect('/admin/announcement/');
             }
@@ -90,7 +90,7 @@ class Admin_Controller_Announcement extends Controller
         $view->set('announcement', $announc);
 
         if (RequestMethods::post('submitEditAnc')) {
-            if($this->checkToken() !== true){
+            if($this->checkCSRFToken() !== true){
                 self::redirect('/admin/announcement/');
             }
             
@@ -129,7 +129,7 @@ class Admin_Controller_Announcement extends Controller
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
 
-        if ($this->checkToken()) {
+        if ($this->checkCSRFToken()) {
             $cache = Registry::get('cache');
             $announc = App_Model_Announcement::first(
                             array('id = ?' => (int) $id), array('id')

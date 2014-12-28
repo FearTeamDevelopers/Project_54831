@@ -20,9 +20,8 @@ class App_Controller_Index extends Controller
      */
     protected function _getSectionContent($urlKey)
     {
-        $cache = Registry::get('cache');
 
-        $content = $cache->get('cache_section_' . $urlKey);
+        $content = $this->getCache()->get('cache_section_' . $urlKey);
 
         if (NULL !== $content) {
             return $content;
@@ -81,7 +80,7 @@ class App_Controller_Index extends Controller
                 'collectionlist' => $collectionList
             );
 
-            $cache->set('cache_section_' . $urlKey, $content);
+            $this->getCache()->set('cache_section_' . $urlKey, $content);
 
             return $content;
         }

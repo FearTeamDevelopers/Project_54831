@@ -99,8 +99,7 @@ class Admin_Controller_System extends Controller
         $this->_willRenderActionView = false;
         $this->_willRenderLayoutView = false;
 
-        $profiler = Profiler::getProfiler();
-        echo $profiler->printProfilerRecord();
+        echo Profiler::display();
     }
 
     /**
@@ -167,7 +166,7 @@ class Admin_Controller_System extends Controller
         $view = $this->getActionView();
 
         if (RequestMethods::post('changeStatus')) {
-            if ($this->checkToken() !== true) {
+            if ($this->checkCSRFToken() !== true) {
                 self::redirect('/admin/system/');
             }
 
@@ -200,7 +199,7 @@ class Admin_Controller_System extends Controller
         $view->set('config', $config);
 
         if (RequestMethods::post('submitEditSet')) {
-            if ($this->checkToken() !== true) {
+            if ($this->checkCSRFToken() !== true) {
                 self::redirect('/admin/system/');
             }
 
@@ -234,7 +233,7 @@ class Admin_Controller_System extends Controller
         $view = $this->getActionView();
 
         if (RequestMethods::post('generateSitemap')) {
-            if ($this->checkToken() !== true) {
+            if ($this->checkCSRFToken() !== true) {
                 self::redirect('/admin/system/');
             }
 

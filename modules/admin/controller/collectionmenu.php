@@ -59,7 +59,7 @@ class Admin_Controller_CollectionMenu extends Controller
                 ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddClmenu')) {
-            if($this->checkToken() !== true && 
+            if($this->checkCSRFToken() !== true && 
                     $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true){
                 self::redirect('/admin/collectionmenu/');
             }
@@ -120,7 +120,7 @@ class Admin_Controller_CollectionMenu extends Controller
                 ->set('sections', $sections);
 
         if (RequestMethods::post('submitEditClmenu')) {
-            if($this->checkToken() !== true){
+            if($this->checkCSRFToken() !== true){
                 self::redirect('/admin/collectionmenu/');
             }
             
@@ -160,7 +160,7 @@ class Admin_Controller_CollectionMenu extends Controller
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
         
-        if ($this->checkToken()) {
+        if ($this->checkCSRFToken()) {
             $clm = App_Model_CollectionMenu::first(
                             array('id = ?' => $id), array('id')
             );
@@ -190,7 +190,7 @@ class Admin_Controller_CollectionMenu extends Controller
         $errors = array();
 
         if (RequestMethods::post('performClmAction')) {
-            if($this->checkToken() !== true){
+            if($this->checkCSRFToken() !== true){
                 self::redirect('/admin/collectionmenu/');
             }
             

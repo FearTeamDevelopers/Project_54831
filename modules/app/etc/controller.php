@@ -16,6 +16,27 @@ class Controller extends BaseController
 {
 
     /**
+     * Store security context object
+     * @var type 
+     * @read
+     */
+    protected $_security;
+
+    /**
+     * Store initialized cache object
+     * @var type 
+     * @read
+     */
+    protected $_cache;
+
+    /**
+     * Store server host name
+     * @var type 
+     * @read
+     */
+    protected $_serverHost;
+    
+    /**
      * 
      * @param type $options
      */
@@ -23,7 +44,10 @@ class Controller extends BaseController
     {
         parent::__construct($options);
 
-        $cache = Registry::get('cache');
+        $this->_security = Registry::get('security');
+        $this->_serverHost = RequestMethods::server('HTTP_HOST');
+        $this->_cache = Registry::get('cache');
+        $cfg = Registry::get('configuration');
 
         // schedule disconnect from database 
         Events::add('framework.controller.destruct.after', function($name) {
@@ -53,23 +77,22 @@ class Controller extends BaseController
             $newsPageCount = $maxPageCount;
         }
 
-        $metaData = $cache->get('global_meta_data');
+        $metaData = $this->getCache()->get('global_meta_data');
 
         if (NULL !== $metaData) {
             $metaData = $metaData;
         } else {
             $metaData = array(
-                'metakeywords' => $this->loadConfigFromDb('meta_keywords'),
-                'metadescription' => $this->loadConfigFromDb('meta_description'),
-                'metarobots' => $this->loadConfigFromDb('meta_robots'),
-                'metatitle' => $this->loadConfigFromDb('meta_title'),
-                'metaogurl' => $this->loadConfigFromDb('meta_og_url'),
-                'metaogtype' => $this->loadConfigFromDb('meta_og_type'),
-                'metaogimage' => $this->loadConfigFromDb('meta_og_image'),
-                'metaogsitename' => $this->loadConfigFromDb('meta_og_site_name')
+                'metadescription' => $cfg->meta_description,
+                'metarobots' => $cfg->meta_robots,
+                'metatitle' => $cfg->meta_title,
+                'metaogurl' => $cfg->meta_og_url,
+                'metaogtype' => $cfg->meta_og_type,
+                'metaogimage' => $cfg->meta_og_image,
+                'metaogsitename' => $cfg->meta_og_site_name
             );
 
-            $cache->set('global_meta_data', $metaData);
+            $this->getCache()->set('global_meta_data', $metaData);
         }
         
         $this->getLayoutView()
@@ -98,9 +121,8 @@ class Controller extends BaseController
             return false;
         } else {
 
-            $cache = Registry::get('cache');
             $cacheKey = 'section_' . $parentId;
-            $sect = $cache->get($cacheKey);
+            $sect = $this->getCache()->get($cacheKey);
 
             if (null !== $sect) {
                 return $sect;
@@ -113,7 +135,7 @@ class Controller extends BaseController
                         );
 
                 if (NULL !== $sect) {
-                    $cache->set($cacheKey, $sect);
+                    $this->getCache()->set($cacheKey, $sect);
                     return $sect;
                 } else {
                     return false;
@@ -135,9 +157,8 @@ class Controller extends BaseController
         if (null === $urlKey) {
             return false;
         } else {
-            $cache = Registry::get('cache');
             $cacheKey = 'section_' . $urlKey;
-            $sect = $cache->get($cacheKey);
+            $sect = $this->getCache()->get($cacheKey);
 
             if (null !== $sect) {
                 return $sect;
@@ -150,7 +171,7 @@ class Controller extends BaseController
                         );
 
                 if (NULL !== $sect) {
-                    $cache->set($cacheKey, $sect);
+                    $this->getCache()->set($cacheKey, $sect);
                     return $sect;
                 } else {
                     return false;

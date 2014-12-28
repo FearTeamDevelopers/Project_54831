@@ -14,8 +14,6 @@ use THCFrame\Model\Exception;
  * number of third-party data services, and provide a simple interface for use in our controllers.
  * 
  * An ORM library creates an opaque communication layer between two data-related systems
- *
- * @author Tomy
  */
 class Model extends Base
 {
@@ -130,7 +128,7 @@ class Model extends Base
      */
     protected function _validateRequired($value)
     {
-        return !empty($value) && $value !== 0;
+        return !empty($value) || is_numeric($value);
     }
 
     /**
@@ -348,6 +346,14 @@ class Model extends Base
     }
 
     /**
+     * Object destructor
+     */
+    public function __destruct()
+    {
+        unset($this->_connector);
+    }
+    
+    /**
      * Method simplifies record retrieval for us. 
      * It determines the model’s primary column and checks to see whether 
      * it is not empty. This tells us whether the primary key has been provided, 
@@ -411,12 +417,15 @@ class Model extends Base
         if (!empty($this->$raw)) {
             $this->connector->beginTransaction();
 
-            $state = $this->connector
+            $query = $this->connector
                     ->query()
                     ->from($this->table)
-                    ->where("{$name} = ?", $this->$raw)
-                    ->delete();
+                    ->where("{$name} = ?", $this->$raw);
 
+            $state = $query->delete();
+            
+            unset($query);
+            
             if ($state != -1) {
                 $this->connector->commitTransaction();
                 return $state;
@@ -449,6 +458,8 @@ class Model extends Base
 
         $state = $query->delete();
 
+        unset($query);
+        
         if ($state != -1) {
             $instance->connector->commitTransaction();
             return $state;
@@ -480,6 +491,8 @@ class Model extends Base
 
         $state = $query->update($data);
 
+        unset($query);
+        
         if ($state != -1) {
             $instance->connector->commitTransaction();
             return $state;
@@ -543,6 +556,8 @@ class Model extends Base
         }
 
         $result = $query->save($data);
+        
+        unset($query);
 
         if ($result > 0) {
             $this->$raw = $result;
@@ -725,7 +740,7 @@ class Model extends Base
     public function getPrimaryColumn()
     {
         if (!isset($this->_primary)) {
-            $primary;
+            $primary = null;
 
             foreach ($this->columns as $column) {
                 if ($column['primary']) {
@@ -784,6 +799,8 @@ class Model extends Base
         $first = $query->first();
         $class = get_class($this);
 
+        unset($query);
+        
         if ($first) {
             return new $class($first);
         }
@@ -861,7 +878,14 @@ class Model extends Base
             $rows[] = new $class($row);
         }
 
-        return $rows;
+        unset($query);
+        
+        if(empty($rows)){
+            return null;
+        }else{
+            return $rows;
+        }
+        
     }
 
     /**
@@ -903,6 +927,8 @@ class Model extends Base
             $rows[] = new $class($row);
         }
 
+        unset($query);
+        
         if (empty($rows)) {
             return null;
         } else {

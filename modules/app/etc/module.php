@@ -17,8 +17,6 @@ class App_Etc_Module extends Module{
     /**
      * @read
      */
-    protected $_observerClass = '';
-    
     protected $_routes = array(
         array(
             'pattern' => '/bio',

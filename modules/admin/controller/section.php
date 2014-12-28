@@ -52,7 +52,7 @@ class Admin_Controller_Section extends Controller
         $view->set('sections', $sections);
 
         if (RequestMethods::post('submitAddSection')) {
-            if($this->checkToken() !== true){
+            if($this->checkCSRFToken() !== true){
                 self::redirect('/admin/section/');
             }
             $errors = array();
@@ -107,7 +107,7 @@ class Admin_Controller_Section extends Controller
                 ->set('sections', $sections);
 
         if (RequestMethods::post('submitEditSection')) {
-            if($this->checkToken() !== true){
+            if($this->checkCSRFToken() !== true){
                 self::redirect('/admin/section/');
             }
             

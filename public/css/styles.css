@@ -146,17 +146,20 @@ a:hover{color: #ccc;}
     float: left;
     position: relative;
     list-style: none;
-    background: url('../images/KOLOGO.png') 50% 5% no-repeat;
 }
 /* main level link */
 #navi a {
     color: white;
     text-decoration: none;
     display: block;
-    margin-top: 55px;
     text-align: center;
     text-shadow: 0 3px 3px rgba(0, 0, 0, .9); 
     padding: 8px;
+    height: 100px;
+    background: url('../images/KOLOGO.png') 50% 1% no-repeat;
+}
+#navi a h1{
+    margin-top: 55px;
 }
 
 /* main level link hover */
@@ -251,6 +254,18 @@ a.close {position: inherit; top:5px; left: 90%;}
 .styling-photos{width: 39%;}
 .styling-videos{width: 56%;}
 
+/* třída pro skrývání H1 u articlu*/
+.visuallyhidden {
+    border: 0 none;
+    clip: rect(0px, 0px, 0px, 0px);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px; 
+}
+
 @media screen and (max-width: 1200px) {
     #temptopdiv{margin-top: 55%;}
 
@@ -286,7 +301,6 @@ a.close {position: inherit; top:5px; left: 90%;}
         float: left;
         position: relative;
         list-style: none;
-        background: url('../images/KOLOGO.png') 50% 5% no-repeat;
     }
     /* main level link */
     #navi a {
@@ -297,6 +311,11 @@ a.close {position: inherit; top:5px; left: 90%;}
         text-align: center;
         text-shadow: 0 3px 3px rgba(0, 0, 0, .9); 
         padding: 8px;
+        background: url('../images/KOLOGO.png') 50% 5% no-repeat;
+    }
+
+    #navi a h1{
+        margin-top: 55px;
     }
 }
 
@@ -336,7 +355,7 @@ a.close {position: inherit; top:5px; left: 90%;}
         float: left;
         position: relative;
         list-style: none;
-        background: url('../images/KOLOGO.png') 50% 5% no-repeat;
+
     }
     /* main level link */
     #navi a {
@@ -347,5 +366,10 @@ a.close {position: inherit; top:5px; left: 90%;}
         text-align: center;
         text-shadow: 0 3px 3px rgba(0, 0, 0, .9); 
         padding: 8px;
+        background: url('../images/KOLOGO.png') 50% 5% no-repeat;
+    }
+
+    #navi a h1{
+        margin-top: 55px;
     }
 }

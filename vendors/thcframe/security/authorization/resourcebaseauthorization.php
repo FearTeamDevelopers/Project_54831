@@ -4,30 +4,37 @@ namespace THCFrame\Security\Authorization;
 
 use THCFrame\Core\Base;
 use THCFrame\Security\Authorization\AuthorizationInterface;
-use THCFrame\Security\UserInterface;
+use THCFrame\Security\Model\BasicUser;
 
 /**
- * Description of ResourceBaseAuthorization
- *
- * @author Tomy
+ * ResourceBaseAuthorization use resource and his permissions defined in config file
  */
 class ResourceBaseAuthorization extends Base implements AuthorizationInterface
 {
     /**
+     * Authorization type
+     * 
      * @read
-     * @var type 
+     * @var string
      */
     protected $_type = 'resourcebase';
     
     /**
+     * RoleManager instance
+     * 
      * @read
-     * @var type
+     * @var \THCFrame\Security\Authorization\RoleManager
      */
     protected $_roleManager;
+    
+    /**
+     *
+     * @var array 
+     */
     protected $_resources = array();
     
     /**
-     * 
+     * Clean up resource name and role given from config file
      */
     private function normalizeResources()
     {
@@ -42,6 +49,7 @@ class ResourceBaseAuthorization extends Base implements AuthorizationInterface
     }
     
     /**
+     * Object constructor
      * 
      * @param \THCFrame\Security\Authorization\RoleManager $roleManager
      * @param array $resources
@@ -57,8 +65,9 @@ class ResourceBaseAuthorization extends Base implements AuthorizationInterface
     }
     
     /**
+     * Check if required resource exists
      * 
-     * @param type $resource
+     * @param string $resource
      */
     public function checkForResource($resource)
     {
@@ -72,16 +81,16 @@ class ResourceBaseAuthorization extends Base implements AuthorizationInterface
     }
     
     /**
-     * Method checks if logged user has required role
+     * Check if logged user has permission to acces required resource
      * 
-     * @param \THCFrame\Security\UserInterface $user
-     * @param type $requiredRole
+     * @param \THCFrame\Security\Model\BasicUser $user
+     * @param string $requiredRole
      */
     public function isGranted($user, $requiredRole)
     {
         if ($user === null) {
             $actualRole = 'role_guest';
-        } elseif($user instanceof UserInterface) {
+        } elseif($user instanceof BasicUser) {
             $actualRole = strtolower($user->getRole());
         }else{
             $actualRole = 'role_guest';

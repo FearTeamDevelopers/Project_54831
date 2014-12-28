@@ -5,9 +5,7 @@ namespace THCFrame\Session\Driver;
 use THCFrame\Session;
 
 /**
- * Description of Server
- *
- * @author Tomy
+ * Server session class
  */
 class Server extends Session\Driver
 {
@@ -16,6 +14,11 @@ class Server extends Session\Driver
      * @readwrite
      */
     protected $_prefix;
+
+    /**
+     * @readwrite
+     */
+    protected $_ttl;
 
     /**
      * 
@@ -74,4 +77,5 @@ class Server extends Session\Driver
         $_SESSION = array();
         return $this;
     }
+
 }

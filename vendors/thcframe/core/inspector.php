@@ -6,7 +6,6 @@ use THCFrame\Core\ArrayMethods;
 use THCFrame\Core\StringMethods;
 
 /**
- * Description of Inspector
  * The first few methods of our Inspector class use built-in PHP reflection 
  * classes to get the string values of Doc Comments, 
  * and to get a list of the properties and methods of a class.
@@ -18,8 +17,6 @@ use THCFrame\Core\StringMethods;
  * Public methods allow us to list the methods and properties of a class. They also allow us to return the key/value
  * metadata of the class, named methods, and named properties, without the methods or properties needing to be
  * public.
- *
- * @author Tomy
  */
 class Inspector
 {

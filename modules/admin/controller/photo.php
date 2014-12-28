@@ -39,7 +39,7 @@ class Admin_Controller_Photo extends Controller
                 ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddPhoto')) {
-            if ($this->checkToken() !== true &&
+            if ($this->checkCSRFToken() !== true &&
                     $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true) {
                 self::redirect('/admin/photo/');
             }
@@ -157,7 +157,7 @@ class Admin_Controller_Photo extends Controller
                 ->set('sections', $sections);
 
         if (RequestMethods::post('submitEditPhoto')) {
-            if ($this->checkToken() !== true) {
+            if ($this->checkCSRFToken() !== true) {
                 self::redirect('/admin/photo/');
             }
 
@@ -231,7 +231,7 @@ class Admin_Controller_Photo extends Controller
         $view->set('photo', $photo);
 
         if (RequestMethods::post('submitDeletePhoto')) {
-            if ($this->checkToken() !== true) {
+            if ($this->checkCSRFToken() !== true) {
                 self::redirect('/admin/photo/');
             }
 
@@ -265,7 +265,7 @@ class Admin_Controller_Photo extends Controller
         $this->willRenderActionView = false;
         $errors = array();
 
-        if ($this->checkToken()) {
+        if ($this->checkCSRFToken()) {
             $ids = RequestMethods::post('photoids');
             $action = RequestMethods::post('action');
             $cache = Registry::get('cache');

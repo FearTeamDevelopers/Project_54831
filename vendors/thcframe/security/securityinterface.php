@@ -4,19 +4,11 @@ namespace THCFrame\Security;
 
 /**
  *
- * @author Tomy
  */
 interface SecurityInterface
 {
-    public function createCsrfToken();
     
-    public function checkCsrfToken($postToken);
-    
-    public function initialize();
-    
-    public function createSalt();
-    
-    public function getSaltedHash($value, $salt);
+    public function initialize($configuration);
     
     public function isGranted($requiredRole);
     

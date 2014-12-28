@@ -2,10 +2,10 @@
 
 namespace THCFrame\Core;
 
+use THCFrame\Core\Exception;
+
 /**
- * Description of StringMethods
- *
- * @author Tomy
+ * StringMethods class
  */
 class StringMethods
 {
@@ -168,8 +168,8 @@ class StringMethods
      * Normalization of regular expression strings, so that the remaining 
      * methods can operate on them without first having to check or normalize them
      * 
-     * @param type $pattern
-     * @return type
+     * @param string $pattern
+     * @return string
      */
     private static function _normalize($pattern)
     {
@@ -177,8 +177,9 @@ class StringMethods
     }
 
     /**
+     * Return delimiter
      * 
-     * @return type
+     * @return string
      */
     public static function getDelimiter()
     {
@@ -186,8 +187,9 @@ class StringMethods
     }
 
     /**
+     * Set delimiter
      * 
-     * @param type $delimiter
+     * @param string $delimiter
      */
     public static function setDelimiter($delimiter)
     {
@@ -200,9 +202,9 @@ class StringMethods
      * The match() method will return the first captured substring, 
      * the entire substring match, or null.
      * 
-     * @param type $string
-     * @param type $pattern
-     * @return null
+     * @param string $string
+     * @param string $pattern
+     * @return mixed
      */
     public static function match($string, $pattern)
     {
@@ -222,8 +224,8 @@ class StringMethods
     /**
      * Methods perform similarly to the preg_split() functions, but require less
      * formal structure to the regular expressions, and return a more predictable set of results. 
-     * The split() method will return the results
-     * of a call to the preg_split() function, after setting some flags and normalizing the regular expression.
+     * The split() method will return the results of a call to the preg_split() function, 
+     * after setting some flags and normalizing the regular expression.
      * 
      * @param type $string
      * @param type $pattern
@@ -240,9 +242,9 @@ class StringMethods
      * Method loops through the characters of a string, replacing them with 
      * regular expression friendly character representations
      * 
-     * @param type $string
-     * @param type $mask
-     * @return type
+     * @param string $string
+     * @param mixed $mask
+     * @return string
      */
     public static function sanitize($string, $mask)
     {
@@ -253,20 +255,21 @@ class StringMethods
         } else {
             return $string;
         }
-
+        
         foreach ($parts as $part) {
             $normalized = self::_normalize("\\{$part}");
             $string = preg_replace("{$normalized}m", "\\{$part}", $string);
         }
 
+        unset($normalized);
         return $string;
     }
 
     /**
      * Method eliminates all duplicated characters in a string
      * 
-     * @param type $string
-     * @return type
+     * @param string $string
+     * @return string
      */
     public static function unique($string)
     {
@@ -286,10 +289,10 @@ class StringMethods
      * Method returns the position of a substring within a larger string, 
      * or -1 if the substring isn’t found
      * 
-     * @param type $string
-     * @param type $substring
+     * @param string $string
+     * @param string $substring
      * @param type $offset
-     * @return type
+     * @return int
      */
     public static function indexOf($string, $substring, $offset = null)
     {
@@ -302,10 +305,10 @@ class StringMethods
 
     /**
      * 
-     * @param type $string
-     * @param type $substring
+     * @param string $string
+     * @param string $substring
      * @param type $offset
-     * @return type
+     * @return int
      */
     public static function lastIndexOf($string, $substring, $offset = null)
     {
@@ -318,8 +321,8 @@ class StringMethods
 
     /**
      * 
-     * @param type $string
-     * @return type
+     * @param string $string
+     * @return string
      */
     public static function singular($string)
     {
@@ -339,8 +342,8 @@ class StringMethods
 
     /**
      * 
-     * @param type $string
-     * @return type
+     * @param string $string
+     * @return string
      */
     public static function plural($string)
     {
@@ -361,8 +364,8 @@ class StringMethods
     /**
      * Method remove diacritical marks form string
      * 
-     * @param type $string
-     * @return type
+     * @param string $string
+     * @return string
      */
     public static function removeDiacriticalMarks($string)
     {
@@ -370,15 +373,38 @@ class StringMethods
     }
 
     /**
+     * 
+     * @param string $string
+     * @param array $badChars
+     * @param string $replace
+     * @return string
+     */
+    public static function fastClean($string, $badChars = array(), $replace = '')
+    {
+        if(empty($badChars)){
+            $badChars = array('.', ',', '_', '(', ')', '[', ']', '|', ';',
+                '?', '<', '>', '/', '\\', '!', '@', '&', '*', ':', '+', '^',
+                '=', '~', '°', '´', '`', '%', "'", '"', '$', '#');
+        }
+        
+        $noDiacriticString = self::removeDiacriticalMarks($string);
+        
+        $cleanString = str_replace($badChars, $replace, $noDiacriticString);
+        
+        unset($noDiacriticString);
+        return $cleanString;
+    }
+    
+    /**
      * truncateHtml can truncate a string up to a number of characters while preserving whole words and HTML tags
      *
-     * @param string $text String to truncate.
-     * @param integer $length Length of returned string, including ellipsis.
-     * @param string $ending Ending to be appended to the trimmed string.
+     * @param string $text String to truncate
+     * @param integer $length Length of returned string, including ellipsis
+     * @param string $ending Ending to be appended to the trimmed string
      * @param boolean $exact If false, $text will not be cut mid-word
      * @param boolean $considerHtml If true, HTML tags would be handled correctly
      *
-     * @return string Trimmed string.
+     * @return string Trimmed string
      */
     public static function truncateHtml($text, $length = 100, $ending = '...', $exact = false, $considerHtml = true)
     {
@@ -469,6 +495,120 @@ class StringMethods
             }
         }
         return $truncate;
+    }
+
+    /**
+     * Returns XSS-safe equivalent of string
+     * 
+     * @param mixed $data
+     */
+    protected static function xss_safe($data)
+    {
+        if (func_num_args() > 1) {
+            $args = func_get_args();
+            $out = array();
+
+            foreach ($args as $arg) {
+                $out[] = self::xss_safe($arg);
+            }
+
+            return implode("", $out);
+        }
+
+        if (defined("ENT_HTML401")) {
+            $t = htmlspecialchars($data, ENT_QUOTES | ENT_HTML401, "UTF-8");
+        } else {
+            $t = htmlspecialchars($data, ENT_QUOTES, "UTF-8");
+        }
+
+        return $t;
+    }
+
+    /**
+     * XSS-safe replacement for echo.
+     * Basically you should never use echo or print in your project, instead use php tags and this
+     * 
+     * @param mixed $data
+     */
+    public static function exho($data)
+    {
+        echo self::xss_safe($data);
+    }
+
+    /**
+     * XSS-safe replacement for echo, with formatting and ability to dump elements and attributes
+     * Usage: echo_param("Hello, you're number <strong>?</strong>",$number);
+     * 
+     * @param $string the format string
+     */
+    public static function echof($string)
+    {
+        if (substr_count($string, "?") !== func_num_args() - 1) {
+            throw new Exception\Implementation("Number of arguments doesn't match number of ?s in format string.");
+        }
+
+        $out = $string;
+        $args = func_get_args();
+        array_shift($args);
+
+        foreach ($args as $arg) {
+            $formatPosition = strpos($out, "?");
+            $out = substr($out, 0, $formatPosition) . self::xss_safe($arg) . substr($out, $formatPosition + 1);
+        }
+        echo($out);
+    }
+
+    /**
+     * Safe printf. Escapes all arguments
+     * The format string should not contain any concatenations or variables, just plain text
+     * 
+     * @param string $formatString
+     */
+    public static function printf($formatString)
+    {
+        $args = func_get_args();
+        $flag = 0;
+        foreach ($args as &$arg) {
+            if (!$flag++)
+                continue; //skip first arg, format str
+            $arg = self::xss_safe($arg);
+        }
+        call_user_func_array("\\printf", $args);
+    }
+
+    /**
+     * Safe vprintf. Escapes all arguments
+     * The format string should not contain any concatenations or variables, just plain text
+     * 
+     * @param string $formatString
+     * @param array args
+     */
+    public static function vprintf($formatString, $args)
+    {
+        foreach ($args as &$arg) {
+            $arg = self::xss_safe($arg);
+        }
+        call_user_func_array("\\vprintf", array($formatString, $args));
+    }
+
+    /**
+     * This one replaces NewLines with <br/>
+     * 
+     * @param unknown $data
+     */
+    public static function echo_br($data)
+    {
+        echo nl2br(self::xss_safe($data));
+    }
+
+    /**
+     * exho alias
+     * 
+     * @param string $data
+     */
+    public static function echos($data)
+    {
+        self::exho($data);
     }
 
 }

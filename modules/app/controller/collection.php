@@ -18,9 +18,8 @@ class App_Controller_Collection extends Controller
      */
     protected function _getContent($urlKey)
     {
-        $cache = Registry::get('cache');
         $urlKey = strtolower($urlKey);
-        $collectionCache = $cache->get('cache_collection_' . $urlKey);
+        $collectionCache = $this->getCache()->get('cache_collection_' . $urlKey);
 
         if (NULL !== $collectionCache) {
             return $collectionCache;
@@ -73,7 +72,7 @@ class App_Controller_Collection extends Controller
                     $collection->photos = $photos;
                 }
 
-                $cache->set('cache_collection_' . $urlKey, $collections);
+                $this->getCache()->set('cache_collection_' . $urlKey, $collections);
             }
             return $collections;
         }

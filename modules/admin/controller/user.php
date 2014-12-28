@@ -4,6 +4,7 @@ use Admin\Etc\Controller;
 use THCFrame\Registry\Registry;
 use THCFrame\Request\RequestMethods;
 use THCFrame\Events\Events as Event;
+use THCFrame\Security\PasswordManager;
 
 /**
  * Description of Admin_Controller_User
@@ -92,7 +93,6 @@ class Admin_Controller_User extends Controller
      */
     public function add()
     {
-        $security = Registry::get('security');
         $view = $this->getActionView();
 
         $errors = array();
@@ -100,7 +100,7 @@ class Admin_Controller_User extends Controller
         $view->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddUser')) {
-            if($this->checkToken() !== true && 
+            if($this->checkCSRFToken() !== true && 
                     $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true){
                 self::redirect('/admin/user/');
             }
@@ -115,8 +115,8 @@ class Admin_Controller_User extends Controller
                 $errors['email'] = array('Email is already used');
             }
 
-            $salt = $security->createSalt();
-            $hash = $security->getSaltedHash(RequestMethods::post('password'), $salt);
+            $salt = PasswordManager::createSalt();
+            $hash = PasswordManager::hashPassword(RequestMethods::post('password'), $salt);
 
             $user = new App_Model_User(array(
                 'firstname' => RequestMethods::post('firstname'),
@@ -124,9 +124,7 @@ class Admin_Controller_User extends Controller
                 'email' => RequestMethods::post('email'),
                 'password' => $hash,
                 'salt' => $salt,
-                'role' => RequestMethods::post('role', 'role_publisher'),
-                'loginLockdownTime' => '',
-                'loginAttempCounter' => 0
+                'role' => RequestMethods::post('role', 'role_publisher')
             ));
 
             if (empty($errors) && $user->validate()) {
@@ -161,11 +159,10 @@ class Admin_Controller_User extends Controller
         $view->set('user', $user);
         
         if (RequestMethods::post('submitUpdateProfile')) {
-            if($this->checkToken() !== true){
+            if($this->checkCSRFToken() !== true){
                 self::redirect('/admin/user/');
             }
             
-            $security = Registry::get('security');
             $errors = array();
             
             if (RequestMethods::post('password') !== RequestMethods::post('password2')) {
@@ -189,8 +186,8 @@ class Admin_Controller_User extends Controller
                 $salt = $user->getSalt();
                 $hash = $user->getPassword();
             } else {
-                $salt = $security->createSalt();
-                $hash = $security->getSaltedHash($pass, $salt);
+                $salt = PasswordManager::createSalt();
+                $hash = PasswordManager::hashPassword($pass, $salt);
             }
 
             $user->firstname = RequestMethods::post('firstname');
@@ -221,7 +218,6 @@ class Admin_Controller_User extends Controller
     public function edit($id)
     {
         $view = $this->getActionView();
-        $security = Registry::get('security');
 
         $errors = array();
         $user = App_Model_User::first(array('id = ?' => (int)$id));
@@ -237,7 +233,7 @@ class Admin_Controller_User extends Controller
         $view->set('user', $user);
 
         if (RequestMethods::post('submitEditUser')) {
-            if($this->checkToken() !== true){
+            if($this->checkCSRFToken() !== true){
                 self::redirect('/admin/user/');
             }
             
@@ -262,8 +258,8 @@ class Admin_Controller_User extends Controller
                 $salt = $user->getSalt();
                 $hash = $user->getPassword();
             } else {
-                $salt = $security->createSalt();
-                $hash = $security->getSaltedHash($pass, $salt);
+                $salt = PasswordManager::createSalt();
+                $hash = PasswordManager::hashPassword($pass, $salt);
             }
 
             $user->firstname = RequestMethods::post('firstname');
@@ -297,7 +293,7 @@ class Admin_Controller_User extends Controller
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
 
-        if ($this->checkToken()) {
+        if ($this->checkCSRFToken()) {
             $user = App_Model_User::first(array('id = ?' => (int) $id));
 
             if (NULL === $user) {

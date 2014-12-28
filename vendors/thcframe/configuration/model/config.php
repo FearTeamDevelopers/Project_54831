@@ -2,12 +2,21 @@
 
 namespace THCFrame\Configuration\Model;
 
-use THCFrame\Model\Model as Model;
+use THCFrame\Model\Model;
 
 /**
- * Description of Config_Model
- *
- * @author Tomy
+ * ORM Config model 
+ * 
+ * SQL code:
+ * CREATE TABLE `tb_config` (
+  `id` INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  `title` varchar(150) NOT NULL DEFAULT '',
+  `xkey` varchar(200) NOT NULL DEFAULT '',
+  `value` varchar(250) NOT NULL DEFAULT '',
+  `created` datetime DEFAULT NULL,
+  `modified` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+  ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
  */
 class Config extends Model
 {
@@ -48,7 +57,7 @@ class Config extends Model
      * @type text
      * @length 256
      * 
-     * @validate required, alphanumeric, max(8496)
+     * @validate required, alphanumeric, max(8192)
      * @label value
      */
     protected $_value;

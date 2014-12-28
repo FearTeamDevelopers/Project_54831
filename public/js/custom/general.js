@@ -136,9 +136,9 @@ jQuery(document).ready(function() {
 
         var url = jQuery(this).attr('href');
         var action = jQuery('.tableoptions select[name=action]').children('option:selected').val();
-        var tk = jQuery('#tk').val();
+        var csrf = jQuery('#csrf').val();
 
-        jQuery.post(url, {tk: tk, action: action, photoids: selected}, function(msg) {
+        jQuery.post(url, {csrf: csrf, action: action, photoids: selected}, function(msg) {
             jQuery('#dialog p').text(msg);
 
             jQuery('#dialog').dialog({
@@ -562,9 +562,9 @@ jQuery(document).ready(function() {
 
         if (c) {
             var url = jQuery(this).attr('href');
-            var token = jQuery('#tk').val();
+            var token = jQuery('#csrf').val();
 
-            jQuery.post(url, {tk: token}, function(msg) {
+            jQuery.post(url, {csrf: token}, function(msg) {
                 if (msg == 'ok') {
                     parentTr.fadeOut();
                 } else {
@@ -670,9 +670,9 @@ jQuery(document).ready(function() {
 
         if (c) {
             var url = jQuery(this).attr('href');
-            var tk = jQuery('#tk').val();
+            var csrf = jQuery('#csrf').val();
 
-            jQuery.post(url, {tk: tk}, function(msg) {
+            jQuery.post(url, {csrf: csrf}, function(msg) {
                 if (msg == 'ok') {
                     parentTr.fadeOut();
                 } else {

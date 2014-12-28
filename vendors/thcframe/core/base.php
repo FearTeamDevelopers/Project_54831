@@ -9,20 +9,28 @@ use THCFrame\Registry\Registry;
 use THCFrame\Configuration\Model\Config as Config;
 
 /**
- * Description of Base
  * Base class can create getters/setters simply by adding comments around the
  * protected properties.
  * 
  * In order for us to achieve this sort of thing, we would need to determine the name of the property that must
  * be read/modified, and also determine whether we are allowed to read/modify it, 
  * based on the @read/@write/@readwrite flags in the comments.
- *
- * @author Tomy
  */
 class Base
 {
 
+    /**
+     * Inspector instance
+     * 
+     * @var THCFrame\Core\Inspector 
+     */
     private $_inspector;
+    
+    /**
+     * Storage for dynamicly created variables mainly from database joins
+     * 
+     * @var array 
+     */
     protected $_dataStore = array();
 
     /**
@@ -65,8 +73,9 @@ class Base
     }
 
     /**
+     * Object constructor
      * 
-     * @param string $options
+     * @param $options $options
      */
     public function __construct($options = array())
     {
@@ -80,7 +89,7 @@ class Base
             }
         }
     }
-
+    
     /**
      * There are four basic parts to our __call() method: 
      * checking to see that the inspector is set, 
@@ -91,7 +100,6 @@ class Base
      * @param string $arguments
      * @return null|\THCFrame\Core\Base
      * @throws Exception
-     * @throws type
      */
     public function __call($name, $arguments)
     {
@@ -111,6 +119,8 @@ class Base
                     throw $this->_getWriteonlyException($normalized);
                 }
 
+                unset($meta);
+                
                 if (isset($this->$property)) {
                     return $this->$property;
                 } else {
@@ -122,6 +132,8 @@ class Base
                 return null;
             }
         }
+        
+        unset($getMatches);
 
         $setMatches = StringMethods::match($name, '#^set([a-zA-Z0-9_]+)$#');
         if (count($setMatches) > 0) {
@@ -134,14 +146,19 @@ class Base
                 if (empty($meta['@readwrite']) && empty($meta['@write'])) {
                     throw $this->_getReadonlyException($normalized);
                 }
+                
+                unset($meta);
 
                 $this->$property = $arguments[0];
                 return $this;
             } else {
+                //if variable is not class property its stored into _dataStore array
                 $this->_dataStore[$normalized] = $arguments[0];
                 return $this;
             }
         }
+        
+        unset($setMatches);
 
         $unsetMatches = StringMethods::match($name, '#^uns([a-zA-Z0-9_]+)$#');
         if (count($unsetMatches) > 0) {
@@ -155,6 +172,8 @@ class Base
                     throw $this->_getReadonlyException($normalized);
                 }
 
+                unset($meta);
+                
                 unset($this->$property);
                 return $this;
             } else {
@@ -162,6 +181,8 @@ class Base
                 return $this;
             }
         }
+        
+        unset($unsetMatches);
 
         throw $this->_getImplementationException($name);
     }
@@ -233,7 +254,7 @@ class Base
                 return null;
             }
         } else {
-            throw new Exception\Argument('Connection to the database has not been initialized yet');
+            throw new Exception\Argument('Connection to the database has not been initialized');
         }
     }
 
@@ -258,7 +279,7 @@ class Base
                 return false;
             }
         } else {
-            throw new Exception\Argument('Connection to the database has not been initialized yet');
+            throw new Exception\Argument('Connection to the database has not been initialized');
         }
     }
 

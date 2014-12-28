@@ -1,6 +1,6 @@
 /application/configuration/config_live.ini
 /application/configuration/config_qa.ini
-/application/configuration/instalScript.sql
+/application/configuration/install.sql
 /application/configuration/olddatadump.sql
 /application/logs/
 /temp/cache/

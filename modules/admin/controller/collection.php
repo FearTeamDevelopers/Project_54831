@@ -50,7 +50,7 @@ class Admin_Controller_Collection extends Controller
                 ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddCollection')) {
-            if ($this->checkToken() !== true &&
+            if ($this->checkCSRFToken() !== true &&
                     $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true) {
                 self::redirect('/admin/collection/');
             }
@@ -160,7 +160,7 @@ class Admin_Controller_Collection extends Controller
                 ->set('menu', $menu);
 
         if (RequestMethods::post('submitEditCollection')) {
-            if ($this->checkToken() !== true) {
+            if ($this->checkCSRFToken() !== true) {
                 self::redirect('/admin/collection/');
             }
 
@@ -217,7 +217,7 @@ class Admin_Controller_Collection extends Controller
                 ->set('photocount', count($colPhotos));
 
         if (RequestMethods::post('submitDeleteCollection')) {
-            if ($this->checkToken() !== true) {
+            if ($this->checkCSRFToken() !== true) {
                 self::redirect('/admin/collection/');
             }
 
@@ -278,7 +278,7 @@ class Admin_Controller_Collection extends Controller
                 ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddPhoto')) {
-            if ($this->checkToken() !== true &&
+            if ($this->checkCSRFToken() !== true &&
                     $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true) {
                 self::redirect('/admin/collection/detail/' . $collection->getId());
             }
@@ -357,7 +357,7 @@ class Admin_Controller_Collection extends Controller
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
 
-        if ($this->checkToken()) {
+        if ($this->checkCSRFToken()) {
             $photo = App_Model_Photo::first(
                             array('id = ?' => (int) $id), 
                             array('id', 'imgMain', 'imgThumb')
@@ -474,7 +474,7 @@ class Admin_Controller_Collection extends Controller
         $view->set('collection', $collection);
 
         if (RequestMethods::post('submitAddVideo')) {
-            if ($this->checkToken() !== true) {
+            if ($this->checkCSRFToken() !== true) {
                 self::redirect('/admin/collection/');
             }
 

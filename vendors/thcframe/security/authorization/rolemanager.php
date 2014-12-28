@@ -6,20 +6,20 @@ use THCFrame\Core\Base;
 use THCFrame\Security\Exception;
 
 /**
- * Description of RoleManager
- *
- * @author Tomy
+ * RoleManager manage access roles form config file
  */
 class RoleManager extends Base
 {
 
     /**
+     * Array of all available roles
      * @readwrite
-     * @var type 
+     * @var array 
      */
     protected $_roles;
 
     /**
+     * Object constructor
      * 
      * @param array $options
      */
@@ -50,8 +50,9 @@ class RoleManager extends Base
     }
 
     /**
+     * Return all roles
      * 
-     * @return type
+     * @return array
      */
     public function getRoles()
     {
@@ -59,9 +60,10 @@ class RoleManager extends Base
     }
 
     /**
+     * Check if required role exists and return it
      * 
-     * @param type $rolename
-     * @return null
+     * @param string $rolename
+     * @return mixed
      */
     public function getRole($rolename)
     {
@@ -73,8 +75,9 @@ class RoleManager extends Base
     }
 
     /**
+     * Check if required role exists
      * 
-     * @param type $rolename
+     * @param string $rolename
      * @return boolean
      */
     public function roleExist($rolename)

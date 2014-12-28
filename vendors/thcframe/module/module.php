@@ -6,14 +6,28 @@ use THCFrame\Core\Base;
 use THCFrame\Events\Events as Event;
 use THCFrame\Module\Exception;
 use THCFrame\Events\SubscriberInterface;
+use THCFrame\Router\Model\Redirect;
 
 /**
- * Description of Module
- *
- * @author Tomy
+ * Application module class
  */
 class Module extends Base
 {
+
+    /**
+     * @read
+     */
+    protected $_routes = array();
+
+    /**
+     * @read
+     */
+    protected $_redirects = array();
+
+    /**
+     * @readwrite
+     */
+    protected $_checkForRedirects = false;
 
     /**
      * @read
@@ -23,11 +37,12 @@ class Module extends Base
     /**
      * @read
      */
-    protected $_observerClass;
+    protected $_observerClass = null;
 
     /**
+     * Object constructor
      * 
-     * @param type $options
+     * @param array $options
      */
     public function __construct($options = array())
     {
@@ -36,37 +51,35 @@ class Module extends Base
         Event::fire('framework.module.initialize.before', array($this->moduleName));
 
         $this->addModuleEvents();
-        
-        Event::add('framework.router.construct.after', function($router){
-            $router->createRoutes($this->getModuleRoutes());
+
+        Event::add('framework.router.construct.after', function($router) {
+            $router->addRedirects($this->getRedirects());
+            $router->addRoutes($this->getRoutes());
         });
 
         Event::fire('framework.module.initialize.after', array($this->moduleName));
     }
 
     /**
-     * 
+     * Create module-specific events
      */
     private function addModuleEvents()
     {
-        $mo = $this->getObserverClass();
-
-        if (isset($mo) && $mo != '') {
-            $moduleObserver = new $mo();
+        if ($this->getObserverClass() !== null) {
+            $obsClass = $this->getObserverClass();
+            $moduleObserver = new $obsClass();
 
             if ($moduleObserver instanceof SubscriberInterface) {
                 $events = $moduleObserver->getSubscribedEvents();
 
                 foreach ($events as $name => $callback) {
-                    if(is_array($callback)){
-                        foreach ($callback as $call){
+                    if (is_array($callback)) {
+                        foreach ($callback as $call) {
                             Event::add($name, array($moduleObserver, $call));
                         }
-                    }else{
+                    } else {
                         Event::add($name, array($moduleObserver, $callback));
                     }
-
-                    
                 }
             }
         }
@@ -83,12 +96,33 @@ class Module extends Base
     }
 
     /**
+     * Get module-specific routes
      * 
-     * @return type
+     * @return array
      */
-    public function getModuleRoutes()
+    public function getRoutes()
     {
         return $this->_routes;
+    }
+
+    /**
+     * Get module-specific redirects
+     * 
+     * @return array
+     */
+    public function getRedirects()
+    {
+        if ($this->checkForRedirects) {
+            $redirects = Redirect::all(array('module = ?' => strtolower($this->getModuleName())));
+
+            if ($redirects === null) {
+                return array();
+            } else {
+                return $redirects;
+            }
+        }else{
+            return array();
+        }
     }
 
 }

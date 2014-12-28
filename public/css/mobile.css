@@ -212,6 +212,18 @@ a:hover{color: #ccc;}
 .pagination li a.disable:hover { background: #f7f7f7; cursor: default; }
 .pagination li a.disable:active { background: #f7f7f7; border: 1px solid #ccc; color: #ccc; }
 
+/* třída pro skrývání H1 u articlu*/
+.visuallyhidden {
+    border: 0 none;
+    clip: rect(0px, 0px, 0px, 0px);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute;
+    width: 1px; 
+}
+
 /* ------------------------ special font elements -------------------*/
 
 .stencilla {font-family: 'stencilla', sans-serif; font-size: 14px;}

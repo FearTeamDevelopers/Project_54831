@@ -5,7 +5,6 @@ namespace Admin\Etc;
 use THCFrame\Events\Events as Events;
 use THCFrame\Registry\Registry;
 use THCFrame\Controller\Controller as BaseController;
-use THCFrame\Request\RequestMethods;
 use THCFrame\Core\StringMethods;
 
 /**
@@ -17,7 +16,7 @@ class Controller extends BaseController
 {
 
     private $_security;
-    
+
     const SUCCESS_MESSAGE_1 = ' has been successfully created';
     const SUCCESS_MESSAGE_2 = 'All changes were successfully saved';
     const SUCCESS_MESSAGE_3 = ' has been successfully deleted';
@@ -27,13 +26,29 @@ class Controller extends BaseController
     const SUCCESS_MESSAGE_7 = 'Everything has been successfully uploaded';
     const SUCCESS_MESSAGE_8 = 'Everything has been successfully saved';
     const SUCCESS_MESSAGE_9 = 'Everything has been successfully added';
-    
     const ERROR_MESSAGE_1 = 'Oops, something went wrong';
     const ERROR_MESSAGE_2 = 'Not found';
     const ERROR_MESSAGE_3 = 'Unknown error eccured';
     const ERROR_MESSAGE_4 = 'You dont have permissions to do this';
     const ERROR_MESSAGE_5 = 'Required fields are not valid';
     const ERROR_MESSAGE_6 = 'Access denied';
+
+    /**
+     * 
+     * @param type $options
+     */
+    public function __construct($options = array())
+    {
+        parent::__construct($options);
+
+        $this->_security = Registry::get('security');
+
+        // schedule disconnect from database 
+        Events::add('framework.controller.destruct.after', function($name) {
+            $database = Registry::get('database');
+            $database->disconnect();
+        });
+    }
 
     /**
      * 
@@ -56,14 +71,16 @@ class Controller extends BaseController
     public function _secured()
     {
         $session = Registry::get('session');
+        $this->_security->forceLogin(1);
         $user = $this->getUser();
-        
+
         if (!$user) {
             $this->_security->logout();
             self::redirect('/login');
         }
 
-        if ($session->get('lastActive') > time() - 1800) {
+        //30min till logout
+        if (time() - $session->get('lastActive') < 1800) {
             $session->set('lastActive', time());
         } else {
             $view = $this->getActionView();
@@ -82,8 +99,20 @@ class Controller extends BaseController
         if ($this->_security->getUser() && $this->_security->isGranted('role_publisher') !== true) {
             $view = $this->getActionView();
             $view->infoMessage(self::ERROR_MESSAGE_6);
-            $this->_security->logout();
-            self::redirect('/login');
+            self::redirect('/logout');
+        }
+    }
+
+    /**
+     * 
+     * @return boolean
+     */
+    protected function isPublisher()
+    {
+        if ($this->_security->getUser() && $this->_security->isGranted('role_publisher') === true) {
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -95,8 +124,7 @@ class Controller extends BaseController
         if ($this->_security->getUser() && $this->_security->isGranted('role_admin') !== true) {
             $view = $this->getActionView();
             $view->infoMessage(self::ERROR_MESSAGE_6);
-            $this->_security->logout();
-            self::redirect('/login');
+            self::redirect('/logout');
         }
     }
 
@@ -121,8 +149,7 @@ class Controller extends BaseController
         if ($this->_security->getUser() && $this->_security->isGranted('role_superadmin') !== true) {
             $view = $this->getActionView();
             $view->infoMessage(self::ERROR_MESSAGE_6);
-            $this->_security->logout();
-            self::redirect('/login');
+            self::redirect('/logout');
         }
     }
 
@@ -141,23 +168,6 @@ class Controller extends BaseController
 
     /**
      * 
-     * @param type $options
-     */
-    public function __construct($options = array())
-    {
-        parent::__construct($options);
-
-        $this->_security = Registry::get('security');
-
-        // schedule disconnect from database 
-        Events::add('framework.controller.destruct.after', function($name) {
-            $database = Registry::get('database');
-            $database->disconnect();
-        });
-    }
-
-    /**
-     * 
      */
     public function mutliSubmissionProtectionToken()
     {
@@ -171,8 +181,8 @@ class Controller extends BaseController
 
         return $token;
     }
-    
-        /**
+
+    /**
      * 
      * @return type
      */
@@ -182,7 +192,7 @@ class Controller extends BaseController
         $session->erase('submissionprotection');
         $token = md5(microtime());
         $session->set('submissionprotection', $token);
-        
+
         return $token;
     }
 
@@ -206,11 +216,11 @@ class Controller extends BaseController
     /**
      * 
      */
-    public function checkToken()
+    public function checkCSRFToken()
     {
-        if($this->_security->checkCsrfToken(RequestMethods::post('tk'))){
+        if ($this->_security->getCSRF()->verifyRequest()) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -230,26 +240,25 @@ class Controller extends BaseController
     {
         $view = $this->getActionView();
         $layoutView = $this->getLayoutView();
-        $user = $this->getUser();
 
         if ($view) {
-            $view->set('authUser', $this->getUser());
+            $view->set('authUser', $this->getUser())
+                    ->set('env', ENV);
 
-            if ($user) {
-                $view->set('isAdmin', $this->isAdmin())
-                        ->set('isSuperAdmin', $this->isSuperAdmin())
-                        ->set('token', $this->_security->getCsrfToken());
-            }
+            $view->set('isPublisher', $this->isPublisher())
+                    ->set('isAdmin', $this->isAdmin())
+                    ->set('isSuperAdmin', $this->isSuperAdmin())
+                    ->set('token', $this->_security->getCSRF()->getToken());
         }
 
         if ($layoutView) {
-            $layoutView->set('authUser', $this->getUser());
+            $layoutView->set('authUser', $this->getUser())
+                    ->set('env', ENV);
 
-            if ($user) {
-                $layoutView->set('isAdmin', $this->isAdmin())
-                        ->set('isSuperAdmin', $this->isSuperAdmin())
-                        ->set('token', $this->_security->getCsrfToken());
-            }
+            $layoutView->set('isPublisher', $this->isPublisher())
+                    ->set('isAdmin', $this->isAdmin())
+                    ->set('isSuperAdmin', $this->isSuperAdmin())
+                    ->set('token', $this->_security->getCSRF()->getToken());
         }
 
         parent::render();

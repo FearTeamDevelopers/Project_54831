@@ -60,7 +60,7 @@ class Admin_Controller_Video extends Controller
                 ->set('submstoken', $this->mutliSubmissionProtectionToken());
 
         if (RequestMethods::post('submitAddVideo')) {
-            if($this->checkToken() !== true && 
+            if($this->checkCSRFToken() !== true && 
                     $this->checkMutliSubmissionProtectionToken(RequestMethods::post('submstoken')) !== true){
                 self::redirect('/admin/video/');
             }
@@ -140,7 +140,7 @@ class Admin_Controller_Video extends Controller
                 ->set('sections', $sections);
 
         if (RequestMethods::post('submitEditVideo')) {
-            if($this->checkToken() !== true){
+            if($this->checkCSRFToken() !== true){
                 self::redirect('/admin/video/');
             }
             
@@ -193,7 +193,7 @@ class Admin_Controller_Video extends Controller
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
 
-        if ($this->checkToken()) {
+        if ($this->checkCSRFToken()) {
             $video = App_Model_Video::first(
                             array('id = ?' => (int) $id), array('id')
             );
@@ -223,7 +223,7 @@ class Admin_Controller_Video extends Controller
         $errors = array();
 
         if (RequestMethods::post('performVideoAction')) {
-            if($this->checkToken() !== true){
+            if($this->checkCSRFToken() !== true){
                 self::redirect('/admin/video/');
             }
             

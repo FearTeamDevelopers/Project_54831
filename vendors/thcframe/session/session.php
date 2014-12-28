@@ -4,13 +4,10 @@ namespace THCFrame\Session;
 
 use THCFrame\Core\Base;
 use THCFrame\Events\Events as Event;
-use THCFrame\Registry\Registry;
 use THCFrame\Session\Exception;
 
 /**
- * Factory class
- * 
- * @author Tomy
+ * Session factory class
  */
 class Session extends Base
 {
@@ -27,7 +24,7 @@ class Session extends Base
 
     /**
      * 
-     * @param type $method
+     * @param string $method
      * @return \THCFrame\Session\Exception\Implementation
      */
     protected function _getImplementationException($method)
@@ -36,17 +33,18 @@ class Session extends Base
     }
 
     /**
+     * Factory method
+     * It accepts initialization options and selects the type of returned object, 
+     * based on the internal $_type property.
      * 
      * @return \THCFrame\Session\Session\Driver\Server
      * @throws Exception\Argument
      */
-    public function initialize()
+    public function initialize($configuration)
     {
         Event::fire('framework.session.initialize.before', array($this->type, $this->options));
 
         if (!$this->type) {
-            $configuration = Registry::get('configuration');
-
             if (!empty($configuration->session) && !empty($configuration->session->type)) {
                 $this->type = $configuration->session->type;
                 $this->options = (array) $configuration->session;
@@ -56,7 +54,7 @@ class Session extends Base
         }
 
         if (!$this->type) {
-            throw new Exception\Argument('Invalid type');
+            throw new Exception\Argument('Invalid session type');
         }
 
         Event::fire('framework.session.initialize.after', array($this->type, $this->options));
@@ -66,8 +64,12 @@ class Session extends Base
                     return new Driver\Server($this->options);
                     break;
                 }
+            case 'database': {
+                    return new Driver\Database($this->options);
+                    break;
+                }
             default: {
-                    throw new Exception\Argument('Invalid type');
+                    throw new Exception\Argument('Invalid session type');
                     break;
                 }
         }

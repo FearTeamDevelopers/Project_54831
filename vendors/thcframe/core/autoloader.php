@@ -3,20 +3,40 @@
 namespace THCFrame\Core;
 
 /**
- * Description of autoloader
- *
- * @author Tomy
+ * Autoloade class
  */
 class Autoloader
 {
 
+    /**
+     * Path prefixes
+     * 
+     * @var array 
+     */
     private $_prefixes = array();
+
+    /**
+     * Fallback dirs
+     * 
+     * @var array 
+     */
     private $_fallbackDirs = array();
+
+    /**
+     * 
+     * @var boolean 
+     */
     private $_useIncludePath = false;
+
+    /**
+     * Already loaded classes
+     * 
+     * @var array 
+     */
     private $_loadedClass = array();
 
     /**
-     * Adds prefixes.
+     * Adds prefixes
      *
      * @param array $prefixes Prefixes to add
      */
@@ -52,7 +72,7 @@ class Autoloader
     }
 
     /**
-     * Registers this instance as an autoloader.
+     * Registers this instance as an autoloader
      *
      * @param Boolean $prepend Whether to prepend the autoloader or not
      */
@@ -62,7 +82,7 @@ class Autoloader
     }
 
     /**
-     * Unregisters this instance as an autoloader.
+     * Unregisters this instance as an autoloader
      */
     public function unregister()
     {
@@ -70,28 +90,31 @@ class Autoloader
     }
 
     /**
-     * Loads the given class or interface.
+     * Loads the given class or interface
      *
      * @param string $class The name of the class
-     *
      * @return Boolean|null True, if loaded
      */
     public function loadClass($class)
     {
-        if ($file = $this->findFile($class)) {
+        if (strpos($class, 'Swift_') !== false) {
+            return;
+        }
+
+        $file = $this->findFile($class);
+        if ($file !== false) {
             require $file;
 
             return true;
-        }else{
+        } else {
             throw new \Exception(sprintf('%s not found', $class));
         }
     }
 
     /**
-     * Finds the path to the file where the class is defined.
+     * Finds the path to the file where the class is defined
      *
      * @param string $class The name of the class
-     *
      * @return string|null The path, if found
      */
     public function findFile($class)
@@ -108,17 +131,17 @@ class Autoloader
 
         $classPath .= str_replace('_', DIRECTORY_SEPARATOR, $className) . '.php';
 
-        if(array_key_exists($class, $this->_loadedClass)){
+        if (array_key_exists($class, $this->_loadedClass)) {
             return $this->_loadedClass[$class];
         }
-        
+
         foreach ($this->_prefixes as $prefix => $dirs) {
-                foreach ($dirs as $dir) {
-                    if (file_exists(strtolower($dir . DIRECTORY_SEPARATOR . $classPath))) {
-                        $file = $this->_loadedClass[$class] = strtolower($dir . DIRECTORY_SEPARATOR . $classPath);
-                        return $file;
-                    }
+            foreach ($dirs as $dir) {
+                if (file_exists(strtolower($dir . DIRECTORY_SEPARATOR . $classPath))) {
+                    $file = $this->_loadedClass[$class] = strtolower($dir . DIRECTORY_SEPARATOR . $classPath);
+                    return $file;
                 }
+            }
         }
 
         foreach ($this->_fallbackDirs as $dir) {
@@ -131,6 +154,8 @@ class Autoloader
         if ($this->_useIncludePath && $file = stream_resolve_include_path($classPath)) {
             return $file;
         }
+
+        return false;
     }
 
 }
