@@ -97,7 +97,6 @@ class Controller extends BaseController
         
         $this->getLayoutView()
                 ->set('metatitle', $metaData['metatitle'])
-                ->set('metakeywords', $metaData['metakeywords'])
                 ->set('metarobots', $metaData['metarobots'])
                 ->set('metadescription', $metaData['metadescription'])
                 ->set('metaogurl', $metaData['metaogurl'])
