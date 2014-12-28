@@ -71,7 +71,6 @@ class Controller extends BaseController
     public function _secured()
     {
         $session = Registry::get('session');
-        $this->_security->forceLogin(1);
         $user = $this->getUser();
 
         if (!$user) {
