@@ -293,7 +293,7 @@ class Admin_Controller_Collection extends Controller
                 'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
             ));
 
-            $fileErrors = $fileManager->upload('photos', 'collections/' . $id, time().'_')->getUploadErrors();
+            $fileErrors = $fileManager->uploadImage('photos', 'collections/' . $id, time().'_')->getUploadErrors();
             $files = $fileManager->getUploadedFiles();
 
             if (!empty($files)) {
@@ -357,25 +357,20 @@ class Admin_Controller_Collection extends Controller
         $this->willRenderActionView = false;
         $this->willRenderLayoutView = false;
 
-        if ($this->checkCSRFToken()) {
-            $photo = App_Model_Photo::first(
-                            array('id = ?' => (int) $id), 
-                            array('id', 'imgMain', 'imgThumb')
-            );
+        $photo = App_Model_Photo::first(
+                        array('id = ?' => (int) $id), array('id', 'imgMain', 'imgThumb')
+        );
 
-            if (null === $photo) {
-                echo self::ERROR_MESSAGE_2;
-            } else {
-                if (@unlink($photo->getUnlinkPath()) && @unlink($photo->getUnlinkThumbPath()) && $photo->delete()) {
-                    Event::fire('admin.log', array('success', 'Photo id: ' . $id));
-                    echo 'ok';
-                } else {
-                    Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
-                    echo self::ERROR_MESSAGE_1;
-                }
-            }
+        if (null === $photo) {
+            echo self::ERROR_MESSAGE_2;
         } else {
-            echo self::ERROR_MESSAGE_1;
+            if (@unlink($photo->getUnlinkPath()) && @unlink($photo->getUnlinkThumbPath()) && $photo->delete()) {
+                Event::fire('admin.log', array('success', 'Photo id: ' . $id));
+                echo 'ok';
+            } else {
+                Event::fire('admin.log', array('fail', 'Photo id: ' . $id));
+                echo self::ERROR_MESSAGE_1;
+            }
         }
     }
 

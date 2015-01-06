@@ -59,7 +59,7 @@ class Admin_Controller_Partner extends Controller
                 'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
             ));
 
-            $fileErrors = $fileManager->upload('logo', 'partners', time().'_', false)->getUploadErrors();
+            $fileErrors = $fileManager->uploadImage('logo', 'partners', time().'_', false)->getUploadErrors();
             $files = $fileManager->getUploadedFiles();
 
             if (!empty($files)) {

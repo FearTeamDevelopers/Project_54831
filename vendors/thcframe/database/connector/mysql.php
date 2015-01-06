@@ -135,7 +135,6 @@ class Mysql extends Database\Connector
             }
 
             $this->_service->set_charset('utf8');
-            $this->_service->query("SET NAMES 'utf8' COLLATE 'utf8_general_ci'");
 
             $this->isConnected = true;
             unset($this->_password);

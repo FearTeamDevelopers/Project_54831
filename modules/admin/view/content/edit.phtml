@@ -33,7 +33,7 @@
             </span>
         </p>
         <p>
-            <label>Text*<small>Max. 50 000 characters</small></label>
+            <label>Text*</label>
             <span class="field">
                 <textarea rows="20" name="text" id="ckeditor">{echo $content->body}</textarea>
                 {if isset($errors["body"])}
@@ -53,7 +53,7 @@
             </span>
         </p>
         <p>
-            <label>Meta-Description<small>Max. 500 znaků</small></label>
+            <label>Meta-Description</label>
             <span class="field">
                 <textarea rows="5" name="metadescription" class="longinput">{echo $content->metaDescription}</textarea>
                 {if isset($errors["metaDescription"])}

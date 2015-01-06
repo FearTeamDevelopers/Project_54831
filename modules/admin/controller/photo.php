@@ -54,7 +54,7 @@ class Admin_Controller_Photo extends Controller
                 'maxImageHeight' => $this->loadConfigFromDb('photo_maxheight')
             ));
 
-            $fileErrors = $fileManager->upload('photos', 'section_photos', time().'_')->getUploadErrors();
+            $fileErrors = $fileManager->uploadImage('photos', 'section_photos', time().'_')->getUploadErrors();
             $files = $fileManager->getUploadedFiles();
 
             $sectionsIds = (array) RequestMethods::post('sections');

@@ -57,7 +57,7 @@
                     </span>
                 </p>
                 <p>
-                    <label>Text*<small>Max. 20 000 characters</small></label>
+                    <label>Text*</label>
                     <span class="field">
                         <textarea rows="20" name="text" id="ckeditor">{echo isset($news)? $news->body: ""}</textarea>
                         {if isset($errors["body"])}
@@ -69,7 +69,7 @@
                     </span>
                 </p>
                 <p>
-                    <label>Teaser*<small>Max. 5000 characters</small></label>
+                    <label>Teaser*</label>
                     <span class="field">
                         <textarea rows="20" name="shorttext" id="ckeditor2">{echo isset($news)? $news->shortBody: ""}</textarea>
                         {if isset($errors["shortBody"])}
@@ -82,7 +82,7 @@
                     </span>
                 </p>
                 <p>
-                    <label>Rss feed text<small>Max. 5000 characters<br/>Text only</small></label>
+                    <label>Rss feed text<small>Text only</small></label>
                     <span class="field">
                         <textarea rows="5" name="feedtext" class="longinput" >{echo isset($news)? $news->rssFeedBody: ""}</textarea>
                         {if isset($errors["rssFeedBody"])}
@@ -101,7 +101,7 @@
                     </span>
                 </p>
                 <p>
-                    <label>Meta description<small>Max. 250 characters<br/>Text only<br/>Fill if different from Teaser</small></label>
+                    <label>Meta description<small>Text only</small></label>
                     <span class="field">
                         <textarea rows="5" name="metadescription" class="longinput" >{echo isset($news)? $news->metaDescription: ""}</textarea>
                         {if isset($errors["metaDescription"])}

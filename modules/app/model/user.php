@@ -3,9 +3,7 @@
 use THCFrame\Security\Model\BasicUser;
 
 /**
- * Description of App_Model_User
  *
- * @author Tomy
  */
 class App_Model_User extends BasicUser
 {

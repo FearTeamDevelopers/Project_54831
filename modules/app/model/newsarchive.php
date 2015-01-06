@@ -3,13 +3,10 @@
 use THCFrame\Model\Model;
 
 /**
- * Description of App_Model_Newsarchive
  *
- * @author Tomy
  */
 class App_Model_Newsarchive extends Model
 {
-
     /**
      * @column
      * @readwrite
@@ -67,21 +64,10 @@ class App_Model_Newsarchive extends Model
      * @type text
      * @length 256
      * 
-     * @validate required, html, max(5000)
+     * @validate required, html
      * @label short text
      */
     protected $_shortBody;
-    
-    /**
-     * @column
-     * @readwrite
-     * @type text
-     * @length 256
-     * 
-     * @validate alphanumeric, max(5000)
-     * @label Rss feed text
-     */
-    protected $_rssFeedBody;
 
     /**
      * @column
@@ -89,7 +75,18 @@ class App_Model_Newsarchive extends Model
      * @type text
      * @length 256
      * 
-     * @validate required, html, max(20000)
+     * @validate html
+     * @label Rss feed text
+     */
+    protected $_rssFeedBody;
+    
+    /**
+     * @column
+     * @readwrite
+     * @type text
+     * @length 256
+     * 
+     * @validate required, html
      * @label text
      */
     protected $_body;
@@ -104,7 +101,7 @@ class App_Model_Newsarchive extends Model
      * @label expiration date
      */
     protected $_expirationDate;
-
+    
     /**
      * @column
      * @readwrite
@@ -115,7 +112,7 @@ class App_Model_Newsarchive extends Model
      */
     protected $_rank;
     
-        /**
+    /**
      * @column
      * @readwrite
      * @type text
@@ -130,9 +127,9 @@ class App_Model_Newsarchive extends Model
      * @column
      * @readwrite
      * @type text
-     * @length 255
+     * @length 256
      * 
-     * @validate alphanumeric, max(250)
+     * @validate alphanumeric, max(5000)
      * @label meta description
      */
     protected $_metaDescription;
@@ -147,7 +144,7 @@ class App_Model_Newsarchive extends Model
      * @label meta image
      */
     protected $_metaImage;
-    
+
     /**
      * @column
      * @readwrite
@@ -163,6 +160,11 @@ class App_Model_Newsarchive extends Model
     protected $_modified;
 
     /**
+     * @readwrite
+     */
+    protected $_fbLikeUrl;
+    
+    /**
      * 
      */
     public function preSave()
@@ -176,5 +178,4 @@ class App_Model_Newsarchive extends Model
         }
         $this->setModified(date('Y-m-d H:i:s'));
     }
-
 }
